@@ -19,6 +19,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class Order{
 
     @Id
+
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "order_id")
     private Long id;
