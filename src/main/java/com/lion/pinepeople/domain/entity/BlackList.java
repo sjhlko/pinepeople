@@ -22,13 +22,13 @@ public class BlackList {
     @Column(name = "start_date")
     private LocalDateTime startDate;
 
-//    @OneToMany
-//    @JoinColumn(name = "user_id")
-//    private List<User> fromReportUsers = new ArrayList<>();
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private List<User> fromReportUsers = new ArrayList<>();
 
-//    @OneToOne
-//    @JoinColumn(name = "user_id")
-//    private User blackListUser;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User blackListUser;
 
 
 }
