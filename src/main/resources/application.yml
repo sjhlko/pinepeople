@@ -19,7 +19,7 @@ spring:
     database : mysql
     hibernate.ddl-auto : create
     default_batch_fetch_size: 1000
-    hibernate.naming.strategy : org.hibernate.cfg.ImprovedNamingStrategy
+    hibernate.naming.strategy : org.hibernate.cfg.SpringPhysicalNamingStrategy
     hibernate.naming.physical-strategy : org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     generate-ddl : false
 
