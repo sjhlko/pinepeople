@@ -1,4 +1,4 @@
-package com.lion.pinepeople.domain;
+package com.lion.pinepeople.domain.entity;
 
 import lombok.Getter;
 import lombok.Setter;
