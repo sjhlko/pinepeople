@@ -1,4 +1,4 @@
-package com.lion.pinepeople.config.domain;
+package com.lion.pinepeople.domain;
 
 import lombok.Getter;
 import lombok.Setter;
