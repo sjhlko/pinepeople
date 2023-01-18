@@ -1,9 +1,12 @@
 package com.lion.pinepeople.service;
 
+import com.lion.pinepeople.domain.dto.user.delete.UserDeleteResponse;
 import com.lion.pinepeople.domain.dto.user.join.UserJoinRequest;
 import com.lion.pinepeople.domain.dto.user.join.UserJoinResponse;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginRequest;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginResponse;
+import com.lion.pinepeople.domain.dto.user.update.UserUpdateRequest;
+import com.lion.pinepeople.domain.dto.user.update.UserUpdateResponse;
 import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.enums.UserRole;
@@ -22,13 +25,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
+    private final BrixService brixService;
     @Value("${jwt.token.secret}")
     private String key;
 
     /**
      * 회원가입 메서드
      *
-     * @param userJoinRequest name, email, password, address
+     * @param userJoinRequest name, email, password, address, phone, birth(yyyy-MM-dd)
      * @return UserJoinResponse userId, message
      */
     public UserJoinResponse join(UserJoinRequest userJoinRequest) {
@@ -40,6 +44,7 @@ public class UserService {
         User user = User.of(userJoinRequest, encoder.encode(userJoinRequest.getPassword()));
         //User 저장
         user = userRepository.save(user);
+        brixService.setBrix(user);
         //User -> UserJoinResponse 변환 후 반환
         return UserJoinResponse.of(user.getId(), user.getName());
     }
@@ -72,7 +77,7 @@ public class UserService {
      * @param userId 변경하는 userId
      * @return UserRoleResponse userName, message
      */
-    public UserRoleResponse changeRole(Long id, String userId) {
+    public UserRoleResponse changeRole(String userId, Long id) {
         //admin 유저 체크
         User admin = userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> {
             throw new AppException(ErrorCode.USER_NOT_FOUND, "ADMIN 유저를 찾을 수 없습니다.");
@@ -94,5 +99,62 @@ public class UserService {
         userRepository.saveAndFlush(changeUser);
         //UserRoleResponse DTO 반환
         return UserRoleResponse.of(changeUser.getName(), "관리자로 권한이 변경되었습니다.");
+    }
+
+    /**
+     * 유저 수정 메서드
+     *
+     * @param userId            수정하려고 하는 유저 id
+     * @param id                수정할 대상인 유저 id
+     * @param userUpdateRequest name, address, phone, birth
+     * @return UserUpdateResponse message, userName
+     */
+    public UserUpdateResponse modify(String userId, Long id, UserUpdateRequest userUpdateRequest) {
+        // 수정을 하는 유저 체크
+        User findUser = userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> {
+            throw new AppException(ErrorCode.USER_NOT_FOUND, "유저를 찾을 수 없습니다.");
+        });
+        // 수정을 하는 유저 권한 체크
+        if (!findUser.getId().equals(id)) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION, "해당 유저 정보를 수정할 권한이 없습니다.");
+        }
+        // 수정할 대상 유저 체크
+        User modifyUser = userRepository.findById(id).orElseThrow(() -> {
+            throw new AppException(ErrorCode.USER_NOT_FOUND, "대상 유저를 찾을 수 없습니다.");
+        });
+        // 유저 수정
+        findUser.updateUser(userUpdateRequest);
+        userRepository.saveAndFlush(findUser);
+        // 유저 번경 dto 반환
+        return UserUpdateResponse.of(String.format(findUser.getName() + "님의 유저 정보가 변경되었습니다."), findUser.getId());
+    }
+
+    /**
+     * 유저 삭제 메서드
+     *
+     * @param userId 삭제하는 userId
+     * @param id     삭제할 userid
+     * @return UserDeleteResponse message userId
+     */
+    // 회원 삭제
+    public UserDeleteResponse delete(String userId, Long id) {
+        // 삭제를 하는 유저 체크
+        User findUser = userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> {
+            throw new AppException(ErrorCode.USER_NOT_FOUND, "유저를 찾을 수 없습니다.");
+        });
+        // 삭제를 하는 유저 권한 체크
+        if (!(findUser.getRole().equals(UserRole.ADMIN) || findUser.getId().equals(id))) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION, "해당 유저 정보를 삭제할 권한이 없습니다.");
+        }
+        // 삭제할 대상 유저 체크
+        User deleteUser = userRepository.findById(id).orElseThrow(() -> {
+            throw new AppException(ErrorCode.USER_NOT_FOUND, "대상 유저를 찾을 수 없습니다.");
+        });
+        // 삭제
+        String deleteMessage = String.format(deleteUser.getName() + "님의 유저 정보를 삭제했습니다.");
+        Long deleteUserId = deleteUser.getId();
+        userRepository.delete(deleteUser);
+        // 삭제 delete dto 반환
+        return UserDeleteResponse.of(deleteMessage, deleteUserId);
     }
 }
