@@ -33,7 +33,7 @@ public class PartyService {
 
     public PartyCreateResponse createParty(PartyCreateRequest partyCreateRequest, String userId) {
         User user = validateUser(userId);
-        Party party = partyRepository.save(partyCreateRequest.toEntity());
+        Party party = partyRepository.save(partyCreateRequest.toEntity(user));
         Participant participant = participantService.createHostParticipant(user,party);
         return PartyCreateResponse.of(party,participant);
     }
