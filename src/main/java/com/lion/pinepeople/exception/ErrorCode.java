@@ -18,6 +18,7 @@ public enum ErrorCode {
     ALREADY_LIKED(HttpStatus.FORBIDDEN, "이미 좋아요를 눌렀습니다."),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 카테고리를 찾을 수 없습니다."),
     CATEGORY_NAME_FALUT(HttpStatus.CONFLICT, "카테고리의 branch와 name이 같을 수 없습니다. "),
+    BRIX_NOT_FOUND(HttpStatus.CONFLICT,"해당 당도를 찾을 수 없습니다."),
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 주문이 없습니다."),
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "DB에러"),
     USER_ROLE_NOT_FOUND(HttpStatus.NOT_ACCEPTABLE, "해당 UserRole은 존재하지 않습니다."),
