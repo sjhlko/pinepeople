@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE party SET deleted_at = current_timestamp WHERE id = ? ")
+@SQLDelete(sql = "UPDATE party SET deleted_at = current_timestamp WHERE party_id = ? ")
 public class Party extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
