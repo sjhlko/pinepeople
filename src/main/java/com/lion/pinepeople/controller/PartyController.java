@@ -1,8 +1,6 @@
 package com.lion.pinepeople.controller;
 
-import com.lion.pinepeople.domain.dto.party.PartyCreateRequest;
-import com.lion.pinepeople.domain.dto.party.PartyCreateResponse;
-import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
+import com.lion.pinepeople.domain.dto.party.*;
 import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
 import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.service.PartyService;
@@ -44,6 +42,14 @@ public class PartyController {
             direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PartyInfoResponse> partyInfoResponses = partyService.getAllParty(pageable);
         return Response.success(partyInfoResponses);
+    }
+
+    @PatchMapping("/{id}")
+    @ApiOperation(value = "파티 수정")
+    public Response<PartyUpdateResponse> modifyPost(@PathVariable Long id, @RequestBody PartyUpdateRequest partyUpdateRequest, Authentication authentication){
+        PartyUpdateResponse partyUpdateResponse = partyService.updateParty(id, partyUpdateRequest, authentication.getName());
+        return Response.success(partyUpdateResponse);
+
     }
 
 }

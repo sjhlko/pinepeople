@@ -15,13 +15,14 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Getter
 public class PartyInfoResponse {
+    private Long id;
     private String partyTitle;
     private String partyContent;
     private Integer partySize;
     private Integer partyCost;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date startDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date endDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
     private Timestamp createdAt;
@@ -32,6 +33,7 @@ public class PartyInfoResponse {
 
     public static PartyInfoResponse of(Party party){
         return PartyInfoResponse.builder()
+                .id(party.getId())
                 .partyContent(party.getPartyContent())
                 .address(party.getAddress())
                 .partySize(party.getPartySize())
@@ -39,6 +41,22 @@ public class PartyInfoResponse {
                 .partyTitle(party.getPartyTitle())
                 .announcement(party.getAnnouncement())
                 .createdAt(party.getCreatedAt())
+                .updatedAt(party.getUpdatedAt())
+                .startDate(party.getStartDate())
+                .endDate(party.getEndDate())
+                .build();
+    }
+
+    public static PartyInfoResponse of(Party party, Timestamp createdAt){
+        return PartyInfoResponse.builder()
+                .id(party.getId())
+                .partyContent(party.getPartyContent())
+                .address(party.getAddress())
+                .partySize(party.getPartySize())
+                .partyCost(party.getPartyCost())
+                .partyTitle(party.getPartyTitle())
+                .announcement(party.getAnnouncement())
+                .createdAt(createdAt)
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())

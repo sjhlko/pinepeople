@@ -20,15 +20,19 @@ public class PartyService {
     private final UserRepository userRepository;
     private final ParticipantService participantService;
     public User validateUser(String userId){
-        User user = userRepository.findById(Long.parseLong(userId))
+        return userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
-        return user;
     }
 
     public Party validateParty(Long partyId){
-        Party party = partyRepository.findById(partyId)
+        return partyRepository.findById(partyId)
                 .orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND, ErrorCode.PARTY_NOT_FOUND.getMessage()));
-        return party;
+    }
+
+    public void validateAuthor(Party party, User currentUser){
+        if(party.getUser().equals(currentUser)){
+            throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
+        }
     }
 
     public PartyCreateResponse createParty(PartyCreateRequest partyCreateRequest, String userId) {
@@ -46,5 +50,13 @@ public class PartyService {
     public Page<PartyInfoResponse> getAllParty(Pageable pageable) {
         Page<Party> parties = partyRepository.findAll(pageable);
         return parties.map(PartyInfoResponse::of);
+    }
+
+    public PartyUpdateResponse updateParty(Long partyId, PartyUpdateRequest partyUpdateRequest, String userId) {
+        User user = validateUser(userId);
+        Party party = validateParty(partyId);
+        validateAuthor(party,user);
+        Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party));
+        return PartyUpdateResponse.of(party,updatedParty);
     }
 }
