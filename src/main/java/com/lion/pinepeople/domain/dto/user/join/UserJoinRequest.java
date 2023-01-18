@@ -1,4 +1,4 @@
-package com.lion.pinepeople.domain.dto;
+package com.lion.pinepeople.domain.dto.user.join;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
