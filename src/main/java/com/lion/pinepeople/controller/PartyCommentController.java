@@ -1,7 +1,6 @@
 package com.lion.pinepeople.controller;
 
-import com.lion.pinepeople.domain.dto.PartyCommentRequest;
-import com.lion.pinepeople.domain.dto.PartyCommentUpdateRequest;
+import com.lion.pinepeople.domain.dto.partyComment.*;
 import com.lion.pinepeople.domain.response.*;
 import com.lion.pinepeople.service.PartyCommentService;
 import io.swagger.annotations.Api;

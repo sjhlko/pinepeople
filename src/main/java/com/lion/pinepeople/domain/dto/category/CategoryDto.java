@@ -1,4 +1,4 @@
-package com.lion.pinepeople.domain.dto;
+package com.lion.pinepeople.domain.dto.category;
 
 import com.lion.pinepeople.domain.entity.Category;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.lion.pinepeople.service;
 
-import com.lion.pinepeople.domain.dto.CategoryDto;
+import com.lion.pinepeople.domain.dto.category.CategoryDto;
 import com.lion.pinepeople.domain.entity.Category;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;

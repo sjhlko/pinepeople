@@ -1,6 +1,6 @@
 package com.lion.pinepeople.controller;
 
-import com.lion.pinepeople.domain.dto.CategoryDto;
+import com.lion.pinepeople.domain.dto.category.CategoryDto;
 import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.service.CategoryService;
 import io.swagger.annotations.Api;
