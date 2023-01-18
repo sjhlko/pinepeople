@@ -21,7 +21,7 @@ public class PartyCommentController {
     private final PartyCommentService partyCommentService;
 
     @PostMapping
-    public Response addPartyComment(@PathVariable Long partyId, PartyCommentRequest partyCommentRequest, Authentication authentication) {
+    public Response addPartyComment(@PathVariable Long partyId, @RequestBody PartyCommentRequest partyCommentRequest, Authentication authentication) {
         long userId = Long.parseLong(authentication.getName());
         PartyCommentResponse response = partyCommentService.addPartyComment(partyId, userId, partyCommentRequest.getBody());
         return Response.success(response);
@@ -35,7 +35,7 @@ public class PartyCommentController {
     }
 
     @PatchMapping("/{commentId}")
-    public Response updatePartyComment(@PathVariable Long partyId, @PathVariable Long commentId , PartyCommentUpdateRequest request, Authentication authentication) {
+    public Response updatePartyComment(@PathVariable Long partyId, @PathVariable Long commentId ,@RequestBody PartyCommentUpdateRequest request, Authentication authentication) {
         long userId = Long.parseLong(authentication.getName());
         PartyCommentUpdateResponse response = partyCommentService.updateComment(partyId, commentId, request.getBody(), userId);
         return Response.success(response);
