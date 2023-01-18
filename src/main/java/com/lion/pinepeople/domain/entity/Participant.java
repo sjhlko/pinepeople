@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -16,7 +17,8 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE participant SET deleted_at = current_timestamp WHERE id = ? ")
+@Where(clause = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE participant SET deleted_at = current_timestamp WHERE participant_id = ? ")
 public class Participant extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
