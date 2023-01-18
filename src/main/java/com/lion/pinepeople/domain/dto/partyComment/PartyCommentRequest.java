@@ -1,4 +1,4 @@
-package com.lion.pinepeople.domain.dto;
+package com.lion.pinepeople.domain.dto.partyComment;
 
 import lombok.*;
 
