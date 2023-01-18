@@ -1,6 +1,6 @@
 package com.lion.pinepeople.controller;
 
-import com.lion.pinepeople.domain.dto.BrixRequest;
+import com.lion.pinepeople.domain.brix.BrixRequest;
 import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.service.BrixService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class BrixController {
      *
      * @param userId 당도를 조회할 대상 아이디
      * @param authentication 로그인한 아이디
-     * @return
+     * @return brix개수
      */
     @GetMapping
     public Response<Double> getBrix(@RequestParam Long userId, Authentication authentication){
