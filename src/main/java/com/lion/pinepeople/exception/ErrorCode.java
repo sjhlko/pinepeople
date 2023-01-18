@@ -23,6 +23,8 @@ public enum ErrorCode {
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 주문이 없습니다."),
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "DB에러"),
     USER_ROLE_NOT_FOUND(HttpStatus.NOT_ACCEPTABLE, "해당 UserRole은 존재하지 않습니다."),
+    PARTY_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 파티 댓글이 없습니다."),
+    PARTY__NOT_FOUND(HttpStatus.NOT_FOUND, "해당 파티가 없습니다."),
     EXPIRE_TOKEN(HttpStatus.UNAUTHORIZED,"토큰이 만료되었습니다.");
 
     private HttpStatus status;

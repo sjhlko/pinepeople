@@ -3,21 +3,19 @@ package com.lion.pinepeople.domain.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lion.pinepeople.enums.ApprovalStatus;
 import com.lion.pinepeople.enums.ParticipantRole;
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Participant {
+public class Participant extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "participant_id")
@@ -34,4 +32,15 @@ public class Participant {
     @JoinColumn(name = "party_id")
     @JsonIgnore
     private Party party;
+
+    public static Participant of(User user, Party party,ParticipantRole participantRole){
+        return Participant.builder()
+                .approvalStatus(
+                        participantRole.equals(ParticipantRole.HOST)?
+                                ApprovalStatus.APPROVED:ApprovalStatus.WAITING)
+                .participantRole(participantRole)
+                .user(user)
+                .party(party)
+                .build();
+    }
 }

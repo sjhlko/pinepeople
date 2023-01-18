@@ -1,9 +1,8 @@
 package com.lion.pinepeople.controller;
 
 import com.lion.pinepeople.domain.dto.PartyCommentRequest;
-import com.lion.pinepeople.domain.response.PartyCommentListResponse;
-import com.lion.pinepeople.domain.response.PartyCommentResponse;
-import com.lion.pinepeople.domain.response.Response;
+import com.lion.pinepeople.domain.dto.PartyCommentUpdateRequest;
+import com.lion.pinepeople.domain.response.*;
 import com.lion.pinepeople.service.PartyCommentService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +32,20 @@ public class PartyCommentController {
         Page<PartyCommentListResponse> responses =
                 partyCommentService.getComments(partyId, pageable);
         return Response.success(responses);
+    }
+
+    @PatchMapping("api/partys/{partyId}/party-comments/{commentId}")
+    public Response updatePartyComment(@PathVariable Long partyId, @PathVariable Long commentId , PartyCommentUpdateRequest request, Authentication authentication) {
+        long userId = Long.parseLong(authentication.getName());
+        PartyCommentUpdateResponse response = partyCommentService.updateComment(partyId, commentId, request.getBody(), userId);
+        return Response.success(response);
+    }
+
+    @DeleteMapping("api/partys/{partyId}/party-comments/{commentId}")
+    public Response deletePartyComment(@PathVariable Long partyId, @PathVariable Long commentId , Authentication authentication) {
+        long userId = Long.parseLong(authentication.getName());
+        PartyCommentDeleteResponse response = partyCommentService.deleteComment(partyId, commentId, userId);
+        return Response.success(response);
     }
 
 

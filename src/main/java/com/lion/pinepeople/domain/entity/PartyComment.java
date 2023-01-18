@@ -40,5 +40,8 @@ public class PartyComment extends BaseEntity  {
 
 
 
-
+    /**변경감지 수정 메서드**/
+    public void update(String body) {
+        this.body = body;
+    }
 }
