@@ -1,6 +1,7 @@
 package com.lion.pinepeople.domain.entity;
 
-import com.lion.pinepeople.domain.dto.UserJoinRequest;
+import com.lion.pinepeople.domain.dto.user.join.UserJoinRequest;
+import com.lion.pinepeople.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @Getter
-public class User extends BaseEntity{
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -28,10 +29,20 @@ public class User extends BaseEntity{
     private Integer warningCnt;
     private Integer point;
 
-    public static User of(UserJoinRequest userJoinRequest){
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    public static User of(UserJoinRequest userJoinRequest, String password) {
         return User.builder()
                 .name(userJoinRequest.getName())
                 .email(userJoinRequest.getEmail())
+                .password(password)
+                .address(userJoinRequest.getAddress())
+                .role(UserRole.USER)
                 .build();
+    }
+
+    public void updateRole(UserRole userRole) {
+        this.role = userRole;
     }
 }
