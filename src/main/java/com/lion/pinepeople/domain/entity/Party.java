@@ -36,4 +36,5 @@ public class Party extends BaseEntity{
     @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Participant> participants = new ArrayList<>();
 
+
 }
