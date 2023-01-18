@@ -19,7 +19,7 @@ public abstract class BaseEntity {
 
     @CreatedDate
     @Column(name ="registered_at" ,updatable = false)
-    private Timestamp registeredAt;
+    private Timestamp createdAt;
 
     @LastModifiedDate
     @Column(name ="update_at")
