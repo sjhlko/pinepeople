@@ -25,7 +25,7 @@ public class ParticipantInfoResponse {
     private ApprovalStatus approvalStatus;
     private ParticipantRole participantRole;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
-    private Timestamp registeredAt;
+    private Timestamp createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
     private Timestamp updatedAt;
     private Long userId;
@@ -35,7 +35,7 @@ public class ParticipantInfoResponse {
                 .id(participant.getId())
                 .approvalStatus(participant.getApprovalStatus())
                 .participantRole(participant.getParticipantRole())
-                .registeredAt(participant.getRegisteredAt())
+                .createdAt(participant.getCreatedAt())
                 .updatedAt(participant.getUpdatedAt())
                 .partyId(participant.getParty().getId())
                 .userId(participant.getUser().getId())
