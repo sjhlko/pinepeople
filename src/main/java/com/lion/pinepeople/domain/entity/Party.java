@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -16,7 +17,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE party SET deleted_at = current_timestamp WHERE id = ? ")
+@Where(clause = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE party SET deleted_at = current_timestamp WHERE party_id = ? ")
 public class Party extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
