@@ -1,6 +1,6 @@
 package com.lion.pinepeople.service;
 
-import com.lion.pinepeople.domain.dto.CategoryDTO;
+import com.lion.pinepeople.domain.dto.CategoryDto;
 import com.lion.pinepeople.domain.entity.Category;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
@@ -27,7 +27,7 @@ public class CategoryService {
      * 처음에 code로 ROOT 생성 그후 자식 카테고리 생성 시에는 parentCategoryName에
      * 부모의 branch 명을 적고 카테고리 생성
      * **/
-    public Long saveCategory(CategoryDTO categoryDTO) {
+    public Long saveCategory(CategoryDto categoryDTO) {
         Category category = categoryDTO.toEntity();
         //대분류 등록
         if (categoryDTO.getParentCategoryName() == null) {
@@ -70,15 +70,15 @@ public class CategoryService {
      * 카테고리 조회 메서드
      * 대분류 카테고리와 자식 카테고리를 같이 조회하기 위해 map으로 반환
      * **/
-    public Map<String, CategoryDTO> getCategoryByBranch(String branch) {
+    public Map<String, CategoryDto> getCategoryByBranch(String branch) {
         /*우선 대분류 카테고리가 존재하는지 check*/
         Category category = categoryRepository.findByBranchAndCode(branch, ROOT)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND,"해당 카테고리를 찾을 수 없습니다."));
 
         /*엔티티 responseDTO로 변환*/
-        CategoryDTO categoryDTO = new CategoryDTO(category);
+        CategoryDto categoryDTO = new CategoryDto(category);
         /*MAP구조로 저장*/
-        Map<String, CategoryDTO> data = new HashMap<>();
+        Map<String, CategoryDto> data = new HashMap<>();
         data.put(categoryDTO.getName(), categoryDTO);
         return data;
     }
@@ -86,11 +86,11 @@ public class CategoryService {
     /**
      * @param branch 카테고리의 branch 로 해당 branch에 속하는 카테고리들 리스트 조회
      * **/
-    public List<CategoryDTO> getCategoryByBranchList(String branch) {
+    public List<CategoryDto> getCategoryByBranchList(String branch) {
         List<Category> categoryList = categoryRepository.findByBranch(branch);
-        List<CategoryDTO> categoryDTOList
-                = categoryList.stream().map(c -> new CategoryDTO(c)).collect(Collectors.toList());
-        return categoryDTOList;
+        List<CategoryDto> categoryDtoList
+                = categoryList.stream().map(c -> new CategoryDto(c)).collect(Collectors.toList());
+        return categoryDtoList;
     }
 
     /**
@@ -118,7 +118,7 @@ public class CategoryService {
 
 
     /**카테고리의 name만 바꿔주는 메서드**/
-    public Long updateCategory (Long categoryId, CategoryDTO categoryDTO) {
+    public Long updateCategory (Long categoryId, CategoryDto categoryDTO) {
         Category category = findCategory(categoryId);
         category.changeCategoryName(categoryDTO.getName());
        /* category.setName(categoryDTO.getName());*/
