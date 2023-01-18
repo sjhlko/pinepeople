@@ -32,7 +32,7 @@ public class PartyService {
 
     public PartyInfoResponse getParty(Long partyId) {
         Party party = partyRepository.findById(partyId)
-                .orElseThrow(() -> new AppException(ErrorCode.PARTY__NOT_FOUND, ErrorCode.PARTY__NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND, ErrorCode.PARTY_NOT_FOUND.getMessage()));
         return PartyInfoResponse.of(party);
     }
 
