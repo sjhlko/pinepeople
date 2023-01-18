@@ -4,6 +4,7 @@ import com.lion.pinepeople.domain.dto.party.*;
 import com.lion.pinepeople.domain.entity.Participant;
 import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.PartyRepository;
@@ -35,6 +36,12 @@ public class PartyService {
         }
     }
 
+    public void validateAuthorOrAdmin(Party party, User currentUser){
+        if(!(party.getUser().equals(currentUser)||currentUser.getRole().equals(UserRole.ADMIN))){
+            throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
+        }
+    }
+
     public PartyCreateResponse createParty(PartyCreateRequest partyCreateRequest, String userId) {
         User user = validateUser(userId);
         Party party = partyRepository.save(partyCreateRequest.toEntity(user));
@@ -58,5 +65,13 @@ public class PartyService {
         validateAuthor(party,user);
         Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party));
         return PartyUpdateResponse.of(party,updatedParty);
+    }
+
+    public PartyDeleteResponse deleteParty(Long partyId, String userId) {
+        User user = validateUser(userId);
+        Party party = validateParty(partyId);
+        validateAuthorOrAdmin(party,user);
+        partyRepository.delete(party);
+        return PartyDeleteResponse.of(party);
     }
 }

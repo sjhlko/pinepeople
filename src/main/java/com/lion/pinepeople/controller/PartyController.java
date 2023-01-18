@@ -52,4 +52,11 @@ public class PartyController {
 
     }
 
+    @DeleteMapping("/{id}")
+    @ApiOperation(value = "파티 삭제")
+    public Response<PartyDeleteResponse> deleteParty(@PathVariable Long id, Authentication authentication){
+        PartyDeleteResponse partyDeleteResponse = partyService.deleteParty(id,authentication.getName());
+        return Response.success(partyDeleteResponse);
+    }
+
 }
