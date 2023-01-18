@@ -31,6 +31,7 @@ public class PartyInfoResponse {
     private String address;
     private String announcement;
 
+    //파티 생성, 조회에 쓰이는 메소드
     public static PartyInfoResponse of(Party party){
         return PartyInfoResponse.builder()
                 .id(party.getId())
@@ -47,6 +48,7 @@ public class PartyInfoResponse {
                 .build();
     }
 
+    //파티 수정시 createdAt이 null로 리턴되는 현상 해결을 위한 메소드
     public static PartyInfoResponse of(Party party, Timestamp createdAt){
         return PartyInfoResponse.builder()
                 .id(party.getId())
