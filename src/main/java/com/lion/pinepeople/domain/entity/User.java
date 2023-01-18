@@ -45,4 +45,8 @@ public class User extends BaseEntity {
     public void updateRole(UserRole userRole) {
         this.role = userRole;
     }
+
+    public void updateWarningCnt() {
+        this.warningCnt += 1;
+    }
 }
