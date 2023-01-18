@@ -11,6 +11,8 @@ import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.PartyRepository;
 import com.lion.pinepeople.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,5 +34,10 @@ public class PartyService {
         Party party = partyRepository.findById(partyId)
                 .orElseThrow(() -> new AppException(ErrorCode.PARTY__NOT_FOUND, ErrorCode.PARTY__NOT_FOUND.getMessage()));
         return PartyInfoResponse.of(party);
+    }
+
+    public Page<PartyInfoResponse> getAllParty(Pageable pageable) {
+        Page<Party> parties = partyRepository.findAll(pageable);
+        return parties.map(PartyInfoResponse::of);
     }
 }

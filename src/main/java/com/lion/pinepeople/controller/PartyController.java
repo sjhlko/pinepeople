@@ -38,4 +38,12 @@ public class PartyController {
         return Response.success(partyInfoResponse);
     }
 
+    @GetMapping("")
+    @ApiOperation(value = "파티 전체 조회")
+    public Response<Page<PartyInfoResponse>> getAllParty(@PageableDefault(size = 20, sort ="createdAt",
+            direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PartyInfoResponse> partyInfoResponses = partyService.getAllParty(pageable);
+        return Response.success(partyInfoResponses);
+    }
+
 }
