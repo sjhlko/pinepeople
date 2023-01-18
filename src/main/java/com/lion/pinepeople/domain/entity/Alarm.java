@@ -25,7 +25,7 @@ public class Alarm {
     private Long fromUserId;
     private Long targetId;
 
-//    @ManyToOne(fetch = LAZY)
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
