@@ -24,7 +24,7 @@ public class PartyInfoResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
     private Date endDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
-    private Timestamp registeredAt;
+    private Timestamp createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
     private Timestamp updatedAt;
     private String address;
@@ -38,7 +38,7 @@ public class PartyInfoResponse {
                 .partyCost(party.getPartyCost())
                 .partyTitle(party.getPartyTitle())
                 .announcement(party.getAnnouncement())
-                .registeredAt(party.getCreatedAt())
+                .createdAt(party.getCreatedAt())
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())
