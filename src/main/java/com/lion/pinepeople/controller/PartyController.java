@@ -9,8 +9,15 @@ import com.lion.pinepeople.service.PartyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "Party API")
 @RestController
@@ -26,7 +33,7 @@ public class PartyController {
     }
     @GetMapping ("/{id}")
     @ApiOperation(value = "파티 상세 조회")
-    public Response<PartyInfoResponse> getPost(@PathVariable Long id){
+    public Response<PartyInfoResponse> getParty(@PathVariable Long id){
         PartyInfoResponse partyInfoResponse = partyService.getParty(id);
         return Response.success(partyInfoResponse);
     }
