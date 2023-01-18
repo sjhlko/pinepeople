@@ -1,6 +1,7 @@
 package com.lion.pinepeople.domain.dto.party;
 
 import com.lion.pinepeople.domain.entity.Party;
+import com.lion.pinepeople.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class PartyCreateRequest {
     private String address;
     private String announcement;
 
-    public Party toEntity(){
+    public Party toEntity(User user){
         return Party.builder()
                 .partyContent(this.partyContent)
                 .address(this.address)
@@ -32,6 +33,7 @@ public class PartyCreateRequest {
                 .announcement(this.announcement)
                 .startDate(this.startDate)
                 .endDate(this.endDate)
+                .user(user)
                 .build();
     }
 

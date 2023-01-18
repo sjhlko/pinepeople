@@ -30,6 +30,10 @@ public class Party extends BaseEntity{
     private Date endDate;
     private String address;
     private String announcement;
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn (name ="user_id")
+    private User user;
     @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Participant> participants = new ArrayList<>();
+
 }
