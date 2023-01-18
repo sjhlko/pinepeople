@@ -38,7 +38,7 @@ public class PartyInfoResponse {
                 .partyCost(party.getPartyCost())
                 .partyTitle(party.getPartyTitle())
                 .announcement(party.getAnnouncement())
-                .registeredAt(party.getRegisteredAt())
+                .registeredAt(party.getCreatedAt())
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())

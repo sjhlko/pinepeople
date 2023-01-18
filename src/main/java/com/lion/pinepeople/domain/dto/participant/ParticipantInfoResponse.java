@@ -35,7 +35,7 @@ public class ParticipantInfoResponse {
                 .id(participant.getId())
                 .approvalStatus(participant.getApprovalStatus())
                 .participantRole(participant.getParticipantRole())
-                .registeredAt(participant.getRegisteredAt())
+                .registeredAt(participant.getCreatedAt())
                 .updatedAt(participant.getUpdatedAt())
                 .partyId(participant.getParty().getId())
                 .userId(participant.getUser().getId())
