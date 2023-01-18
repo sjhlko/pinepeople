@@ -2,6 +2,7 @@ package com.lion.pinepeople.service;
 
 import com.lion.pinepeople.domain.dto.party.PartyCreateRequest;
 import com.lion.pinepeople.domain.dto.party.PartyCreateResponse;
+import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
 import com.lion.pinepeople.domain.entity.Participant;
 import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.User;
@@ -25,5 +26,11 @@ public class PartyService {
         Party party = partyRepository.save(partyCreateRequest.toEntity());
         Participant participant = participantService.createHostParticipant(user,party);
         return PartyCreateResponse.of(party,participant);
+    }
+
+    public PartyInfoResponse getParty(Long partyId) {
+        Party party = partyRepository.findById(partyId)
+                .orElseThrow(() -> new AppException(ErrorCode.PARTY__NOT_FOUND, ErrorCode.PARTY__NOT_FOUND.getMessage()));
+        return PartyInfoResponse.of(party);
     }
 }

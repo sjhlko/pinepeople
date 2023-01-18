@@ -2,6 +2,7 @@ package com.lion.pinepeople.controller;
 
 import com.lion.pinepeople.domain.dto.party.PartyCreateRequest;
 import com.lion.pinepeople.domain.dto.party.PartyCreateResponse;
+import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
 import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
 import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.service.PartyService;
@@ -23,4 +24,11 @@ public class PartyController {
         PartyCreateResponse partyCreateResponse = partyService.createParty(partyCreateRequest, authentication.getName());
         return Response.success(partyCreateResponse);
     }
+    @GetMapping ("/{id}")
+    @ApiOperation(value = "파티 상세 조회")
+    public Response<PartyInfoResponse> getPost(@PathVariable Long id){
+        PartyInfoResponse partyInfoResponse = partyService.getParty(id);
+        return Response.success(partyInfoResponse);
+    }
+
 }
