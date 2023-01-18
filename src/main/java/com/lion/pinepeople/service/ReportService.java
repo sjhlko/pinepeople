@@ -9,16 +9,20 @@ import com.lion.pinepeople.repository.BlackListRepository;
 import com.lion.pinepeople.repository.ReportRepository;
 import com.lion.pinepeople.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReportService {
     private final UserRepository userRepository;
     private final ReportRepository reportRepository;
     private final BlackListRepository blackListRepository;
+
 
     /**
      *
@@ -31,20 +35,24 @@ public class ReportService {
         userRepository.findById(loginUserId)
                 .orElseThrow( () -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
         //신고할 유저 확인
-        User user = userRepository.findById(userId)
+        User targetUser = userRepository.findById(userId)
                 .orElseThrow( () -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
 
-        // 신고 저장
-        Report report = Report.toEntity(loginUserId, user);
+        // 신고 중복 확인 후 저장
+        Optional<Report> confirmReport = reportRepository.findByFromUserIdAndUser(loginUserId, targetUser);
+        if(confirmReport.isPresent()){
+            throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage());
+        }
+        Report report = Report.toEntity(loginUserId, targetUser);
         reportRepository.save(report);
-
+        log.info("here");
         // 신고당한사람의 정보를 플러스
-        user.updateWarningCnt();
-        userRepository.save(user);
-
+        targetUser.updateWarningCnt();
+        userRepository.save(targetUser);
+        log.info("here2");
         //3이상이면 블랙리스트처리
-        if (user.getWarningCnt() >= 3){
-            BlackList blackList = BlackList.toEntity(LocalDateTime.now(), user);
+        if (targetUser.getWarningCnt() >= 3){
+            BlackList blackList = BlackList.toEntity(LocalDateTime.now(), targetUser);
             blackListRepository.save(blackList);
 //            userRepository.delete(user); softdelete적용후 넣기
         }
