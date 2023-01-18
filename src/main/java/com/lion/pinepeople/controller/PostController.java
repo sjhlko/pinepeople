@@ -20,14 +20,14 @@ public class PostController {
     PostService postService;
 
 
-    @Operation(summary = "게시물 등록")
-    @PostMapping
-    public Response<PostCreateResponse> create(@RequestBody PostCreateRequest postCreateRequest, @ApiIgnore Authentication authentication) {
-
-        String userName = authentication.getName();
-
-        return Response.success(new PostCreateResponse("게시물 등록 완료", postCreateResponse.getId()));
-    }
+//    @Operation(summary = "게시물 등록")
+//    @PostMapping
+//    public Response<PostCreateResponse> create(@RequestBody PostCreateRequest postCreateRequest, @ApiIgnore Authentication authentication) {
+//
+//        String userName = authentication.getName();
+//
+//        return Response.success(new PostCreateResponse("게시물 등록 완료", postCreateResponse.getId()));
+//    }
 
 
 
