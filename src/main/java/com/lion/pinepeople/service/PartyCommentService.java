@@ -3,8 +3,10 @@ package com.lion.pinepeople.service;
 import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.PartyComment;
 import com.lion.pinepeople.domain.entity.User;
-import com.lion.pinepeople.domain.response.PartyCommentListResponse;
-import com.lion.pinepeople.domain.response.PartyCommentResponse;
+import com.lion.pinepeople.domain.dto.partyComment.PartyCommentDeleteResponse;
+import com.lion.pinepeople.domain.dto.partyComment.PartyCommentListResponse;
+import com.lion.pinepeople.domain.dto.partyComment.PartyCommentResponse;
+import com.lion.pinepeople.domain.dto.partyComment.PartyCommentUpdateResponse;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.PartyCommentRepository;
@@ -45,6 +47,7 @@ public class PartyCommentService {
         return PartyCommentResponse.of(savedPartyComment);
     }
 
+
     public Page<PartyCommentListResponse> getComments(Long partyId, Pageable pageable) {
         Party party =
                 partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.BRIX_NOT_FOUND));
@@ -53,5 +56,27 @@ public class PartyCommentService {
     }
 
 
+    public PartyCommentUpdateResponse updateComment(Long partyId, Long commentId,String body ,long userId) {
+        //회원
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        //파티
+        Party party = partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.PARTY__NOT_FOUND));
+        //comment
+        PartyComment partyComment = partyCommentRepository.findById(commentId).orElseThrow(() -> new AppException(ErrorCode.PARTY_COMMENT_NOT_FOUND));
+        //comment 수정
+        partyComment.update(body);
+        return PartyCommentUpdateResponse.of(commentId);
+    }
 
+    public PartyCommentDeleteResponse deleteComment(Long partyId, Long commentId, long userId) {
+        //회원
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        //파티
+        Party party = partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.PARTY__NOT_FOUND));
+        //comment
+        PartyComment partyComment = partyCommentRepository.findById(commentId).orElseThrow(() -> new AppException(ErrorCode.PARTY_COMMENT_NOT_FOUND));
+        //삭제 진행
+        partyCommentRepository.deleteById(partyComment.getId());
+        return PartyCommentDeleteResponse.of(commentId);
+    }
 }

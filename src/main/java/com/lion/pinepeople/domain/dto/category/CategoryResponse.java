@@ -1,4 +1,4 @@
-package com.lion.pinepeople.domain.response;
+package com.lion.pinepeople.domain.dto.category;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

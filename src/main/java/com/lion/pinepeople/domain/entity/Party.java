@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.sql.Date;
 
 @Entity
 @Getter
@@ -22,8 +22,8 @@ public class Party extends BaseEntity{
     private String partyContent;
     private Integer partySize;
     private Integer partyCost;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private Date startDate;
+    private Date endDate;
     private String address;
     private String announcement;
 }
