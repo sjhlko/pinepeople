@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE participant SET deleted_at = current_timestamp WHERE id = ? ")
+@SQLDelete(sql = "UPDATE participant SET deleted_at = current_timestamp WHERE participant_id = ? ")
 public class Participant extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
