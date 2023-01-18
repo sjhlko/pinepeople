@@ -1,5 +1,11 @@
 package com.lion.pinepeople.domain.dto;
 
+import lombok.*;
+
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PartyCommentRequest {
-    public String body;
+    private String body;
 }

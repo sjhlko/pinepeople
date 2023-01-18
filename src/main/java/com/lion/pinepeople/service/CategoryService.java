@@ -2,13 +2,17 @@ package com.lion.pinepeople.service;
 
 import com.lion.pinepeople.domain.dto.CategoryDTO;
 import com.lion.pinepeople.domain.entity.Category;
+import com.lion.pinepeople.exception.ErrorCode;
+import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,18 +20,23 @@ import java.util.Map;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public Long saveCategory(CategoryDTO categoryDTO) {
+    public final String ROOT = "ROOT";
 
+    /**
+     * 카테고리 생성 메서드
+     * 처음에 code로 ROOT 생성 그후 자식 카테고리 생성 시에는 parentCategoryName에
+     * 부모의 branch 명을 적고 카테고리 생성
+     * **/
+    public Long saveCategory(CategoryDTO categoryDTO) {
         Category category = categoryDTO.toEntity();
         //대분류 등록
         if (categoryDTO.getParentCategoryName() == null) {
-
             //JPA 사용하여 DB에서 branch와 name의 중복값을 검사. (대분류에서만 가능)
             if (categoryRepository.existsByBranchAndName(categoryDTO.getBranch(), categoryDTO.getName())) {
-                throw new RuntimeException("branch와 name이 같을 수 없습니다. ");
+                throw new AppException(ErrorCode.CATEGORY_NAME_FALUT,"branch와 name이 같을 수 없습니다.");
             }
             //orElse로 refactor
-            Category rootCategory = categoryRepository.findByBranchAndName(categoryDTO.getBranch(), "ROOT")
+            Category rootCategory = categoryRepository.findByBranchAndName(categoryDTO.getBranch(), ROOT)
                     .orElseGet(() ->
                             Category.builder()
                                     .name("ROOT")
@@ -36,34 +45,58 @@ public class CategoryService {
                                     .level(0)
                                     .build()
                     );
-            if (!categoryRepository.existsByBranchAndName(categoryDTO.getBranch(), "ROOT")) {
+            if (!categoryRepository.existsByBranchAndName(categoryDTO.getBranch(), ROOT)) {
                 categoryRepository.save(rootCategory);
             }
-            category.setParentCategory(rootCategory);
-            category.setLevel(1);
+
+            /*자식카테고리 생성 시 ROOT 설정 and level에 값 넣어주기*/
+            category.addParentCategory(rootCategory);
+            category.addLevel(1);
             //중, 소분류 등록
         } else {
             String parentCategoryName = categoryDTO.getParentCategoryName();
             Category parentCategory = categoryRepository.findByBranchAndName(categoryDTO.getBranch(), parentCategoryName)
                     .orElseThrow(() -> new IllegalArgumentException("부모 카테고리 없음 예외"));
-            category.setLevel(parentCategory.getLevel() + 1);
-            category.setParentCategory(parentCategory);
+            /*category.setLevel(parentCategory.getLevel() + 1);
+            category.setParentCategory(parentCategory);*/
+            category.addLevel(parentCategory.getLevel()+1);
+            category.addParentCategory(parentCategory);
             parentCategory.getSubCategory().add(category);
         }
-        //category.setLive(true);
         return categoryRepository.save(category).getId();
     }
 
-
+    /**
+     * 카테고리 조회 메서드
+     * 대분류 카테고리와 자식 카테고리를 같이 조회하기 위해 map으로 반환
+     * **/
     public Map<String, CategoryDTO> getCategoryByBranch(String branch) {
-        Category category = categoryRepository.findByBranchAndCode(branch, "ROOT")
-                .orElseThrow(() -> new IllegalArgumentException("찾는 대분류가 없습니다"));
+        /*우선 대분류 카테고리가 존재하는지 check*/
+        Category category = categoryRepository.findByBranchAndCode(branch, ROOT)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND,"해당 카테고리를 찾을 수 없습니다."));
+
+        /*엔티티 responseDTO로 변환*/
         CategoryDTO categoryDTO = new CategoryDTO(category);
+        /*MAP구조로 저장*/
         Map<String, CategoryDTO> data = new HashMap<>();
         data.put(categoryDTO.getName(), categoryDTO);
         return data;
     }
 
+    /**
+     * @param branch 카테고리의 branch 로 해당 branch에 속하는 카테고리들 리스트 조회
+     * **/
+    public List<CategoryDTO> getCategoryByBranchList(String branch) {
+        List<Category> categoryList = categoryRepository.findByBranch(branch);
+        List<CategoryDTO> categoryDTOList
+                = categoryList.stream().map(c -> new CategoryDTO(c)).collect(Collectors.toList());
+        return categoryDTOList;
+    }
+
+    /**
+     * 하위 카테고리가 없을 경우 repository에서도 삭제
+     * 하위 카테고리가 있을 경우에는 name을 "Deleted category" 로 변경만 할것
+     * **/
     public void deleteCategory(Long categoryId) {
         Category category = findCategory(categoryId);
         if (category.getSubCategory().size() == 0) { //하위 카테고리 없을 경우
@@ -78,24 +111,24 @@ public class CategoryService {
             if (!parentCategory.getName().equals("ROOT")) {
                 parentCategory.getSubCategory().remove(category);
             }
-            category.setName("Deleted category");
+            category.changeCategoryName("Deleted category");
+            /*category.setName("Deleted category");*/
         }
     }
 
 
-    public Long updateCategory (Long categoryId,CategoryDTO categoryDTO) {
+    /**카테고리의 name만 바꿔주는 메서드**/
+    public Long updateCategory (Long categoryId, CategoryDTO categoryDTO) {
         Category category = findCategory(categoryId);
-        category.setName(categoryDTO.getName());
+        category.changeCategoryName(categoryDTO.getName());
+       /* category.setName(categoryDTO.getName());*/
         return category.getId();
     }
 
-
-
-
-
-
+    /**카테고리 조회**/
     private Category findCategory(Long categoryId) {
-       return   categoryRepository.findById(categoryId).get();
+       return  categoryRepository.findById(categoryId).orElseThrow(()->
+               new AppException(ErrorCode.CATEGORY_NOT_FOUND,categoryId +"번의 카테고리를 찾을 수 없습니다."));
     }
 
 
