@@ -3,6 +3,7 @@ package com.lion.pinepeople.service;
 import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.PartyComment;
 import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.domain.response.PartyCommentListResponse;
 import com.lion.pinepeople.domain.response.PartyCommentResponse;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
@@ -44,14 +45,11 @@ public class PartyCommentService {
         return PartyCommentResponse.of(savedPartyComment);
     }
 
-    public void getComments(Long partyId, Pageable pageable) {
+    public Page<PartyCommentListResponse> getComments(Long partyId, Pageable pageable) {
         Party party =
                 partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.BRIX_NOT_FOUND));
-
         Page<PartyComment> partyComments = partyCommentRepository.findAllByParty(party, pageable);
-
-
-
+        return PartyCommentListResponse.toResponse(partyComments);
     }
 
 

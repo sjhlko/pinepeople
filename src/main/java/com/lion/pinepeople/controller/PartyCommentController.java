@@ -1,6 +1,7 @@
 package com.lion.pinepeople.controller;
 
 import com.lion.pinepeople.domain.dto.PartyCommentRequest;
+import com.lion.pinepeople.domain.response.PartyCommentListResponse;
 import com.lion.pinepeople.domain.response.PartyCommentResponse;
 import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.service.PartyCommentService;
@@ -8,6 +9,7 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +28,12 @@ public class PartyCommentController {
         return Response.success(response);
     }
 
- /*   @GetMapping("api/partys/{partyId}/party-comments")
+    @GetMapping("api/partys/{partyId}/party-comments")
     public Response getList(@PathVariable Long partyId, Pageable pageable) {
-
-
-    }*/
+        Page<PartyCommentListResponse> responses =
+                partyCommentService.getComments(partyId, pageable);
+        return Response.success(responses);
+    }
 
 
 }
