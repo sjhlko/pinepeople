@@ -1,10 +1,6 @@
 package com.lion.pinepeople.domain.dto.party;
 
-<<<<<<< HEAD
-=======
 import com.lion.pinepeople.domain.entity.Party;
-import com.lion.pinepeople.domain.entity.User;
->>>>>>> fd5ca66bb71328ea1b95556c58ccee548c89b8e1
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +12,7 @@ import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class PartyCreateRequest {
+public class PartyUpdateRequest {
     private String partyTitle;
     private String partyContent;
     private Integer partySize;
@@ -26,8 +22,9 @@ public class PartyCreateRequest {
     private String address;
     private String announcement;
 
-    public Party toEntity(User user){
+    public Party toEntity(Party party){
         return Party.builder()
+                .id(party.getId())
                 .partyContent(this.partyContent)
                 .address(this.address)
                 .partySize(this.partySize)
@@ -36,9 +33,8 @@ public class PartyCreateRequest {
                 .announcement(this.announcement)
                 .startDate(this.startDate)
                 .endDate(this.endDate)
-                .user(user)
+                .participants(party.getParticipants())
+                .user(party.getUser())
                 .build();
     }
-
-
 }

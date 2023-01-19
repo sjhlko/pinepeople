@@ -6,29 +6,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
-@AllArgsConstructor
 @Getter
 @Builder
+@AllArgsConstructor
 @NoArgsConstructor
-public class BlackList extends BaseEntity{
+public class Report extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "blackList_id")
-    private Long blackListId;
+    @Column(name = "report_id")
+    private Long id;
 
-    @Column(name = "start_date")
-    private LocalDateTime startDate;
+    @Column(name = "from_user_id")
+    private Long fromUserId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public static BlackList toEntity(LocalDateTime dateTime, User user){
-        return BlackList.builder()
-                .startDate(dateTime)
+    public static Report toEntity(Long loginUserId, User user) {
+        return Report.builder()
+                .fromUserId(loginUserId)
                 .user(user)
                 .build();
     }

@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Builder
-public class Brix {
+public class Brix extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +28,14 @@ public class Brix {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public static Brix toEntity(double brixdefault, String brixName, User user) {
+        return Brix.builder()
+                .brixFigure(brixdefault)
+                .brixName(brixName)
+                .user(user)
+                .build();
+    }
 
     public void update(Double brixNum) {
         this.brixFigure += brixNum;

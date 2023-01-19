@@ -1,15 +1,15 @@
 package com.lion.pinepeople.repository;
 
 import com.lion.pinepeople.domain.entity.Order;
+<<<<<<< HEAD
 import com.lion.pinepeople.domain.entity.User;
+=======
+>>>>>>> fd5ca66bb71328ea1b95556c58ccee548c89b8e1
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    Optional<Order> findByUserAndParty(User user, Party party);
     Page<Order> findAll(Pageable pageable);
 }

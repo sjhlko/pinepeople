@@ -1,15 +1,17 @@
 package com.lion.pinepeople.controller;
 
-import com.lion.pinepeople.domain.dto.BrixRequest;
+import com.lion.pinepeople.domain.brix.BrixRequest;
 import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.service.BrixService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/users/{userId}/brix")
 @RequiredArgsConstructor
+@Slf4j
 public class BrixController {
     private final BrixService brixService;
 
@@ -21,7 +23,7 @@ public class BrixController {
      * @return 당도 평가 성공 메세지
      */
     @PostMapping
-    public Response<Void> calculationBrix(@RequestParam Long userId, @RequestBody BrixRequest request, Authentication authentication){
+    public Response<Void> calculationBrix(@PathVariable Long userId, @RequestBody BrixRequest request, Authentication authentication){
         Long loginUserId = Long.parseLong(authentication.getName());
         String result = brixService.calculationBrix(request, userId, loginUserId);
         return Response.success(result);
@@ -31,10 +33,10 @@ public class BrixController {
      *
      * @param userId 당도를 조회할 대상 아이디
      * @param authentication 로그인한 아이디
-     * @return
+     * @return brix개수
      */
     @GetMapping
-    public Response<Double> getBrix(@RequestParam Long userId, Authentication authentication){
+    public Response<Double> getBrix(@PathVariable Long userId, Authentication authentication){
         Long loginUserId = Long.parseLong(authentication.getName());
         Double result = brixService.getBrix(loginUserId, userId);
         return Response.success(result);
