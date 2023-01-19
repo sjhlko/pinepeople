@@ -46,7 +46,7 @@ public class PartyService {
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
         }
     }
-    
+
 
     /**파티 생성시 카테고리 선택 추가**/
     public PartyCreateResponse createPartyWithCategory(PartyCategoryRequest request, String userId) {
