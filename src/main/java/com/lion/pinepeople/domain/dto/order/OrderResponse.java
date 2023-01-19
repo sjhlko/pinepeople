@@ -32,7 +32,7 @@ public class OrderResponse {
                 .orderDate(order.getOrderDate())
                 .cost(order.getCost())
                 .discountPoint(order.getDiscountPoint())
-                .totalCost(order.totalCost(order.getParty()))
+                .totalCost(order.getTotalCost(order.getParty()))
                 .build();
     }
 }

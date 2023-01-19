@@ -32,7 +32,7 @@ public class OrderInfoResponse {
                 .accumulateCost(order.getAccumulateCost())
                 .cost(order.getCost())
                 .orderType(order.getOrderType())
-                .totalCost(order.totalCost(order.getParty()))
+                .totalCost(order.getTotalCost(order.getParty()))
                 .build();
     }
 
@@ -44,7 +44,7 @@ public class OrderInfoResponse {
                 .accumulateCost(o.getAccumulateCost())
                 .cost(o.getCost())
                 .orderType(o.getOrderType())
-                .totalCost(o.totalCost(o.getParty()))
+                .totalCost(o.getTotalCost(o.getParty()))
                 .build());
         return orderDtoList;
     }

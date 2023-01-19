@@ -3,12 +3,10 @@ package com.lion.pinepeople.service;
 
 
 import com.lion.pinepeople.domain.entity.Order;
-import com.lion.pinepeople.domain.entity.OrderType;
 
 import com.lion.pinepeople.domain.dto.order.OrderInfoResponse;
 import com.lion.pinepeople.domain.dto.order.OrderRequest;
 import com.lion.pinepeople.domain.dto.order.OrderResponse;
-import com.lion.pinepeople.domain.entity.Order;
 import com.lion.pinepeople.domain.entity.Party;
 
 import com.lion.pinepeople.domain.entity.User;
@@ -24,8 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.util.Optional;
 
 
 @Service
@@ -48,10 +44,10 @@ public class OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND, "존재하지 않는 파티입니다."));
 
         // 주문 생성
-        Order createOrder = Order.creatOrder(findUser,findParty,orderRequest.toEntity());
+        Order createOrder = Order.createOrder(findUser,findParty,orderRequest.toEntity());
 
         // 총 결제 금액이 0원 미만이면 에러
-        if (createOrder.totalCost(findParty) < 0) {
+        if (createOrder.getTotalCost(findParty) < 0) {
             throw new AppException(ErrorCode.INVALID_PERMISSION, "할인금액이 주문금액을 초과하였습니다. 다시 입력해주세요.");
         }
 

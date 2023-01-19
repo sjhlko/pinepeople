@@ -40,6 +40,8 @@ public class Order {
 
     private Integer discountPoint; // cost >= discountPoint
 
+    private Integer totalCost;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -50,7 +52,7 @@ public class Order {
 
 
     // 주문 메소드
-    public static Order creatOrder(User user, Party party, Order order) {
+    public static Order createOrder(User user, Party party, Order order) {
         return Order.builder()
                 .user(user)
                 .party(party)
@@ -59,6 +61,7 @@ public class Order {
                 .cost(order.userOneCost(party))
                 .discountPoint(order.discountPoint)
                 .accumulateCost(order.accumulatePoints(party))
+                .totalCost(order.getTotalCost(party))
                 .build();
     }
 
@@ -75,10 +78,7 @@ public class Order {
 
     }
 
-    /**
-     * 총 결제 금액 컬럼 추가?!
-     */
-    public Integer totalCost(Party party) {
+    public Integer getTotalCost(Party party) {
         int totalCost = userOneCost(party) - discountPoint;
         return totalCost;
     }
