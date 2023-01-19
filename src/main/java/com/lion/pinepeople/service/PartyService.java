@@ -7,12 +7,14 @@ import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
+import com.lion.pinepeople.repository.CategoryRepository;
 import com.lion.pinepeople.repository.PartyRepository;
 import com.lion.pinepeople.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +44,8 @@ public class PartyService {
         }
     }
 
+
+    /**origin 파티 생성**/
     public PartyCreateResponse createParty(PartyCreateRequest partyCreateRequest, String userId) {
         User user = validateUser(userId);
         Party party = partyRepository.save(partyCreateRequest.toEntity(user));

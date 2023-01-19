@@ -20,6 +20,13 @@ public class PartyCommentController {
 
     private final PartyCommentService partyCommentService;
 
+    /**
+     * 파티모집글에 댓글 쓰기
+     *
+     * @param partyId 파티 조회 목적
+     * @param partyCommentRequest 파티 댓글 등록 dto
+     * @return PartyCommentResponse 응답
+     */
     @PostMapping
     public Response addPartyComment(@PathVariable Long partyId, @RequestBody PartyCommentRequest partyCommentRequest, Authentication authentication) {
         long userId = Long.parseLong(authentication.getName());
@@ -27,6 +34,13 @@ public class PartyCommentController {
         return Response.success(response);
     }
 
+    /**
+     * 파티모집글에 댓글 페이징 조회
+     *
+     * @param partyId 파티 조회 목적
+
+     * @return Page<PartyCommentListResponse> 응답
+     */
     @GetMapping
     public Response getList(@PathVariable Long partyId, Pageable pageable) {
         Page<PartyCommentListResponse> responses =
@@ -34,6 +48,14 @@ public class PartyCommentController {
         return Response.success(responses);
     }
 
+    /**
+     * 파티모집글에 댓글 수정
+     *
+     * @param partyId 파티 조회 목적
+     * @param commentId 파티 댓글 조회 목적
+     * @param request 파티 댓글 수정 request
+     * @return PartyCommentUpdateResponse 응답
+     */
     @PatchMapping("/{commentId}")
     public Response updatePartyComment(@PathVariable Long partyId, @PathVariable Long commentId ,@RequestBody PartyCommentUpdateRequest request, Authentication authentication) {
         long userId = Long.parseLong(authentication.getName());
@@ -41,6 +63,13 @@ public class PartyCommentController {
         return Response.success(response);
     }
 
+    /**
+     * 파티모집글에 댓글 삭제
+     *
+     * @param partyId 파티 조회 목적
+     * @param commentId 파티 댓글 조회 목적
+     * @return PartyCommentDeleteResponse 응답
+     */
     @DeleteMapping("/{commentId}")
     public Response deletePartyComment(@PathVariable Long partyId, @PathVariable Long commentId , Authentication authentication) {
         long userId = Long.parseLong(authentication.getName());
