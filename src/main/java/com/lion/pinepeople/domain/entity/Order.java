@@ -78,9 +78,9 @@ public class Order {
     /**
      * 총 결제 금액 컬럼 추가?!
      */
-    public Integer totalPrice(Party party) {
-        int totalPrice = userOneCost(party) - discountPoint;
-        return totalPrice;
+    public Integer totalCost(Party party) {
+        int totalCost = userOneCost(party) - discountPoint;
+        return totalCost;
     }
 
 }

@@ -51,7 +51,7 @@ public class OrderService {
         Order createOrder = Order.creatOrder(findUser,findParty,orderRequest.toEntity());
 
         // 총 결제 금액이 0원 미만이면 에러
-        if (createOrder.totalPrice(findParty) < 0) {
+        if (createOrder.totalCost(findParty) < 0) {
             throw new AppException(ErrorCode.INVALID_PERMISSION, "할인금액이 주문금액을 초과하였습니다. 다시 입력해주세요.");
         }
 
