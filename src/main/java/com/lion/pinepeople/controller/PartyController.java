@@ -31,7 +31,7 @@ public class PartyController {
      * @param code 소분류 카테고리 코드
      * **/
     @PostMapping
-    @ApiOperation(value = "파티 생성 카테고리 선택 추가")
+    @ApiOperation(value = "파티 생성")
     public Response<PartyCreateResponse> createParty(@RequestBody PartyCategoryRequest partyCreateRequest, Authentication authentication) {
         PartyCreateResponse partyCreateResponse = partyService.createPartyWithCategory(partyCreateRequest, authentication.getName());
         return Response.success(partyCreateResponse);
@@ -66,6 +66,14 @@ public class PartyController {
     public Response<PartyDeleteResponse> deleteParty(@PathVariable Long id, Authentication authentication){
         PartyDeleteResponse partyDeleteResponse = partyService.deleteParty(id,authentication.getName());
         return Response.success(partyDeleteResponse);
+    }
+
+    @GetMapping("/search")
+    @ApiOperation(value = "파티 검색")
+    public Response<Page<PartyInfoResponse>> searchParty(@PageableDefault(size = 20, sort ="createdAt",
+            direction = Sort.Direction.DESC) Pageable pageable, @RequestParam String address, @RequestParam String partyContent, @RequestParam String partyTitle) {
+        Page<PartyInfoResponse> parties = partyService.searchParty(pageable, address, partyContent, partyTitle);
+        return Response.success(parties);
     }
 
 }

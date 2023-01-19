@@ -1,10 +1,7 @@
 package com.lion.pinepeople.service;
 
 import com.lion.pinepeople.domain.dto.party.*;
-import com.lion.pinepeople.domain.entity.Category;
-import com.lion.pinepeople.domain.entity.Participant;
-import com.lion.pinepeople.domain.entity.Party;
-import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.domain.entity.*;
 import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
@@ -84,5 +81,10 @@ public class PartyService {
         validateAuthorOrAdmin(party,user);
         partyRepository.delete(party);
         return PartyDeleteResponse.of(party);
+    }
+
+    public Page<PartyInfoResponse> searchParty(Pageable pageable, String address, String partyContent, String partyTitle) {
+        Page<Party> parties = partyRepository.findBySearchOption(pageable,address,partyContent,partyTitle);
+        return parties.map(PartyInfoResponse::of);
     }
 }
