@@ -2,6 +2,7 @@ package com.lion.pinepeople.domain.dto.party;
 
 import com.lion.pinepeople.domain.entity.Category;
 import com.lion.pinepeople.domain.entity.Party;
+import com.lion.pinepeople.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,8 +23,10 @@ public class PartyCategoryRequest {
     private Date endDate;
     private String address;
     private String announcement;
+    private String branch; // 카테고리 대분류
+    private String code; // 카테고리 소분류
 
-    public Party toEntity(Category category){
+    public Party toEntity(Category category, User user){
         return Party.builder()
                 .partyContent(this.partyContent)
                 .address(this.address)
@@ -34,6 +37,7 @@ public class PartyCategoryRequest {
                 .startDate(this.startDate)
                 .endDate(this.endDate)
                 .category(category)
+                .user(user)
                 .build();
     }
 
