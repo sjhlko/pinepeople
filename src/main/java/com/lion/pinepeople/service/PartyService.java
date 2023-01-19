@@ -46,23 +46,15 @@ public class PartyService {
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
         }
     }
-
-
-    /**origin 파티 생성**/
-    public PartyCreateResponse createParty(PartyCreateRequest partyCreateRequest, String userId) {
-        User user = validateUser(userId);
-        Party party = partyRepository.save(partyCreateRequest.toEntity(user));
-        Participant participant = participantService.createHostParticipant(user,party);
-        return PartyCreateResponse.of(party,participant);
-    }
+    
 
     /**파티 생성시 카테고리 선택 추가**/
-    public PartyCreateResponse createPartyWithCategory(String branch, String code, PartyCategoryRequest request, String userId) {
+    public PartyCreateResponse createPartyWithCategory(PartyCategoryRequest request, String userId) {
         User user = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
         //카테고리 생성
-        Category category = categoryRepository.findByBranchAndCode(branch, code).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        Party party = partyRepository.save(request.toEntity(category));
+        Category category = categoryRepository.findByBranchAndCode(request.getBranch(), request.getCode()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        Party party = partyRepository.save(request.toEntity(category,user));
         Participant participant = participantService.createHostParticipant(user,party);
         return PartyCreateResponse.of(party,participant);
     }
