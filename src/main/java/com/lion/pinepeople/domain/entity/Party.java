@@ -26,4 +26,8 @@ public class Party extends BaseEntity{
     private Date endDate;
     private String address;
     private String announcement;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cagegory_id")
+    private Category category;
 }
