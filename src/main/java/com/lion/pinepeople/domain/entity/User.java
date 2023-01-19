@@ -37,6 +37,9 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    @OneToOne(mappedBy = "user")
+    private Brix brix;
+
     public static User of(UserJoinRequest userJoinRequest, String password) {
         return User.builder()
                 .name(userJoinRequest.getName())
