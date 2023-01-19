@@ -1,4 +1,4 @@
-package com.lion.pinepeople.domain.brix;
+package com.lion.pinepeople.domain.dto.brix;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
