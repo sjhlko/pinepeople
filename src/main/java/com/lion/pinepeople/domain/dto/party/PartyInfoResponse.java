@@ -15,13 +15,14 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Getter
 public class PartyInfoResponse {
+    private Long id;
     private String partyTitle;
     private String partyContent;
     private Integer partySize;
     private Integer partyCost;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date startDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date endDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
     private Timestamp createdAt;
@@ -30,8 +31,10 @@ public class PartyInfoResponse {
     private String address;
     private String announcement;
 
+    //파티 생성, 조회에 쓰이는 메소드
     public static PartyInfoResponse of(Party party){
         return PartyInfoResponse.builder()
+                .id(party.getId())
                 .partyContent(party.getPartyContent())
                 .address(party.getAddress())
                 .partySize(party.getPartySize())
@@ -39,6 +42,23 @@ public class PartyInfoResponse {
                 .partyTitle(party.getPartyTitle())
                 .announcement(party.getAnnouncement())
                 .createdAt(party.getCreatedAt())
+                .updatedAt(party.getUpdatedAt())
+                .startDate(party.getStartDate())
+                .endDate(party.getEndDate())
+                .build();
+    }
+
+    //파티 수정시 createdAt이 null로 리턴되는 현상 해결을 위한 메소드
+    public static PartyInfoResponse of(Party party, Timestamp createdAt){
+        return PartyInfoResponse.builder()
+                .id(party.getId())
+                .partyContent(party.getPartyContent())
+                .address(party.getAddress())
+                .partySize(party.getPartySize())
+                .partyCost(party.getPartyCost())
+                .partyTitle(party.getPartyTitle())
+                .announcement(party.getAnnouncement())
+                .createdAt(createdAt)
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())

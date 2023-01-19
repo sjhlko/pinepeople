@@ -36,7 +36,8 @@ public class Category {
 
 
     @Builder
-    public Category(String branch, String code, String name, Integer level,Category parentCategory) {
+    public Category(Long id,String branch, String code, String name, Integer level,Category parentCategory) {
+        this.id = id;
         this.branch = branch;
         this.code = code;
         this.name = name;

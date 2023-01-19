@@ -1,6 +1,7 @@
 package com.lion.pinepeople.service;
 
 import com.lion.pinepeople.domain.dto.category.CategoryDto;
+import com.lion.pinepeople.domain.dto.category.SmallCategoryResponse;
 import com.lion.pinepeople.domain.entity.Category;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
@@ -67,7 +68,7 @@ public class CategoryService {
     }
 
     /**
-     * 카테고리 조회 메서드
+     * 카테고리 대분류 소분류 동시 조회 메서드
      * 대분류 카테고리와 자식 카테고리를 같이 조회하기 위해 map으로 반환
      * **/
     public Map<String, CategoryDto> getCategoryByBranch(String branch) {
@@ -82,6 +83,21 @@ public class CategoryService {
         data.put(categoryDTO.getName(), categoryDTO);
         return data;
     }
+
+    /**
+     * 카테고리 소분류  단건 조회 메서드
+     **/
+    public Category getCategory(String branch, String code) {
+        return  categoryRepository.findByBranchAndCode(branch, code)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, "해당 카테고리를 찾을 수 없습니다."));
+    }
+
+    public SmallCategoryResponse getCategoryDTO(String branch, String code) {
+        Category category = categoryRepository.findByBranchAndCode(branch, code)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, "해당 카테고리를 찾을 수 없습니다."));
+        return SmallCategoryResponse.of(category);
+    }
+
 
     /**
      * @param branch 카테고리의 branch 로 해당 branch에 속하는 카테고리들 리스트 조회
