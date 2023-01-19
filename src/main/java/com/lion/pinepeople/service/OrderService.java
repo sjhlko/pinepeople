@@ -35,11 +35,11 @@ public class OrderService {
 
     @Transactional
     public OrderResponse order(Long userId, Long partyId, OrderRequest orderRequest) {
-        // 해당 id의 회원 없음
+        // 해당 userId의 회원 없음
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "존재하지 않는 회원입니다"));
 
-        // 해당 id의 파티 없음
+        // 해당 partyId의 파티 없음
         Party findParty = partyRepository.findById(partyId)
                 .orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND, "존재하지 않는 파티입니다."));
 
@@ -64,23 +64,32 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderInfoResponse getOrder(Long userId, Long orderId) {
-        // 해당 id의 회원 없음
-        userRepository.findById(userId)
+        // 해당 userId의 회원 없음
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "존재하지 않는 회원입니다."));
 
-        // 해당 id의 주문 없음
+        // 해당 orderId의 주문 없음
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND, "해당 주문은 존재하지 않습니다."));
+
+        if (order.getUser().getId() != user.getId()) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION, "본인의 주문내역만 조회가능합니다.");
+        }
         return OrderInfoResponse.toDto(order);
 
     }
 
     @Transactional(readOnly = true)
     public Page<OrderInfoResponse> getMyOrder(Long userId, Pageable pageable) {
-        // 해당 id의 회원 없음
-        userRepository.findById(userId)
+        // 해당 userId의 회원 없음
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "존재하지 않는 회원입니다."));
-        Page<Order> findAll = orderRepository.findAll(pageable);
+
+//        if (order.getUser().getId() != user.getId()) {
+//            throw new AppException(ErrorCode.INVALID_PERMISSION, "본인의 주문내역만 조회가능합니다.");
+//        }
+
+        Page<Order> findAll = orderRepository.findOrdersByUser(user,pageable);
         Page<OrderInfoResponse> findOrderAll = OrderInfoResponse.toDtoList(findAll);
         return findOrderAll;
     }
