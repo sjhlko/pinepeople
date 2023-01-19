@@ -6,6 +6,8 @@ import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.enums.ParticipantRole;
 import com.lion.pinepeople.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,5 +20,9 @@ public class ParticipantService {
 
     public Participant createGuestParticipant(User user, Party party){
         return participantRepository.save(Participant.of(user,party, ParticipantRole.GUEST));
+    }
+
+    public Page<Participant> getMyGuestParty(Pageable pageable, User user){
+        return participantRepository.findAllByUserAndParticipantRole(pageable,user,ParticipantRole.GUEST);
     }
 }

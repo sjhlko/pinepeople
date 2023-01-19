@@ -2,6 +2,7 @@ package com.lion.pinepeople.service;
 
 import com.lion.pinepeople.domain.dto.party.*;
 import com.lion.pinepeople.domain.entity.*;
+import com.lion.pinepeople.enums.ParticipantRole;
 import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
@@ -86,5 +87,16 @@ public class PartyService {
     public Page<PartyInfoResponse> searchParty(Pageable pageable, String address, String partyContent, String partyTitle) {
         Page<Party> parties = partyRepository.findBySearchOption(pageable,address,partyContent,partyTitle);
         return parties.map(PartyInfoResponse::of);
+    }
+
+    public Page<PartyInfoResponse> getMyParty(Pageable pageable, String role, String userId) {
+        User user = validateUser(userId);
+        if(role.equals(ParticipantRole.HOST.name())){
+            Page<Party> parties = partyRepository.findAllByUser(pageable,user);
+            return parties.map(PartyInfoResponse::of);
+        }
+        Page<Participant> participants = participantService.getMyGuestParty(pageable,user);
+        return participants.map(PartyInfoResponse::of);
+
     }
 }

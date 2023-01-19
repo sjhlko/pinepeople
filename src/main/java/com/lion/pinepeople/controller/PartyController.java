@@ -76,4 +76,12 @@ public class PartyController {
         return Response.success(parties);
     }
 
+    @GetMapping("/my")
+    @ApiOperation(value = "내가 참가한 파티 조회")
+    public Response<Page<PartyInfoResponse>> getMyPosts(@PageableDefault(size = 20, sort ="createdAt",
+            direction = Sort.Direction.DESC) Pageable pageable, @RequestParam String role, Authentication authentication) {
+        Page<PartyInfoResponse> parties = partyService.getMyParty(pageable, role, authentication.getName());
+        return Response.success(parties);
+    }
+
 }
