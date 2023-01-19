@@ -34,14 +34,14 @@ public class OrderService {
     private final PartyRepository partyRepository;
 
     @Transactional
-    public OrderResponse order(Long userId, Long partyId, OrderRequest orderRequest) {
+    public OrderResponse order(String userId, Long partyId, OrderRequest orderRequest) {
         // 해당 userId의 회원 없음
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "존재하지 않는 회원입니다"));
+        User findUser = userRepository.findById(Long.parseLong(userId))
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, ErrorCode.USERNAME_NOT_FOUND.getMessage()));
 
         // 해당 partyId의 파티 없음
         Party findParty = partyRepository.findById(partyId)
-                .orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND, "존재하지 않는 파티입니다."));
+                .orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
 
         // 주문 생성
         Order createOrder = Order.createOrder(findUser,findParty,orderRequest.toEntity());
@@ -63,31 +63,27 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public OrderInfoResponse getOrder(Long userId, Long orderId) {
+    public OrderInfoResponse getOrder(String userId, Long orderId) {
         // 해당 userId의 회원 없음
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "존재하지 않는 회원입니다."));
+        User user = userRepository.findById(Long.parseLong(userId))
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
 
         // 해당 orderId의 주문 없음
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND, "해당 주문은 존재하지 않습니다."));
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND, ErrorCode.ORDER_NOT_FOUND.getMessage()));
 
         if (order.getUser().getId() != user.getId()) {
-            throw new AppException(ErrorCode.INVALID_PERMISSION, "본인의 주문내역만 조회가능합니다.");
+            throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
         }
         return OrderInfoResponse.toDto(order);
 
     }
 
     @Transactional(readOnly = true)
-    public Page<OrderInfoResponse> getMyOrder(Long userId, Pageable pageable) {
+    public Page<OrderInfoResponse> getMyOrder(String userId, Pageable pageable) {
         // 해당 userId의 회원 없음
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "존재하지 않는 회원입니다."));
-
-//        if (order.getUser().getId() != user.getId()) {
-//            throw new AppException(ErrorCode.INVALID_PERMISSION, "본인의 주문내역만 조회가능합니다.");
-//        }
+        User user = userRepository.findById(Long.parseLong(userId))
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
 
         Page<Order> findAll = orderRepository.findOrdersByUser(user,pageable);
         Page<OrderInfoResponse> findOrderAll = OrderInfoResponse.toDtoList(findAll);

@@ -37,8 +37,8 @@ public class OrderController {
     @PostMapping("/party/{partyId}/orders")
     public Response<OrderResponse> order(@PathVariable Long partyId, @RequestBody OrderRequest orderRequest, @ApiIgnore Authentication authentication) {
         log.info("controller");
-        Long loginUserId = Long.parseLong(authentication.getName());
-        OrderResponse order = orderservice.order(loginUserId, partyId, orderRequest);
+        String userName = authentication.getName();
+        OrderResponse order = orderservice.order(userName, partyId, orderRequest);
         return Response.success(order);
     }
 
@@ -51,8 +51,8 @@ public class OrderController {
     @ApiOperation(value = "주문 상세 조회")
     @GetMapping("/users/order-lists/{orderId}")
     public Response<OrderInfoResponse> getOrder(@PathVariable Long orderId,@ApiIgnore Authentication authentication) {
-        Long loginUserId = Long.parseLong(authentication.getName());
-        OrderInfoResponse findOne = orderservice.getOrder(loginUserId, orderId);
+        String userName = authentication.getName();
+        OrderInfoResponse findOne = orderservice.getOrder(userName, orderId);
         return Response.success(findOne);
     }
 
@@ -63,10 +63,10 @@ public class OrderController {
      * @return 해당 회원의 전체 주문 내역 조회
      */
     @ApiOperation(value = "나의 주문 내역")
-    @GetMapping("/users/order-lists")
+    @GetMapping("/users/order-lists/my")
     public Response<Page<OrderInfoResponse>> myOrders(@PageableDefault(size = 10, sort = "orderDate", direction = Sort.Direction.DESC) Pageable pageable,@ApiIgnore Authentication authentication) {
-        Long loginUserId = Long.parseLong(authentication.getName());
-        Page<OrderInfoResponse> orderList = orderservice.getMyOrder(loginUserId, pageable);
+        String userName = authentication.getName();
+        Page<OrderInfoResponse> orderList = orderservice.getMyOrder(userName, pageable);
         return Response.success(orderList);
     }
 }
