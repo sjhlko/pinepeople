@@ -29,6 +29,8 @@ public class BrixController {
         return Response.success(result);
     }
 
+
+
     /**
      *
      * @param userId 당도를 조회할 대상 아이디
