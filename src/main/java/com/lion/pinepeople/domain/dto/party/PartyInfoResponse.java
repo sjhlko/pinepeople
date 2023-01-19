@@ -1,6 +1,7 @@
 package com.lion.pinepeople.domain.dto.party;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lion.pinepeople.domain.entity.Participant;
 import com.lion.pinepeople.domain.entity.Party;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -59,6 +60,24 @@ public class PartyInfoResponse {
                 .partyTitle(party.getPartyTitle())
                 .announcement(party.getAnnouncement())
                 .createdAt(createdAt)
+                .updatedAt(party.getUpdatedAt())
+                .startDate(party.getStartDate())
+                .endDate(party.getEndDate())
+                .build();
+    }
+
+    //파티 참여자 테이블을 조회한 결과를 통해 속한 파티의 정보를 리턴
+    public static PartyInfoResponse of(Participant participant){
+        Party party = participant.getParty();
+        return PartyInfoResponse.builder()
+                .id(party.getId())
+                .partyContent(party.getPartyContent())
+                .address(party.getAddress())
+                .partySize(party.getPartySize())
+                .partyCost(party.getPartyCost())
+                .partyTitle(party.getPartyTitle())
+                .announcement(party.getAnnouncement())
+                .createdAt(party.getCreatedAt())
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())
