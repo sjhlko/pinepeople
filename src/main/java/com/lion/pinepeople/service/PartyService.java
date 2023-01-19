@@ -40,7 +40,7 @@ public class PartyService {
     }
 
     public void validateAuthorOrAdmin(Party party, User currentUser){
-        if(!(party.getUser().equals(currentUser)||currentUser.getRole().equals(UserRole.ADMIN))){
+        if(!(party.getUser().getId().equals(currentUser.getId())||currentUser.getRole().equals(UserRole.ADMIN))){
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
         }
     }
