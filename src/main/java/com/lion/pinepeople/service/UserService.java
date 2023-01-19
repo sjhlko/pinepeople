@@ -5,9 +5,12 @@ import com.lion.pinepeople.domain.dto.user.join.UserJoinRequest;
 import com.lion.pinepeople.domain.dto.user.join.UserJoinResponse;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginRequest;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginResponse;
+import com.lion.pinepeople.domain.dto.user.myInfo.MyInfoResponse;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateRequest;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateResponse;
 import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
+import com.lion.pinepeople.domain.dto.user.userInfo.UserInfoResponse;
+import com.lion.pinepeople.domain.dto.user.userInfoList.UserInfoListResponse;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
@@ -16,6 +19,8 @@ import com.lion.pinepeople.repository.UserRepository;
 import com.lion.pinepeople.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -105,28 +110,19 @@ public class UserService {
      * 유저 수정 메서드
      *
      * @param userId            수정하려고 하는 유저 id
-     * @param id                수정할 대상인 유저 id
      * @param userUpdateRequest name, address, phone, birth
      * @return UserUpdateResponse message, userName
      */
-    public UserUpdateResponse modify(String userId, Long id, UserUpdateRequest userUpdateRequest) {
+    public UserUpdateResponse modify(String userId, UserUpdateRequest userUpdateRequest) {
         // 수정을 하는 유저 체크
-        User findUser = userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> {
+        User updateUser = userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> {
             throw new AppException(ErrorCode.USER_NOT_FOUND, "유저를 찾을 수 없습니다.");
         });
-        // 수정을 하는 유저 권한 체크
-        if (!findUser.getId().equals(id)) {
-            throw new AppException(ErrorCode.INVALID_PERMISSION, "해당 유저 정보를 수정할 권한이 없습니다.");
-        }
-        // 수정할 대상 유저 체크
-        User modifyUser = userRepository.findById(id).orElseThrow(() -> {
-            throw new AppException(ErrorCode.USER_NOT_FOUND, "대상 유저를 찾을 수 없습니다.");
-        });
         // 유저 수정
-        findUser.updateUser(userUpdateRequest);
-        userRepository.saveAndFlush(findUser);
+        updateUser.updateUser(userUpdateRequest);
+        userRepository.saveAndFlush(updateUser);
         // 유저 번경 dto 반환
-        return UserUpdateResponse.of(String.format(findUser.getName() + "님의 유저 정보가 변경되었습니다."), findUser.getId());
+        return UserUpdateResponse.of(String.format(updateUser.getName() + "님의 유저 정보가 변경되었습니다."), updateUser.getId());
     }
 
     /**
@@ -136,7 +132,6 @@ public class UserService {
      * @param id     삭제할 userid
      * @return UserDeleteResponse message userId
      */
-    // 회원 삭제
     public UserDeleteResponse delete(String userId, Long id) {
         // 삭제를 하는 유저 체크
         User findUser = userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> {
@@ -156,5 +151,46 @@ public class UserService {
         userRepository.delete(deleteUser);
         // 삭제 delete dto 반환
         return UserDeleteResponse.of(deleteMessage, deleteUserId);
+    }
+
+    /**
+     * 유저 상세 정보 조회 메서드
+     *
+     * @param id 조회할 유저 id
+     * @return UserInfoResponse userId, userName, email, brixFiguer, brixName
+     */
+    public UserInfoResponse getUserInfo(Long id) {
+        // 조회할 유저 체크
+        User findUser = userRepository.findById(id).orElseThrow(() -> {
+            throw new AppException(ErrorCode.USER_NOT_FOUND, "유저를 찾을 수 없습니다.");
+        });
+        // 유저 UserInfoResponse로 변환 후 반환
+        return UserInfoResponse.of(findUser);
+    }
+
+    /**
+     * 유저 정보 리스트 조회
+     *
+     * @param pageable 페이징
+     * @return Page<UserInfoList> UserInfoResponse userId, userName, email, brixFiguer, brixName
+     */
+    public Page<UserInfoListResponse> getUserInfoList(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable);
+        return UserInfoListResponse.of(users);
+    }
+
+    /**
+     * 마이페이지 메서드
+     *
+     * @param userId 유저 id
+     * @return MyInfoResponse userId, userName, email, phone, address, birth, brixFiguer, brixName, point
+     */
+    public MyInfoResponse getMyInfo(String userId) {
+        //유저체크
+        User findUser = userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> {
+            throw new AppException(ErrorCode.USER_NOT_FOUND, "유저를 찾을 수 없습니다.");
+        });
+        //MyInfoResponse 변환 후 리턴
+        return MyInfoResponse.of(findUser);
     }
 }

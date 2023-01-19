@@ -23,6 +23,10 @@ public class SecurityConfig {
     private final String[] PERMMIT = {
             "/swagger-ui/**"
     };
+
+    private final String[] GET_AUTHENTICATED = {
+            "/api/users/my"
+    };
     private final String[] POST_AUTHENTICATED = {
     };
 
@@ -42,6 +46,7 @@ public class SecurityConfig {
                 .cors().and()
                 .authorizeRequests()
                 .antMatchers(PERMMIT).permitAll()
+                .antMatchers(HttpMethod.GET,GET_AUTHENTICATED).authenticated()
                 .antMatchers(HttpMethod.POST, POST_AUTHENTICATED).authenticated()
                 .antMatchers(HttpMethod.PATCH, PATCH_AUTHENTICATED).authenticated()
                 .antMatchers(HttpMethod.DELETE, DELETE_AUTHENTICATED).authenticated()
