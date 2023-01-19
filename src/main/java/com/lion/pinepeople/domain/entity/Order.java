@@ -1,10 +1,12 @@
 package com.lion.pinepeople.domain.entity;
 
-import com.lion.pinepeople.domain.dto.OrderResponse;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import static javax.persistence.EnumType.STRING;
@@ -18,6 +20,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "orders")
 @Builder
 @AllArgsConstructor
+@Slf4j
 public class Order {
 
     @Id
@@ -28,13 +31,14 @@ public class Order {
     @Enumerated(STRING)
     private OrderType orderType;
 
-    private Integer cost;
+    private Integer cost; // 파티금액 / 파티원 = cost
 
     private Integer accumulateCost;
 
-    private LocalDateTime orderDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private Timestamp orderDate;
 
-    private Integer discountPoint;
+    private Integer discountPoint; // cost >= discountPoint
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
@@ -44,29 +48,39 @@ public class Order {
     @JoinColumn(name = "party_id")
     private Party party;
 
+
     // 주문 메소드
-    public static Order creatOrder(User user, Party party) {
-        Order order = new Order();
+    public static Order creatOrder(User user, Party party, Order order) {
         return Order.builder()
                 .user(user)
                 .party(party)
-                .orderDate(LocalDateTime.now())
                 .orderType(order.getOrderType())
-                .cost(order.getTotalCost())
-                .accumulateCost(order.getAccumulateCost())
+                .orderDate(Timestamp.valueOf(LocalDateTime.now()))
+                .cost(order.userOneCost(party))
+                .discountPoint(order.discountPoint)
+                .accumulateCost(order.accumulatePoints(party))
                 .build();
     }
 
-    // 총 주문 금액 메소드
-    public int getTotalCost() {
-        int totalCost = cost;
-        totalCost -= getDiscountPoint();
-        return totalCost;
+    // 적립금( 5% ? )
+    public Integer accumulatePoints(Party party) {
+        int points = (int) ((userOneCost(party) - discountPoint) * 0.05);
+        return points;
     }
 
-    // 주문 타입(카드 결제, 만나서 결제)
-    public void selectOrderType(OrderType orderType) {
-        this.orderType = orderType;
+    // 회원 한명의 파티 참가 비용
+    public static Integer userOneCost (Party party) {
+        int price = party.getPartyCost() / party.getPartySize();
+        return price;
+
+    }
+
+    /**
+     * 총 결제 금액 컬럼 추가?!
+     */
+    public Integer totalPrice(Party party) {
+        int totalPrice = userOneCost(party) - discountPoint;
+        return totalPrice;
     }
 
 }
