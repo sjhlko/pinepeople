@@ -30,7 +30,15 @@ public class PartyCommentService {
     private final PartyRepository partyRepository;
 
 
-
+    /**
+     * 파티모집글에 댓글 쓰기
+     *
+     * @param partyId 파티 조회 목적
+     * @param userId 로그인 유저 id
+     * @param body 댓글 내용
+     *
+     * @return PartyCommentResponse 응답
+     */
     public PartyCommentResponse addPartyComment(Long partyId, Long userId, String body) {
         //회원
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -47,7 +55,13 @@ public class PartyCommentService {
         return PartyCommentResponse.of(savedPartyComment);
     }
 
-
+    /**
+     * 파티모집글에 댓글 페이징 조회
+     *
+     * @param partyId 파티 조회 목적
+     * @param pageable 페이징
+     * @return Page<PartyCommentListResponse> 응답
+     */
     public Page<PartyCommentListResponse> getComments(Long partyId, Pageable pageable) {
         Party party =
                 partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.BRIX_NOT_FOUND));
@@ -55,7 +69,14 @@ public class PartyCommentService {
         return PartyCommentListResponse.toResponse(partyComments);
     }
 
-
+    /**
+     * 파티모집글에 댓글 수정
+     *
+     * @param partyId 파티 조회 목적
+     * @param commentId 파티 댓글 조회 목적
+     * @param body 파티 댓글 수정 request
+     * @return PartyCommentUpdateResponse 응답
+     */
     public PartyCommentUpdateResponse updateComment(Long partyId, Long commentId,String body ,long userId) {
         //회원
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -71,6 +92,13 @@ public class PartyCommentService {
         return PartyCommentUpdateResponse.of(commentId);
     }
 
+    /**
+     * 파티모집글에 댓글 삭제
+     *
+     * @param partyId 파티 조회 목적
+     * @param commentId 파티 댓글 조회 목적
+     * @return PartyCommentDeleteResponse 응답
+     */
     public PartyCommentDeleteResponse deleteComment(Long partyId, Long commentId, long userId) {
         //회원
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
