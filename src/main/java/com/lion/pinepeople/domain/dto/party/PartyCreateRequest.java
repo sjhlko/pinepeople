@@ -1,6 +1,5 @@
 package com.lion.pinepeople.domain.dto.party;
 
-import com.lion.pinepeople.domain.entity.Party;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

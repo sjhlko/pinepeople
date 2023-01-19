@@ -1,8 +1,6 @@
 package com.lion.pinepeople.domain.dto.party;
 
 import com.lion.pinepeople.domain.entity.Category;
-import com.lion.pinepeople.domain.entity.Party;
-import com.lion.pinepeople.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

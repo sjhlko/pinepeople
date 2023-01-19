@@ -1,17 +1,14 @@
 package com.lion.pinepeople.service;
 
 
-import com.lion.pinepeople.domain.dto.OrderRequest;
 import com.lion.pinepeople.domain.dto.OrderResponse;
 import com.lion.pinepeople.domain.dto.OrderSearchResponse;
 import com.lion.pinepeople.domain.entity.Order;
 import com.lion.pinepeople.domain.entity.OrderType;
-import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.OrderRepository;
-import com.lion.pinepeople.repository.PartyCommentRepository;
 import com.lion.pinepeople.repository.PartyRepository;
 import com.lion.pinepeople.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
