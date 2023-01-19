@@ -1,10 +1,7 @@
 package com.lion.pinepeople.domain.dto.party;
 
-<<<<<<< HEAD
-=======
 import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.User;
->>>>>>> fd5ca66bb71328ea1b95556c58ccee548c89b8e1
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

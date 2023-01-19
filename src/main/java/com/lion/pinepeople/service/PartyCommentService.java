@@ -1,5 +1,6 @@
 package com.lion.pinepeople.service;
 
+import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.PartyComment;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.domain.dto.partyComment.PartyCommentDeleteResponse;
