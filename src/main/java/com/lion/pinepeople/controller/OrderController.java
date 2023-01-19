@@ -5,6 +5,8 @@ import com.lion.pinepeople.domain.dto.order.OrderRequest;
 import com.lion.pinepeople.domain.dto.order.OrderResponse;
 import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.service.OrderService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,11 +15,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Slf4j
+@Api(tags = "Order API")
 public class OrderController {
 
     private final OrderService orderservice;
@@ -29,8 +33,9 @@ public class OrderController {
      * @param authentication 로그인한 회원만 주문 가능
      * @return 주문 성공 메세지
      */
+    @ApiOperation(value = "주문 생성")
     @PostMapping("/party/{partyId}/orders")
-    public Response<OrderResponse> order(@PathVariable Long partyId,@RequestBody OrderRequest orderRequest, Authentication authentication) {
+    public Response<OrderResponse> order(@PathVariable Long partyId, @RequestBody OrderRequest orderRequest, @ApiIgnore Authentication authentication) {
         log.info("controller");
         Long loginUserId = Long.parseLong(authentication.getName());
         OrderResponse order = orderservice.order(loginUserId, partyId, orderRequest);
@@ -43,8 +48,9 @@ public class OrderController {
      * @param authentication 로그인한 회원 본인의 주문만 접근 가능
      * @return 해당 주문번호의 주문 상세 내역
      */
+    @ApiOperation(value = "주문 상세 조회")
     @GetMapping("/users/order-lists/{orderId}")
-    public Response<OrderInfoResponse> getOrder(@PathVariable Long orderId, Authentication authentication) {
+    public Response<OrderInfoResponse> getOrder(@PathVariable Long orderId,@ApiIgnore Authentication authentication) {
         Long loginUserId = Long.parseLong(authentication.getName());
         OrderInfoResponse findOne = orderservice.getOrder(loginUserId, orderId);
         return Response.success(findOne);
@@ -56,8 +62,9 @@ public class OrderController {
      * @param authentication 로그인한 회원 본인의 주문만 접근 가능
      * @return 해당 회원의 전체 주문 내역 조회
      */
+    @ApiOperation(value = "나의 주문 내역")
     @GetMapping("/users/order-lists")
-    public Response<Page<OrderInfoResponse>> myOrders(@PageableDefault(size = 10, sort = "orderDate", direction = Sort.Direction.DESC) Pageable pageable, Authentication authentication) {
+    public Response<Page<OrderInfoResponse>> myOrders(@PageableDefault(size = 10, sort = "orderDate", direction = Sort.Direction.DESC) Pageable pageable,@ApiIgnore Authentication authentication) {
         Long loginUserId = Long.parseLong(authentication.getName());
         Page<OrderInfoResponse> orderList = orderservice.getMyOrder(loginUserId, pageable);
         return Response.success(orderList);
