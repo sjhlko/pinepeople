@@ -1,11 +1,16 @@
 package com.lion.pinepeople.service;
 
 
+
+import com.lion.pinepeople.domain.entity.Order;
+import com.lion.pinepeople.domain.entity.OrderType;
+
 import com.lion.pinepeople.domain.dto.order.OrderInfoResponse;
 import com.lion.pinepeople.domain.dto.order.OrderRequest;
 import com.lion.pinepeople.domain.dto.order.OrderResponse;
 import com.lion.pinepeople.domain.entity.Order;
 import com.lion.pinepeople.domain.entity.Party;
+
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
@@ -18,6 +23,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+
+import java.util.Optional;
 
 
 @Service
@@ -37,7 +45,7 @@ public class OrderService {
 
         // 해당 id의 파티 없음
         Party findParty = partyRepository.findById(partyId)
-                .orElseThrow(() -> new AppException(ErrorCode.PARTY__NOT_FOUND, "존재하지 않는 파티입니다."));
+                .orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND, "존재하지 않는 파티입니다."));
 
         // 주문 생성
         Order createOrder = Order.creatOrder(findUser,findParty,orderRequest.toEntity());

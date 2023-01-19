@@ -1,10 +1,7 @@
 package com.lion.pinepeople.domain.dto.participant;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lion.pinepeople.domain.entity.Participant;
-import com.lion.pinepeople.domain.entity.Party;
-import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.enums.ApprovalStatus;
 import com.lion.pinepeople.enums.ParticipantRole;
 import lombok.AllArgsConstructor;
@@ -12,9 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Builder
 @AllArgsConstructor
