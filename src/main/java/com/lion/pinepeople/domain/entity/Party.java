@@ -4,15 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Where(clause = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE party SET deleted_at = current_timestamp WHERE party_id = ? ")
 public class Party extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +32,11 @@ public class Party extends BaseEntity{
     private Date endDate;
     private String address;
     private String announcement;
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn (name ="user_id")
+    private User user;
+    @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    List<Participant> participants = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cagegory_id")
-    private Category category;
+
 }

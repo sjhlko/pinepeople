@@ -1,6 +1,6 @@
 package com.lion.pinepeople.service;
 
-import com.lion.pinepeople.domain.dto.BrixRequest;
+import com.lion.pinepeople.domain.brix.BrixRequest;
 import com.lion.pinepeople.domain.entity.Brix;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.enums.Star;
@@ -16,6 +16,15 @@ import org.springframework.stereotype.Service;
 public class BrixService {
     private final UserRepository userRepository;
     private final BrixRepository brixRepository;
+    public final double BRIXDEFAULT = 14.0;
+
+    /**
+     *
+     * @param request 별점
+     * @param userId 당도평가 대상 유저 아이디
+     * @param loginUserId 로그인 유저 아이디
+     * @return 당도 측정 완료 메세지
+     */
     public String calculationBrix(BrixRequest request, Long userId, Long loginUserId) {
         //로그인 유저 검사
         userRepository.findById(loginUserId)
@@ -33,6 +42,12 @@ public class BrixService {
         return "당도 측정 완료";
     }
 
+    /**
+     *
+     * @param loginUserId 로그인 유저 아이디
+     * @param userId 당도를 조회할 유저 아이디
+     * @return 당도
+     */
     public Double getBrix(Long loginUserId, Long userId) {
         //로그인 유저 검사
         userRepository.findById(loginUserId)
@@ -45,5 +60,14 @@ public class BrixService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
 
         return brix.getBrixFigure();
+    }
+
+    public void setBrix(User user){
+        //로그인 유저 검사
+        userRepository.findById(user.getId())
+                .orElseThrow( () -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
+        //brix 초기값 생성
+        Brix brix = Brix.toEntity(BRIXDEFAULT, null, user);
+        brixRepository.save(brix);
     }
 }
