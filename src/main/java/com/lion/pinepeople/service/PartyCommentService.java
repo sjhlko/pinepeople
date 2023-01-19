@@ -60,9 +60,12 @@ public class PartyCommentService {
         //회원
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         //파티
-        Party party = partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.PARTY__NOT_FOUND));
+        Party party = partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND));
         //comment
         PartyComment partyComment = partyCommentRepository.findById(commentId).orElseThrow(() -> new AppException(ErrorCode.PARTY_COMMENT_NOT_FOUND));
+        if (user.getId() != partyComment.getUser().getId()) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION);
+        }
         //comment 수정
         partyComment.update(body);
         return PartyCommentUpdateResponse.of(commentId);
@@ -72,9 +75,12 @@ public class PartyCommentService {
         //회원
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         //파티
-        Party party = partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.PARTY__NOT_FOUND));
+        Party party = partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND));
         //comment
         PartyComment partyComment = partyCommentRepository.findById(commentId).orElseThrow(() -> new AppException(ErrorCode.PARTY_COMMENT_NOT_FOUND));
+        if (user.getId() != partyComment.getUser().getId()) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION);
+        }
         //삭제 진행
         partyCommentRepository.deleteById(partyComment.getId());
         return PartyCommentDeleteResponse.of(commentId);

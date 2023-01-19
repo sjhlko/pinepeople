@@ -6,6 +6,7 @@ import com.lion.pinepeople.config.security.filter.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,6 +20,24 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final JwtFilter jwtFilter;
 
+    private final String[] PERMMIT = {
+            "/swagger-ui/**"
+    };
+
+    private final String[] GET_AUTHENTICATED = {
+            "/api/users/my"
+    };
+    private final String[] POST_AUTHENTICATED = {
+    };
+
+    private final String[] PATCH_AUTHENTICATED = {
+            "/api/users/*"
+    };
+
+    private final String[] DELETE_AUTHENTICATED = {
+            "/api/users/*"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -26,7 +45,11 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
-                .antMatchers("/api/users/*/change-role").hasRole("ADMIN")
+                .antMatchers(PERMMIT).permitAll()
+                .antMatchers(HttpMethod.GET,GET_AUTHENTICATED).authenticated()
+                .antMatchers(HttpMethod.POST, POST_AUTHENTICATED).authenticated()
+                .antMatchers(HttpMethod.PATCH, PATCH_AUTHENTICATED).authenticated()
+                .antMatchers(HttpMethod.DELETE, DELETE_AUTHENTICATED).authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
