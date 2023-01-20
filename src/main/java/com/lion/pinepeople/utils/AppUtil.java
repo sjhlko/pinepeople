@@ -24,6 +24,7 @@ public class AppUtil {
     }
 
 
+
     // 게시물 작성 본인여부 확인
     public static void checkUser(Long checkUserId, Long userId) {
         if (!checkUserId.equals(userId)) {
