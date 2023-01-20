@@ -1,45 +1,47 @@
 package com.lion.pinepeople.domain.entity;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
-import com.lion.pinepeople.domain.dto.PostCreateRequest;
-import com.lion.pinepeople.domain.dto.PostCreateResponse;
+
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.DateTimeException;
 
-import static javax.persistence.FetchType.LAZY;
 
-@Getter
+@NoArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 @Entity
+@Getter
+@Builder
 public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
     private Long postId;
+
     private String title;
     private String body;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "userID")
     private User user;
 
-//    @ManyToOne(fetch = LAZY)
-//    @JoinColumn(name = "like_id")
-
-    // @OneToMany(name = "like_id" , mappedBy = )
-    //
-    //@OneToMany(name = "comment_id")
+    private Long userId;
 
 
-//    public void update(String title, String body) {
-//        this.title = title;
-//        this.body = body;
-//    }
+
+    public static Post convertToEntity(String title, String body, User user) {
+        return Post.builder()
+                .title(title)
+                .body(body)
+                .user(user)
+                .build();
+
+    }
+
+    public void update(String title, String body) {
+        this.title = title;
+        this.body = body;
+    }
 
 
 }
+
