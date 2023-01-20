@@ -22,7 +22,7 @@ public class OrderInfoResponse {
     private Integer discountPoint;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp orderDate;
-    private Integer totalCost; // 총 결제 금액
+    private Integer totalCost;
 
     /* Entity -> Dto 변환 */
     public static OrderInfoResponse toDto(Order order) {
@@ -32,7 +32,7 @@ public class OrderInfoResponse {
                 .accumulateCost(order.getAccumulateCost())
                 .cost(order.getCost())
                 .orderType(order.getOrderType())
-                .totalCost(order.getTotalCost(order.getParty()))
+                .totalCost(order.getTotalCost())
                 .build();
     }
 
@@ -44,7 +44,7 @@ public class OrderInfoResponse {
                 .accumulateCost(o.getAccumulateCost())
                 .cost(o.getCost())
                 .orderType(o.getOrderType())
-                .totalCost(o.getTotalCost(o.getParty()))
+                .totalCost(o.getTotalCost())
                 .build());
         return orderDtoList;
     }

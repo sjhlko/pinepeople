@@ -1,6 +1,9 @@
 package com.lion.pinepeople.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lion.pinepeople.domain.dto.order.OrderRequest;
+import com.lion.pinepeople.exception.ErrorCode;
+import com.lion.pinepeople.exception.customException.AppException;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,9 +21,9 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Table(name = "orders")
+@Slf4j
 @Builder
 @AllArgsConstructor
-@Slf4j
 public class Order {
 
     @Id
@@ -50,24 +53,26 @@ public class Order {
     @JoinColumn(name = "party_id")
     private Party party;
 
-
-    // 주문 메소드
-    public static Order createOrder(User user, Party party, Order order) {
+    // 주문 생성 메소드
+    public static Order createOrder(User user, Party party, OrderRequest orderRequest) {
         return Order.builder()
                 .user(user)
                 .party(party)
-                .orderType(order.getOrderType())
+                .orderType(orderRequest.getOrderType())
                 .orderDate(Timestamp.valueOf(LocalDateTime.now()))
-                .cost(order.userOneCost(party))
-                .discountPoint(order.discountPoint)
-                .accumulateCost(order.accumulatePoints(party))
-                .totalCost(order.getTotalCost(party))
+                .cost(Order.userOneCost(party))
+                .discountPoint(orderRequest.getDiscountPoint())
+                .accumulateCost(Order.getAccumulatePoint(party,orderRequest))
+                .totalCost(Order.getTotalCost(party,orderRequest))
                 .build();
     }
 
+
     // 적립금( 5% ? )
-    public Integer accumulatePoints(Party party) {
-        int points = (int) ((userOneCost(party) - discountPoint) * 0.05);
+    public static Integer getAccumulatePoint(Party party, OrderRequest orderRequest) {
+        int points = (int) ((userOneCost(party) - orderRequest.getDiscountPoint()) * 0.05);
+//        Integer point = user.getPoint();
+//        point += points;
         return points;
     }
 
@@ -78,8 +83,13 @@ public class Order {
 
     }
 
-    public Integer getTotalCost(Party party) {
-        int totalCost = userOneCost(party) - discountPoint;
+    // 총 결제 비용(회원 한명의 파티 참가 비용 - 할인 금액)
+    public static Integer getTotalCost(Party party, OrderRequest orderRequest) {
+        int totalCost = userOneCost(party) - orderRequest.getDiscountPoint();
+        // 총 결제 금액이 0원 미만이면 에러
+        if (totalCost < 0) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION,"총 결제금액인 0원 미만입니다. 할인금액을 다시 입력해주세요");
+        }
         return totalCost;
     }
 

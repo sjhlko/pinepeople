@@ -44,12 +44,7 @@ public class OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
 
         // 주문 생성
-        Order createOrder = Order.createOrder(findUser,findParty,orderRequest.toEntity());
-
-        // 총 결제 금액이 0원 미만이면 에러
-        if (createOrder.getTotalCost(findParty) < 0) {
-            throw new AppException(ErrorCode.INVALID_PERMISSION, "할인금액이 주문금액을 초과하였습니다. 다시 입력해주세요.");
-        }
+        Order createOrder = Order.createOrder(findUser,findParty,orderRequest);
 
         /**
          * 회원테이블의 포인트에 누적 적립금 저장!?
@@ -72,6 +67,7 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND, ErrorCode.ORDER_NOT_FOUND.getMessage()));
 
+        // 주문자와 로그인한 회원이 일치하지 않다면 에러 발생
         if (order.getUser().getId() != user.getId()) {
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
         }

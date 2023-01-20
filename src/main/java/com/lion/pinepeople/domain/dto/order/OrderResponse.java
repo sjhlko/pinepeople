@@ -23,7 +23,7 @@ public class OrderResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp orderDate;
     private String message;
-    private Integer totalCost; // 총 결제 금액
+    private Integer totalCost;
 
     public static OrderResponse of(Order order) {
         return OrderResponse.builder()
@@ -32,7 +32,7 @@ public class OrderResponse {
                 .orderDate(order.getOrderDate())
                 .cost(order.getCost())
                 .discountPoint(order.getDiscountPoint())
-                .totalCost(order.getTotalCost(order.getParty()))
+                .totalCost(order.getTotalCost())
                 .build();
     }
 }
