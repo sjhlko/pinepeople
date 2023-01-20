@@ -1,5 +1,6 @@
 package com.lion.pinepeople.controller;
 
+import com.lion.pinepeople.domain.dto.order.OrderDeleteResponse;
 import com.lion.pinepeople.domain.dto.order.OrderInfoResponse;
 import com.lion.pinepeople.domain.dto.order.OrderRequest;
 import com.lion.pinepeople.domain.dto.order.OrderResponse;
@@ -44,13 +45,14 @@ public class OrderController {
 
     /**
      * 주문을 상세 조회한다. 주문한 파티 가격, 총 지불 금액, 주문 날짜 등의 정보를 조회할 수 있다.
-     * @param orderId 주문번호
+     *
+     * @param orderId        주문번호
      * @param authentication 로그인한 회원 본인의 주문만 접근 가능
      * @return 해당 주문번호의 주문 상세 내역
      */
     @ApiOperation(value = "주문 상세 조회")
     @GetMapping("/users/order-lists/{orderId}")
-    public Response<OrderInfoResponse> getOrder(@PathVariable Long orderId,@ApiIgnore Authentication authentication) {
+    public Response<OrderInfoResponse> getOrder(@PathVariable Long orderId, @ApiIgnore Authentication authentication) {
         String userName = authentication.getName();
         OrderInfoResponse findOne = orderservice.getOrder(userName, orderId);
         return Response.success(findOne);
@@ -58,15 +60,32 @@ public class OrderController {
 
     /**
      * 회원의 주문 내역을 모두 조회한다.
-     * @param pageable 주문 내역 페이징 처리
+     *
+     * @param pageable       주문 내역 페이징 처리
      * @param authentication 로그인한 회원 본인의 주문만 접근 가능
      * @return 해당 회원의 전체 주문 내역 조회
      */
     @ApiOperation(value = "나의 주문 내역")
     @GetMapping("/users/order-lists/my")
-    public Response<Page<OrderInfoResponse>> myOrders(@PageableDefault(size = 10, sort = "orderDate", direction = Sort.Direction.DESC) Pageable pageable,@ApiIgnore Authentication authentication) {
+    public Response<Page<OrderInfoResponse>> myOrders(@PageableDefault(size = 10, sort = "orderDate", direction = Sort.Direction.DESC) Pageable pageable, @ApiIgnore Authentication authentication) {
         String userName = authentication.getName();
         Page<OrderInfoResponse> orderList = orderservice.getMyOrder(userName, pageable);
         return Response.success(orderList);
+    }
+
+    /**
+     * 자신의 주문을 취소한다.
+     *
+     * @param orderId        주문번호
+     * @param partyId        주문한 파티 번호
+     * @param authentication 로그인한 회원 본인의 주문만 접근 가능
+     * @return
+     */
+    @ApiOperation(value = "주문 취소")
+    @PatchMapping("/users/{partyId}/orders/{orderId}")
+    public Response<OrderDeleteResponse> deleteOrder(@PathVariable Long orderId, @PathVariable Long partyId, @ApiIgnore Authentication authentication) {
+        String userName = authentication.getName();
+        OrderDeleteResponse deleteOrder = orderservice.cancelOrder(userName, orderId, partyId);
+        return Response.success(deleteOrder);
     }
 }
