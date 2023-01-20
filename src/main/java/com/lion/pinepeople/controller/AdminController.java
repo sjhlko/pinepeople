@@ -4,8 +4,12 @@ package com.lion.pinepeople.controller;
 import com.lion.pinepeople.domain.dto.admin.AllBlackListResponse;
 import com.lion.pinepeople.domain.dto.admin.BlackListRequest;
 import com.lion.pinepeople.domain.dto.admin.BlackListResponse;
+import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
 import com.lion.pinepeople.domain.response.Response;
+import com.lion.pinepeople.repository.UserRepository;
 import com.lion.pinepeople.service.AdminService;
+import com.lion.pinepeople.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 
 @RestController
@@ -21,6 +26,21 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class AdminController {
     private final AdminService adminService;
+    private final UserService userService;
+
+    /**
+     * 계정 등급 변경 메서드
+     *
+     * @param authentication userId
+     * @param id             계정 등급을 변경할 userId
+     * @return userName, message
+     */
+    @PostMapping("/{id}/change-role")
+    @ApiOperation(value = "계정 등급 변경")
+    public Response<UserRoleResponse> changeRole(@ApiIgnore Authentication authentication, @PathVariable Long id) {
+        UserRoleResponse userRoleResponse = adminService.changeRole(authentication.getName(), id);
+        return Response.success(userRoleResponse);
+    }
 
     /**
      * 블랙리스트 추가
@@ -37,27 +57,27 @@ public class AdminController {
 
     /**
      * 블랙리스트에서 삭제
-     * @param userId 블랙리스트에서 삭제할 유저 아이디
+     * @param blackListId 삭제할 블랙리스트 아이디
      * @param authentication 로그인 권한 인증
      * @return 삭제 성공 메세지
      */
-    @DeleteMapping("/black-lists/{userId}")
-    public Response<Void> deleteBlackList(@PathVariable Long userId, Authentication authentication){
+    @DeleteMapping("/black-lists/{blackListId}")
+    public Response<Void> deleteBlackList(@PathVariable Long blackListId, Authentication authentication){
         String loginUserId = authentication.getName();
-        String result = adminService.deleteBlackList(userId, loginUserId);
+        String result = adminService.deleteBlackList(blackListId, loginUserId);
         return Response.success(result);
     }
 
     /**
      * 블랙리스트 상세 조회(아직 에러못고침)
-     * @param userId 조회할 유저 아이디
+     * @param blackListId 조회할 블랙리스트 아이디
      * @param authentication 로그인 권한 인증
      * @return 블랙리스트 상세 조회 내용(블랙리스트 아이디, 정지 시작 시간, 신고한 유저들)
      */
-    @GetMapping("/black-lists/{userId}")
-    public Response<BlackListResponse> getBlackList(@PathVariable Long userId, Authentication authentication){
+    @GetMapping("/black-lists/{blackListId}")
+    public Response<BlackListResponse> getBlackList(@PathVariable Long blackListId, Authentication authentication){
         String loginUserId = authentication.getName();
-        BlackListResponse response = adminService.getBlackList(userId, loginUserId);
+        BlackListResponse response = adminService.getBlackList(blackListId, loginUserId);
         return Response.success(response);
     }
 
