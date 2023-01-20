@@ -1,6 +1,6 @@
 package com.lion.pinepeople.controller;
 
-import com.lion.pinepeople.domain.dto.order.OrderDeleteResponse;
+import com.lion.pinepeople.domain.dto.order.OrderCancelResponse;
 import com.lion.pinepeople.domain.dto.order.OrderInfoResponse;
 import com.lion.pinepeople.domain.dto.order.OrderRequest;
 import com.lion.pinepeople.domain.dto.order.OrderResponse;
@@ -83,9 +83,9 @@ public class OrderController {
      */
     @ApiOperation(value = "주문 취소")
     @PatchMapping("/users/{partyId}/orders/{orderId}")
-    public Response<OrderDeleteResponse> deleteOrder(@PathVariable Long orderId, @PathVariable Long partyId, @ApiIgnore Authentication authentication) {
+    public Response<OrderCancelResponse> deleteOrder(@PathVariable Long orderId, @PathVariable Long partyId, @ApiIgnore Authentication authentication) {
         String userName = authentication.getName();
-        OrderDeleteResponse deleteOrder = orderservice.cancelOrder(userName, orderId, partyId);
+        OrderCancelResponse deleteOrder = orderservice.cancelOrder(userName, orderId, partyId);
         return Response.success(deleteOrder);
     }
 }

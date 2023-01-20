@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderDeleteResponse {
+public class OrderCancelResponse {
 
     private String message;
     private Long orderId;
 
-    public static OrderDeleteResponse of(Order order) {
-        return OrderDeleteResponse.builder()
+    public static OrderCancelResponse of(Order order) {
+        return OrderCancelResponse.builder()
                 .orderId(order.getId())
                 .message("주문이 취소되었습니다.")
                 .build();

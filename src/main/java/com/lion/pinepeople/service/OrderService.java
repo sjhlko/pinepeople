@@ -2,7 +2,7 @@ package com.lion.pinepeople.service;
 
 
 
-import com.lion.pinepeople.domain.dto.order.OrderDeleteResponse;
+import com.lion.pinepeople.domain.dto.order.OrderCancelResponse;
 import com.lion.pinepeople.domain.entity.Order;
 
 import com.lion.pinepeople.domain.dto.order.OrderInfoResponse;
@@ -104,7 +104,7 @@ public class OrderService {
      * @return 주문 취소 완료
      */
     @Transactional
-    public OrderDeleteResponse cancelOrder(String userId, Long orderId, Long partyId) {
+    public OrderCancelResponse cancelOrder(String userId, Long orderId, Long partyId) {
         User findUser = getUser(userId);
         getParty(partyId);
         Order findOrder = getOrder(orderId);
@@ -122,7 +122,7 @@ public class OrderService {
         userRepository.save(findUser);
         // 주문 저장
         orderRepository.save(findOrder);
-        return OrderDeleteResponse.of(findOrder);
+        return OrderCancelResponse.of(findOrder);
     }
 
     /** 해당 회원있는지 체크 **/
