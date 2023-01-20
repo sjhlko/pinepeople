@@ -4,7 +4,6 @@ import com.lion.pinepeople.domain.dto.admin.AllBlackListResponse;
 import com.lion.pinepeople.domain.dto.admin.BlackListRequest;
 import com.lion.pinepeople.domain.dto.admin.BlackListResponse;
 import com.lion.pinepeople.domain.entity.BlackList;
-import com.lion.pinepeople.domain.entity.Report;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
@@ -40,15 +39,7 @@ public class AdminService {
      * @return 등록 성공 메세지
      */
     public String addBlackList(BlackListRequest request, String loginUserId) {
-        //유저 확인
-        User user = userRepository.findById(Long.parseLong(loginUserId)).orElseThrow(() -> {
-            throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_ROLE_NOT_FOUND.getMessage());
-        });
-
-        //관리자 확인
-        if(user.getRole() != UserRole.ADMIN){
-            throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_TOKEN.getMessage());
-        }
+        isAdmin(loginUserId);
 
         //블랙리스트에 넣을 유저 확인
         User targetUser = userRepository.findById(request.getUserId()).orElseThrow(() -> {
@@ -62,57 +53,38 @@ public class AdminService {
 
     /**
      * 블랙리스트 삭제 메서드
-     * @param userId 블랙리스트에서 삭제할 유저 아이디
+     * @param blackListId 삭제할 블랙리스트 아이디
      * @param loginUserId 로그인한 유저 아이디
      * @return 삭제 성공 메세지
      */
-    public String deleteBlackList(Long userId, String loginUserId) {
-        //유저 확인
-        User user = userRepository.findById(Long.parseLong(loginUserId)).orElseThrow(() -> {
-            throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_ROLE_NOT_FOUND.getMessage());
-        });
-
-        //관리자 확인
-        if(user.getRole() != UserRole.ADMIN){
-            throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_TOKEN.getMessage());
-        }
+    public String deleteBlackList(Long blackListId, String loginUserId) {
+        isAdmin(loginUserId);
 
         //블랙리스트에서 삭제할 유저 확인
-        userRepository.findById(userId).orElseThrow(() -> {
+        blackListRepository.findById(blackListId).orElseThrow(() -> {
             throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_ROLE_NOT_FOUND.getMessage());
         });
 
-        blackListRepository.deleteById(userId);
+        blackListRepository.deleteById(blackListId);
         return "블랙리스트에서 삭제 완료 하였습니다.";
     }
 
     /**
      * 블랙리스트 상세 조회
-     * @param userId 조회할 유저 아이디
+     * @param blackListId 조회할 블랙리스트 아이디
      * @param loginUserId 로그인한 유저 아이디
      * @return 블랙리스트 아이디, 시작 시간, 신고한사람들
      */
-    public BlackListResponse getBlackList(Long userId, String loginUserId) {
-        //유저 확인
-        User user = userRepository.findById(Long.parseLong(loginUserId)).orElseThrow(() -> {
-            throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_ROLE_NOT_FOUND.getMessage());
-        });
+    public BlackListResponse getBlackList(Long blackListId, String loginUserId) {
+        isAdmin(loginUserId);
 
-        //관리자 확인
-        if(user.getRole() != UserRole.ADMIN){
-            throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_TOKEN.getMessage());
-        }
-
-        //블랙리스트에서 조회할 유저 확인
-        User targetUser = userRepository.findById(userId).orElseThrow(() -> {
-            throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_ROLE_NOT_FOUND.getMessage());
-        });
-        log.info("here1");
         //블랙리스트 조회
-        BlackList blackList = blackListRepository.findByUser(targetUser);
-        log.info("here2");
+        BlackList blackList = blackListRepository.findById(blackListId).orElseThrow(() -> {
+            throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_ROLE_NOT_FOUND.getMessage());
+        });
+
         //신고자들 조회
-        List<Long> fromUserIdList =  reportRepository.findAllByUser(targetUser).stream()
+        List<Long> fromUserIdList =  reportRepository.findAllByUser(blackList.getUser()).stream()
                         .map(r -> r.getFromUserId())
                                 .collect(Collectors.toList());
 
@@ -137,6 +109,20 @@ public class AdminService {
      * @return 블랙리스트 아이디, 정지 시작시간
      */
     public Page<AllBlackListResponse> getAllBlackList(String loginUserId, PageRequest pageable) {
+        isAdmin(loginUserId);
+
+        //블랙리스트 전체 조회
+        Page<AllBlackListResponse> allBlackList = blackListRepository.findAll(pageable)
+                .map(blackList -> AllBlackListResponse.fromEntity(blackList));
+        return allBlackList;
+    }
+
+    /**
+     * 관리자 확인 로직
+     * @param loginUserId 로그인한 유저 아이디
+     * @return
+     */
+    public void isAdmin(String loginUserId){
         //유저 확인
         User user = userRepository.findById(Long.parseLong(loginUserId)).orElseThrow(() -> {
             throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_ROLE_NOT_FOUND.getMessage());
@@ -146,10 +132,5 @@ public class AdminService {
         if(user.getRole() != UserRole.ADMIN){
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_TOKEN.getMessage());
         }
-
-        //블랙리스트 전체 조회
-        Page<AllBlackListResponse> allBlackList = blackListRepository.findAll(pageable)
-                .map(blackList -> AllBlackListResponse.fromEntity(blackList));
-        return allBlackList;
     }
 }

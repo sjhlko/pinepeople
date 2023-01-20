@@ -37,27 +37,27 @@ public class AdminController {
 
     /**
      * 블랙리스트에서 삭제
-     * @param userId 블랙리스트에서 삭제할 유저 아이디
+     * @param blackListId 삭제할 블랙리스트 아이디
      * @param authentication 로그인 권한 인증
      * @return 삭제 성공 메세지
      */
-    @DeleteMapping("/black-lists/{userId}")
-    public Response<Void> deleteBlackList(@PathVariable Long userId, Authentication authentication){
+    @DeleteMapping("/black-lists/{blackListId}")
+    public Response<Void> deleteBlackList(@PathVariable Long blackListId, Authentication authentication){
         String loginUserId = authentication.getName();
-        String result = adminService.deleteBlackList(userId, loginUserId);
+        String result = adminService.deleteBlackList(blackListId, loginUserId);
         return Response.success(result);
     }
 
     /**
      * 블랙리스트 상세 조회(아직 에러못고침)
-     * @param userId 조회할 유저 아이디
+     * @param blackListId 조회할 블랙리스트 아이디
      * @param authentication 로그인 권한 인증
      * @return 블랙리스트 상세 조회 내용(블랙리스트 아이디, 정지 시작 시간, 신고한 유저들)
      */
-    @GetMapping("/black-lists/{userId}")
-    public Response<BlackListResponse> getBlackList(@PathVariable Long userId, Authentication authentication){
+    @GetMapping("/black-lists/{blackListId}")
+    public Response<BlackListResponse> getBlackList(@PathVariable Long blackListId, Authentication authentication){
         String loginUserId = authentication.getName();
-        BlackListResponse response = adminService.getBlackList(userId, loginUserId);
+        BlackListResponse response = adminService.getBlackList(blackListId, loginUserId);
         return Response.success(response);
     }
 
