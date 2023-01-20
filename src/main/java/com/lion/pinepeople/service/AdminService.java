@@ -3,6 +3,7 @@ package com.lion.pinepeople.service;
 import com.lion.pinepeople.domain.dto.admin.AllBlackListResponse;
 import com.lion.pinepeople.domain.dto.admin.BlackListRequest;
 import com.lion.pinepeople.domain.dto.admin.BlackListResponse;
+import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
 import com.lion.pinepeople.domain.entity.BlackList;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.enums.UserRole;
@@ -31,6 +32,31 @@ public class AdminService {
     private final BlackListRepository blackListRepository;
     private final ReportRepository reportRepository;
     private final UserRepository userRepository;
+
+    /**
+     * 계정 등급 변경 메서드
+     *
+     * @param id     변경할 userId
+     * @param userId 변경하는 userId
+     * @return UserRoleResponse userName, message
+     */
+    public UserRoleResponse changeRole(String userId, Long id) {
+        isAdmin(userId);
+
+        //changeRole 대상 유저 체크
+        User changeUser = userRepository.findById(id).orElseThrow(() -> {
+            throw new AppException(ErrorCode.USER_NOT_FOUND, "계정 등급을 변경할 유저를 찾을 수 없습니다.");
+        });
+        //changeRole 대상 유저 role 체크
+        if (changeUser.getRole().equals(UserRole.ADMIN)) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION, "해당 계정은 ADMIN 계정입니다.");
+        }
+        //changeRole 대상 유저 role 수정 및 업데이트
+        changeUser.updateRole(UserRole.ADMIN);
+        userRepository.saveAndFlush(changeUser);
+        //UserRoleResponse DTO 반환
+        return UserRoleResponse.of(changeUser.getName(), "관리자로 권한이 변경되었습니다.");
+    }
 
     /**
      * 블랙리스트 추가
@@ -62,7 +88,7 @@ public class AdminService {
 
         //블랙리스트에서 삭제할 유저 확인
         blackListRepository.findById(blackListId).orElseThrow(() -> {
-            throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_ROLE_NOT_FOUND.getMessage());
+            throw new AppException(ErrorCode.USER_ROLE_NOT_FOUND, ErrorCode.USER_ROLE_NOT_FOUND.getMessage());
         });
 
         blackListRepository.deleteById(blackListId);
@@ -130,7 +156,7 @@ public class AdminService {
 
         //관리자 확인
         if(user.getRole() != UserRole.ADMIN){
-            throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_TOKEN.getMessage());
+            throw new AppException(ErrorCode.INVALID_PERMISSION, "접근 권한이 없습니다.");
         }
     }
 }

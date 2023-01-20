@@ -4,8 +4,12 @@ package com.lion.pinepeople.controller;
 import com.lion.pinepeople.domain.dto.admin.AllBlackListResponse;
 import com.lion.pinepeople.domain.dto.admin.BlackListRequest;
 import com.lion.pinepeople.domain.dto.admin.BlackListResponse;
+import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
 import com.lion.pinepeople.domain.response.Response;
+import com.lion.pinepeople.repository.UserRepository;
 import com.lion.pinepeople.service.AdminService;
+import com.lion.pinepeople.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 
 @RestController
@@ -21,6 +26,21 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class AdminController {
     private final AdminService adminService;
+    private final UserService userService;
+
+    /**
+     * 계정 등급 변경 메서드
+     *
+     * @param authentication userId
+     * @param id             계정 등급을 변경할 userId
+     * @return userName, message
+     */
+    @PostMapping("/{id}/change-role")
+    @ApiOperation(value = "계정 등급 변경")
+    public Response<UserRoleResponse> changeRole(@ApiIgnore Authentication authentication, @PathVariable Long id) {
+        UserRoleResponse userRoleResponse = adminService.changeRole(authentication.getName(), id);
+        return Response.success(userRoleResponse);
+    }
 
     /**
      * 블랙리스트 추가
