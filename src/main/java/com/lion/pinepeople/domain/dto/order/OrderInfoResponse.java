@@ -2,7 +2,8 @@ package com.lion.pinepeople.domain.dto.order;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lion.pinepeople.domain.entity.Order;
-import com.lion.pinepeople.domain.entity.OrderType;
+import com.lion.pinepeople.domain.entity.OrderStatus;
+import com.lion.pinepeople.domain.entity.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,11 +18,12 @@ import java.sql.Timestamp;
 public class OrderInfoResponse {
 
     private Integer cost;
-    private OrderType orderType;
+    private PaymentType paymentType;
     private Integer accumulateCost;
     private Integer discountPoint;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp orderDate;
+    private OrderStatus orderStatus;
     private Integer totalCost;
 
     /* Entity -> Dto 변환 */
@@ -31,7 +33,8 @@ public class OrderInfoResponse {
                 .discountPoint(order.getDiscountPoint())
                 .accumulateCost(order.getAccumulateCost())
                 .cost(order.getCost())
-                .orderType(order.getOrderType())
+                .paymentType(order.getPaymentType())
+                .orderStatus(order.getOrderStatus())
                 .totalCost(order.getTotalCost())
                 .build();
     }
@@ -43,7 +46,8 @@ public class OrderInfoResponse {
                 .discountPoint(o.getDiscountPoint())
                 .accumulateCost(o.getAccumulateCost())
                 .cost(o.getCost())
-                .orderType(o.getOrderType())
+                .paymentType(o.getPaymentType())
+                .orderStatus(o.getOrderStatus())
                 .totalCost(o.getTotalCost())
                 .build());
         return orderDtoList;
