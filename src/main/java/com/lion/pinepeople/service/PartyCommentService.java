@@ -39,9 +39,9 @@ public class PartyCommentService {
      *
      * @return PartyCommentResponse 응답
      */
-    public PartyCommentResponse addPartyComment(Long partyId, Long userId, String body) {
+    public PartyCommentResponse addPartyComment(Long partyId, String userId, String body) {
         //회원
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = getUser(userId);
         //파티
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new IllegalStateException());
         //파티 댓글
@@ -55,6 +55,10 @@ public class PartyCommentService {
         return PartyCommentResponse.of(savedPartyComment);
     }
 
+    private User getUser(String userId) {
+        return userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    }
+
     /**
      * 파티모집글에 댓글 페이징 조회
      *
@@ -63,8 +67,7 @@ public class PartyCommentService {
      * @return Page<PartyCommentListResponse> 응답
      */
     public Page<PartyCommentListResponse> getComments(Long partyId, Pageable pageable) {
-        Party party =
-                partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.BRIX_NOT_FOUND));
+        Party party = getParty(partyId, ErrorCode.BRIX_NOT_FOUND);
         Page<PartyComment> partyComments = partyCommentRepository.findAllByParty(party, pageable);
         return PartyCommentListResponse.toResponse(partyComments);
     }
@@ -77,19 +80,23 @@ public class PartyCommentService {
      * @param body 파티 댓글 수정 request
      * @return PartyCommentUpdateResponse 응답
      */
-    public PartyCommentUpdateResponse updateComment(Long partyId, Long commentId,String body ,long userId) {
+    public PartyCommentUpdateResponse updateComment(Long partyId, Long commentId,String body ,String userId) {
         //회원
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = getUser(userId);
         //파티
-        Party party = partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND));
+        Party party = getParty(partyId, ErrorCode.PARTY_NOT_FOUND);
         //comment
-        PartyComment partyComment = partyCommentRepository.findById(commentId).orElseThrow(() -> new AppException(ErrorCode.PARTY_COMMENT_NOT_FOUND));
+        PartyComment partyComment = getPartyComment(commentId);
         if (user.getId() != partyComment.getUser().getId()) {
             throw new AppException(ErrorCode.INVALID_PERMISSION);
         }
         //comment 수정
         partyComment.update(body);
         return PartyCommentUpdateResponse.of(commentId);
+    }
+
+    private Party getParty(Long partyId, ErrorCode partyNotFound) {
+        return partyRepository.findById(partyId).orElseThrow(() -> new AppException(partyNotFound));
     }
 
     /**
@@ -99,18 +106,22 @@ public class PartyCommentService {
      * @param commentId 파티 댓글 조회 목적
      * @return PartyCommentDeleteResponse 응답
      */
-    public PartyCommentDeleteResponse deleteComment(Long partyId, Long commentId, long userId) {
+    public PartyCommentDeleteResponse deleteComment(Long partyId, Long commentId, String userId) {
         //회원
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = getUser(userId);
         //파티
-        Party party = partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND));
+        Party party = getParty(partyId, ErrorCode.PARTY_NOT_FOUND);
         //comment
-        PartyComment partyComment = partyCommentRepository.findById(commentId).orElseThrow(() -> new AppException(ErrorCode.PARTY_COMMENT_NOT_FOUND));
+        PartyComment partyComment = getPartyComment(commentId);
         if (user.getId() != partyComment.getUser().getId()) {
             throw new AppException(ErrorCode.INVALID_PERMISSION);
         }
         //삭제 진행
         partyCommentRepository.deleteById(partyComment.getId());
         return PartyCommentDeleteResponse.of(commentId);
+    }
+
+    private PartyComment getPartyComment(Long commentId) {
+        return partyCommentRepository.findById(commentId).orElseThrow(() -> new AppException(ErrorCode.PARTY_COMMENT_NOT_FOUND));
     }
 }
