@@ -27,6 +27,7 @@ public enum ErrorCode {
     PARTY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 파티가 없습니다."),
     DUPLICATED_REPORT(HttpStatus.CONFLICT, "중복된 신고입니다."),
     INVALID_ORDER_TOTAL_COST(HttpStatus.CONFLICT, "주문 금액은 0원 미만일 수 없습니다."),
+    EXPIRE_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "로그인을 다시 해주세요."),
     EXPIRE_TOKEN(HttpStatus.UNAUTHORIZED,"토큰이 만료되었습니다.");
 
     private HttpStatus status;
