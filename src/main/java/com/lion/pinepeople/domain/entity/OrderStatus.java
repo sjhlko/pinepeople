@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum OrderType {
+public enum OrderStatus {
 
-    CREDIT_CARD,
-    CONTACT_PAYMENT
+    ORDER_CANCEL,
+    ORDER_COMPLETE
 
 }
