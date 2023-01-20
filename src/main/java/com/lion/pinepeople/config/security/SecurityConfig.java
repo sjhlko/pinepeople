@@ -21,21 +21,13 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
 
     private final String[] PERMMIT = {
-            "/swagger-ui/**"
+            "/swagger-ui/**",
+            "/api/users/join",
+            "/api/users/login"
     };
 
     private final String[] GET_AUTHENTICATED = {
             "/api/users/my"
-    };
-    private final String[] POST_AUTHENTICATED = {
-    };
-
-    private final String[] PATCH_AUTHENTICATED = {
-            "/api/users/*"
-    };
-
-    private final String[] DELETE_AUTHENTICATED = {
-            "/api/users/*"
     };
 
     @Bean
@@ -46,10 +38,11 @@ public class SecurityConfig {
                 .cors().and()
                 .authorizeRequests()
                 .antMatchers(PERMMIT).permitAll()
-                .antMatchers(HttpMethod.GET,GET_AUTHENTICATED).authenticated()
-                .antMatchers(HttpMethod.POST, POST_AUTHENTICATED).authenticated()
-                .antMatchers(HttpMethod.PATCH, PATCH_AUTHENTICATED).authenticated()
-                .antMatchers(HttpMethod.DELETE, DELETE_AUTHENTICATED).authenticated()
+                .antMatchers(HttpMethod.GET, GET_AUTHENTICATED).authenticated()
+                .antMatchers(HttpMethod.POST).authenticated()
+                .antMatchers(HttpMethod.PUT).authenticated()
+                .antMatchers(HttpMethod.PATCH).authenticated()
+                .antMatchers(HttpMethod.DELETE).authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

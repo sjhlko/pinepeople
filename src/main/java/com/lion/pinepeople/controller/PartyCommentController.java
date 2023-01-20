@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +44,8 @@ public class PartyCommentController {
      * @return Page<PartyCommentListResponse> 응답
      */
     @GetMapping
-    public Response getList(@PathVariable Long partyId, Pageable pageable) {
+    public Response getList(@PathVariable Long partyId, @PageableDefault(size = 10,
+            sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PartyCommentListResponse> responses =
                 partyCommentService.getComments(partyId, pageable);
         return Response.success(responses);
