@@ -43,7 +43,7 @@ public class PartyCommentService {
         //회원
         User user = getUser(userId);
         //파티
-        Party party = partyRepository.findById(partyId).orElseThrow(() -> new IllegalStateException());
+        Party party = partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND));
         //파티 댓글
         PartyComment partyComment = PartyComment.builder()
                 .body(body)
