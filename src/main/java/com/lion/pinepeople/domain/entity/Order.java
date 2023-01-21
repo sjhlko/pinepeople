@@ -39,7 +39,7 @@ public class Order{
 
     private Integer cost;
 
-    private Integer accumulateCost;
+    private Integer accumulatePoint;
 
     private Integer discountPoint;
 
@@ -84,7 +84,7 @@ public class Order{
                 .orderDate(Timestamp.valueOf(LocalDateTime.now()))
                 .updatedAt(Timestamp.valueOf(LocalDateTime.now()))
                 .cost(userOneCost)
-                .accumulateCost(accumulatePoint)
+                .accumulatePoint(accumulatePoint)
                 .totalCost(totalCost)
                 .build();
     }

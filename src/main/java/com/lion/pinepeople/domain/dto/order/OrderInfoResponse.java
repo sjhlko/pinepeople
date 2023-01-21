@@ -19,7 +19,7 @@ public class OrderInfoResponse {
 
     private Integer cost;
     private PaymentType paymentType;
-    private Integer accumulateCost;
+    private Integer accumulatePoint;
     private Integer discountPoint;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp orderDate;
@@ -31,7 +31,7 @@ public class OrderInfoResponse {
         return OrderInfoResponse.builder()
                 .orderDate(order.getOrderDate())
                 .discountPoint(order.getDiscountPoint())
-                .accumulateCost(order.getAccumulateCost())
+                .accumulatePoint(order.getAccumulatePoint())
                 .cost(order.getCost())
                 .paymentType(order.getPaymentType())
                 .orderStatus(order.getOrderStatus())
@@ -44,7 +44,7 @@ public class OrderInfoResponse {
         Page<OrderInfoResponse> orderDtoList = orderList.map(o -> OrderInfoResponse.builder()
                 .orderDate(o.getOrderDate())
                 .discountPoint(o.getDiscountPoint())
-                .accumulateCost(o.getAccumulateCost())
+                .accumulatePoint(o.getAccumulatePoint())
                 .cost(o.getCost())
                 .paymentType(o.getPaymentType())
                 .orderStatus(o.getOrderStatus())

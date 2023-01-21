@@ -49,8 +49,8 @@ public class OrderService {
 
 //        Integer integer = remainingSeats(findParty);
         Integer userOneCost = userOneCost(findParty);
-        Integer accumulatePoint = getAccumulatePoint(orderRequest, findParty, findUser);
-        Integer totalCost = totalCost(orderRequest, userOneCost);
+        Integer accumulatePoint = getAccumulatePoint(orderRequest, findParty);
+        Integer totalCost = totalCost(findUser, orderRequest, userOneCost);
 
         // 주문 생성
         Order createOrder = Order.createOrder(findUser,findParty,userOneCost,accumulatePoint,totalCost,orderRequest);
@@ -110,7 +110,7 @@ public class OrderService {
         Order findOrder = getOrder(orderId);
         validateUser(findUser, findOrder);
 
-//        int remainingSeats = findParty.getPartySize() + 1;
+//        int remainingSeats = findParty.getPartySize() ++;
 
         // 주문 시 회원 포인트 정보 수정
         findUser.updatePoint(plusPoint(findUser, findOrder));
@@ -131,7 +131,7 @@ public class OrderService {
     }
      /** 해당 파티있는지 체크 **/
     private Party getParty(Long partyId) {
-        return partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
+        return partyRepository.findById(partyId).orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND, ErrorCode.PARTY_NOT_FOUND.getMessage()));
     }
     /** 해당 주문있는지 체크 **/
     private Order getOrder(Long orderId) {
@@ -145,9 +145,9 @@ public class OrderService {
     }
 
 
-    /** 주문 취소 시 회원의 포인트 복구하는 메서드 -> (회원 기존 포인트 + 사용포인트 - 적립금) **/
-    public Integer plusPoint(User findUser, Order findOrder) {
-        return findUser.getPoint() + findOrder.getDiscountPoint() - findOrder.getAccumulateCost();
+    /** 주문 시 회원 포인트 차감하는 메소드 (회원 기존 포인트 - 사용할 할인 금액 + 적립금) **/
+    public Integer minusPoint(OrderRequest orderRequest, User findUser, Integer accumulatePoint) {
+        return findUser.getPoint() - orderRequest.getDiscountPoint() + accumulatePoint;
     }
 
     /** 회원 한명의 파티 참가 비용 -> (파티 금액 / 파티 인원수) **/
@@ -156,26 +156,25 @@ public class OrderService {
     }
 
     /** 총 결제 비용 -> (회원 한명의 파티 참가 비용 - 할인금액)**/
-    private Integer totalCost(OrderRequest orderRequest, Integer userOneCost) {
+    private Integer totalCost(User findUser, OrderRequest orderRequest, Integer userOneCost) {
+        if (findUser.getPoint() < orderRequest.getDiscountPoint()) {
+            throw new AppException(ErrorCode.INVALID_ORDER_TOTAL_COST,"현재 사용할 수 있는 포인트는 총 "+findUser.getPoint() + "포인트 입니다.");
+        }
         int totalCost = userOneCost - orderRequest.getDiscountPoint();
         if (totalCost < 0) {
-            throw new AppException(ErrorCode.DATABASE_ERROR,"총 결제금액인 0원 미만입니다. 할인금액을 다시 입력해주세요");
+            throw new AppException(ErrorCode.INVALID_ORDER_TOTAL_COST,"총 결제금액인 0원 미만입니다. 할인금액을 다시 입력해주세요");
         }
         return totalCost;
     }
 
     /** 적립금 계산하는 메서드 -> ((회원 한명의 파티 참가 비용 - 할인금액) * 5% )**/
-    private Integer getAccumulatePoint(OrderRequest orderRequest, Party findParty, User findUser) {
-        int accumulatePoint = (int) ((userOneCost(findParty) - orderRequest.getDiscountPoint()) * 0.05);
-        if (findUser.getPoint() < orderRequest.getDiscountPoint()) {
-            throw new AppException(ErrorCode.DATABASE_ERROR,"현재 사용할 수 있는 포인트는 총 "+findUser.getPoint() + "포인트 입니다.");
-        }
-        return accumulatePoint;
+    private Integer getAccumulatePoint(OrderRequest orderRequest, Party findParty) {
+        return (int) ((userOneCost(findParty) - orderRequest.getDiscountPoint()) * 0.05);
     }
 
-    /** 주문 시 회원 포인트 차감하는 메소드 (회원 기존 포인트 - 사용할 할인 금액 + 적립금) **/
-    public Integer minusPoint(OrderRequest orderRequest, User findUser, Integer accumulatePoint) {
-        return findUser.getPoint() - orderRequest.getDiscountPoint() + accumulatePoint;
+    /** 주문 취소 시 회원의 포인트 복구하는 메서드 -> (회원 기존 포인트 + 사용포인트 - 적립금) **/
+    public Integer plusPoint(User findUser, Order findOrder) {
+        return findUser.getPoint() + findOrder.getDiscountPoint() - findOrder.getAccumulatePoint();
     }
 
 
@@ -185,7 +184,7 @@ public class OrderService {
      */
 //    // 주문 생성 시 파티 인원수 - 1
 //    public Integer remainingSeats(Party findParty) {
-//        int i = findParty.getPartySize() - 1;
+//        int i = findParty.getPartySize() --;
 //        if (i < 0) {
 //            throw new AppException(ErrorCode.INVALID_PERMISSION,"이미 마감된 파티입니다.");
 //        }
