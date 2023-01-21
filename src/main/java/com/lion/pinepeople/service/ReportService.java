@@ -41,15 +41,15 @@ public class ReportService {
         // 신고 중복 확인 후 저장
         Optional<Report> confirmReport = reportRepository.findByFromUserIdAndUser(loginUserId, targetUser);
         if(confirmReport.isPresent()){
-            throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage());
+            throw new AppException(ErrorCode.DUPLICATED_REPORT, ErrorCode.DUPLICATED_REPORT.getMessage());
         }
         Report report = Report.toEntity(loginUserId, targetUser);
         reportRepository.save(report);
-        log.info("here");
+
         // 신고당한사람의 정보를 플러스
         targetUser.updateWarningCnt();
         userRepository.save(targetUser);
-        log.info("here2");
+
         //3이상이면 블랙리스트처리
         if (targetUser.getWarningCnt() >= 3){
             BlackList blackList = BlackList.toEntity(LocalDateTime.now(), targetUser);

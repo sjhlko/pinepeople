@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +31,8 @@ public class PartyCommentController {
      */
     @PostMapping
     public Response addPartyComment(@PathVariable Long partyId, @RequestBody PartyCommentRequest partyCommentRequest, Authentication authentication) {
-        long userId = Long.parseLong(authentication.getName());
-        PartyCommentResponse response = partyCommentService.addPartyComment(partyId, userId, partyCommentRequest.getBody());
+
+        PartyCommentResponse response = partyCommentService.addPartyComment(partyId, authentication.getName(), partyCommentRequest.getBody());
         return Response.success(response);
     }
 
@@ -42,7 +44,8 @@ public class PartyCommentController {
      * @return Page<PartyCommentListResponse> 응답
      */
     @GetMapping
-    public Response getList(@PathVariable Long partyId, Pageable pageable) {
+    public Response getList(@PathVariable Long partyId, @PageableDefault(size = 10,
+            sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PartyCommentListResponse> responses =
                 partyCommentService.getComments(partyId, pageable);
         return Response.success(responses);
@@ -58,8 +61,8 @@ public class PartyCommentController {
      */
     @PatchMapping("/{commentId}")
     public Response updatePartyComment(@PathVariable Long partyId, @PathVariable Long commentId ,@RequestBody PartyCommentUpdateRequest request, Authentication authentication) {
-        long userId = Long.parseLong(authentication.getName());
-        PartyCommentUpdateResponse response = partyCommentService.updateComment(partyId, commentId, request.getBody(), userId);
+
+        PartyCommentUpdateResponse response = partyCommentService.updateComment(partyId, commentId, request.getBody(), authentication.getName());
         return Response.success(response);
     }
 
@@ -72,8 +75,8 @@ public class PartyCommentController {
      */
     @DeleteMapping("/{commentId}")
     public Response deletePartyComment(@PathVariable Long partyId, @PathVariable Long commentId , Authentication authentication) {
-        long userId = Long.parseLong(authentication.getName());
-        PartyCommentDeleteResponse response = partyCommentService.deleteComment(partyId, commentId, userId);
+
+        PartyCommentDeleteResponse response = partyCommentService.deleteComment(partyId, commentId, authentication.getName());
         return Response.success(response);
     }
 

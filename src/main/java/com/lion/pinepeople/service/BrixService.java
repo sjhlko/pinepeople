@@ -1,6 +1,6 @@
 package com.lion.pinepeople.service;
 
-import com.lion.pinepeople.domain.brix.BrixRequest;
+import com.lion.pinepeople.domain.dto.brix.BrixRequest;
 import com.lion.pinepeople.domain.entity.Brix;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.enums.Star;
@@ -25,9 +25,9 @@ public class BrixService {
      * @param loginUserId 로그인 유저 아이디
      * @return 당도 측정 완료 메세지
      */
-    public String calculationBrix(BrixRequest request, Long userId, Long loginUserId) {
+    public String calculationBrix(BrixRequest request, Long userId, String loginUserId) {
         //로그인 유저 검사
-        userRepository.findById(loginUserId)
+        userRepository.findById(Long.parseLong(loginUserId))
                 .orElseThrow( () -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
         //별점을 줄 유저 확인
         User user = userRepository.findById(userId)
@@ -48,9 +48,9 @@ public class BrixService {
      * @param userId 당도를 조회할 유저 아이디
      * @return 당도
      */
-    public Double getBrix(Long loginUserId, Long userId) {
+    public Double getBrix(String loginUserId, Long userId) {
         //로그인 유저 검사
-        userRepository.findById(loginUserId)
+        userRepository.findById(Long.parseLong(loginUserId))
                 .orElseThrow( () -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
         //별점을 줄 유저 확인
         User user = userRepository.findById(userId)
