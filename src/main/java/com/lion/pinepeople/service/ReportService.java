@@ -30,20 +30,21 @@ public class ReportService {
      * @param userId 신고할 타겟 유저
      * @return 신고 성공 여부
      */
-    public String addReport(Long loginUserId, Long userId) {
+    public String addReport(String loginUserId, Long userId) {
+        Long loginUser = Long.parseLong(loginUserId);
         //로그인 유저 검사
-        userRepository.findById(loginUserId)
+        userRepository.findById(loginUser)
                 .orElseThrow( () -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
         //신고할 유저 확인
         User targetUser = userRepository.findById(userId)
                 .orElseThrow( () -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
 
         // 신고 중복 확인 후 저장
-        Optional<Report> confirmReport = reportRepository.findByFromUserIdAndUser(loginUserId, targetUser);
+        Optional<Report> confirmReport = reportRepository.findByFromUserIdAndUser(loginUser, targetUser);
         if(confirmReport.isPresent()){
             throw new AppException(ErrorCode.DUPLICATED_REPORT, ErrorCode.DUPLICATED_REPORT.getMessage());
         }
-        Report report = Report.toEntity(loginUserId, targetUser);
+        Report report = Report.toEntity(loginUser, targetUser);
         reportRepository.save(report);
 
         // 신고당한사람의 정보를 플러스
