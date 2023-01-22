@@ -25,7 +25,7 @@ public class ReportService {
 
 
     /**
-     *
+     * 유저 신고하기
      * @param loginUserId 신고한 유저
      * @param userId 신고할 타겟 유저
      * @return 신고 성공 여부
