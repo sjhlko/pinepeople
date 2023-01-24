@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum OrderStatus {
 
-    ORDER_CANCEL,
-    ORDER_COMPLETE
+    ORDER_COMPLETE, // 주문 완료
+    ORDER_CANCEL // 주문 취소
 
 }
