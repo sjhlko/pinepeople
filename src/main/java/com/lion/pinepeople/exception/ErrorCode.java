@@ -29,6 +29,8 @@ public enum ErrorCode {
     INVALID_ORDER_TOTAL_COST(HttpStatus.CONFLICT, "주문 금액은 0원 미만일 수 없습니다."),
     EXPIRE_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "로그인을 다시 해주세요."),
     BLACKLIST_NOT_FOUND(HttpStatus.NOT_FOUND, "블랙리스트에서 해당 내용을 찾을 수 없습니다."),
+    DUPLICATED_PARTICIPANT(HttpStatus.CONFLICT, "해당 파티에 이미 속해있거나, 가입신청되었습니다."),
+    PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 파티원이 없습니다."),
     EXPIRE_TOKEN(HttpStatus.UNAUTHORIZED,"토큰이 만료되었습니다.");
 
     private HttpStatus status;
