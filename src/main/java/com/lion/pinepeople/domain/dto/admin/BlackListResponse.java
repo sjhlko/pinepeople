@@ -18,12 +18,14 @@ public class BlackListResponse {
     private Long blackListId;
     private LocalDateTime startDate;
     private List<String> fromUserEmail;
+    private List<String> reportComment;
 
-    public static BlackListResponse fromEntity(BlackList blackList, List<String> fromUserEmail) {
+    public static BlackListResponse fromEntity(BlackList blackList, List<String> fromUserEmail, List<String> reportComment) {
         return BlackListResponse.builder()
                 .blackListId(blackList.getBlackListId())
                 .startDate(blackList.getStartDate())
                 .fromUserEmail(fromUserEmail)
+                .reportComment(reportComment)
                 .build();
     }
 
