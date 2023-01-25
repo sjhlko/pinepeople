@@ -14,7 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags = "파티 댓글")
+@Api(tags = "PartyComment API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/partys/{partyId}/party-comments")
