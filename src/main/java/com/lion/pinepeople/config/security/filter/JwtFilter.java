@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
-//@Component
+@Component
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
