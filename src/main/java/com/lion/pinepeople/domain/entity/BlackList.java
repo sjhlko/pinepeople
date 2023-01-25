@@ -27,6 +27,7 @@ public class BlackList extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Enumerated(EnumType.STRING)
     private BlackListStatus status;
 
     public static BlackList toEntity(LocalDateTime dateTime, User user, BlackListStatus status){
