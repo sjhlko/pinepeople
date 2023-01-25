@@ -32,7 +32,7 @@ public class PartyInfoResponse {
     private Timestamp updatedAt;
     private String address;
     private String announcement;
-    private User host;
+    private String categoryName;
 
     //파티 생성, 조회에 쓰이는 메소드
     public static PartyInfoResponse of(Party party){
@@ -49,6 +49,7 @@ public class PartyInfoResponse {
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())
+                .categoryName(party.getCategory().getName())
                 .build();
     }
 
