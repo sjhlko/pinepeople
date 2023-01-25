@@ -26,7 +26,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @Slf4j
 public class AdminController {
     private final AdminService adminService;
-    private final UserService userService;
+
 
     /**
      * 계정 등급 변경 메서드
