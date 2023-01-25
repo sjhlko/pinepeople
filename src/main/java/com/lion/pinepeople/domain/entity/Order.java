@@ -1,8 +1,15 @@
 package com.lion.pinepeople.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lion.pinepeople.domain.dto.order.OrderRequest;
+import com.lion.pinepeople.exception.ErrorCode;
+import com.lion.pinepeople.exception.customException.AppException;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
@@ -18,27 +25,44 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Table(name = "orders")
+@Slf4j
 @Builder
 @AllArgsConstructor
-@Slf4j
-public class Order {
+@EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties(value={"updatedAt"}, allowGetters=true)
+public class Order{
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "order_id")
     private Long id;
 
+    private Integer cost;
+
+    private Integer accumulatePoint;
+
+    private Integer discountPoint;
+
+    private Integer totalCost;
+
+    // 주문 상태(주문 취소, 주문 완료)
     @Enumerated(STRING)
-    private OrderType orderType;
+    private OrderStatus orderStatus;
 
-    private Integer cost; // 파티금액 / 파티원 = cost
+    // 결제 수단(카드 결제, 만나서 결제)
+    @Enumerated(STRING)
+    private PaymentType paymentType;
 
-    private Integer accumulateCost;
-
+    @CreatedDate
+    @Column(name = "order_date", updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp orderDate;
 
-    private Integer discountPoint; // cost >= discountPoint
+    @LastModifiedDate
+    @Column(name = "update_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private Timestamp updatedAt;
+
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
@@ -49,38 +73,27 @@ public class Order {
     private Party party;
 
 
-    // 주문 메소드
-    public static Order creatOrder(User user, Party party, Order order) {
+    /** 주문 생성 메소드 **/
+    public static Order createOrder(User user, Party party, Integer userOneCost, Integer accumulatePoint,Integer totalCost, OrderRequest orderRequest) {
         return Order.builder()
                 .user(user)
                 .party(party)
-                .orderType(order.getOrderType())
+                .orderStatus(OrderStatus.ORDER_COMPLETE)
+                .paymentType(orderRequest.getPaymentType())
+                .discountPoint(orderRequest.getDiscountPoint())
                 .orderDate(Timestamp.valueOf(LocalDateTime.now()))
-                .cost(order.userOneCost(party))
-                .discountPoint(order.discountPoint)
-                .accumulateCost(order.accumulatePoints(party))
+                .updatedAt(Timestamp.valueOf(LocalDateTime.now()))
+                .cost(userOneCost)
+                .accumulatePoint(accumulatePoint)
+                .totalCost(totalCost)
                 .build();
     }
 
-    // 적립금( 5% ? )
-    public Integer accumulatePoints(Party party) {
-        int points = (int) ((userOneCost(party) - discountPoint) * 0.05);
-        return points;
+    /** 주문 취소 시 주문 상태 변경하는 메소드 **/
+    public void cancelOrder(OrderStatus orderStatus) {
+        if (orderStatus.equals(OrderStatus.ORDER_CANCEL)) {
+            throw new AppException(ErrorCode.DATABASE_ERROR, "이미 취소된 주문입니다.");
+        }
+        this.orderStatus = OrderStatus.ORDER_CANCEL;
     }
-
-    // 회원 한명의 파티 참가 비용
-    public static Integer userOneCost (Party party) {
-        int price = party.getPartyCost() / party.getPartySize();
-        return price;
-
-    }
-
-    /**
-     * 총 결제 금액 컬럼 추가?!
-     */
-    public Integer totalPrice(Party party) {
-        int totalPrice = userOneCost(party) - discountPoint;
-        return totalPrice;
-    }
-
 }

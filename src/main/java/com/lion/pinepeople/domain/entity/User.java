@@ -68,4 +68,8 @@ public class User extends BaseEntity {
     public void updateWarningCnt() {
         this.warningCnt += 1;
     }
+
+    public void updatePoint(int point) {
+        this.point = point;
+    }
 }

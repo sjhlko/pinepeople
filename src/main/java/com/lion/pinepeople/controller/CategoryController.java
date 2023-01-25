@@ -60,7 +60,10 @@ public class CategoryController {
         return Response.success("카테고리 삭제 성공");
     }
 
-    /**카테고리 단건 조회**/
+    /**카테고리 단건 조회
+     * @param branch 대부류 카테고리 조회
+     * @param code 소분류 카테고리 조회
+     * **/
     @GetMapping("/{branch}/{code}")
     public Response getCategory (@PathVariable String branch,@PathVariable String code) {
         return Response.success(categoryService.getCategoryDTO(branch,code));

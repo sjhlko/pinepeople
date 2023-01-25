@@ -2,7 +2,8 @@ package com.lion.pinepeople.domain.dto.order;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lion.pinepeople.domain.entity.Order;
-import com.lion.pinepeople.domain.entity.OrderType;
+import com.lion.pinepeople.domain.entity.OrderStatus;
+import com.lion.pinepeople.domain.entity.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,22 +18,24 @@ import java.sql.Timestamp;
 public class OrderInfoResponse {
 
     private Integer cost;
-    private OrderType orderType;
-    private Integer accumulateCost;
+    private PaymentType paymentType;
+    private Integer accumulatePoint;
     private Integer discountPoint;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp orderDate;
-    private Integer totalPrice; // 총 결제 금액
+    private OrderStatus orderStatus;
+    private Integer totalCost;
 
     /* Entity -> Dto 변환 */
     public static OrderInfoResponse toDto(Order order) {
         return OrderInfoResponse.builder()
                 .orderDate(order.getOrderDate())
                 .discountPoint(order.getDiscountPoint())
-                .accumulateCost(order.getAccumulateCost())
+                .accumulatePoint(order.getAccumulatePoint())
                 .cost(order.getCost())
-                .orderType(order.getOrderType())
-                .totalPrice(order.totalPrice(order.getParty()))
+                .paymentType(order.getPaymentType())
+                .orderStatus(order.getOrderStatus())
+                .totalCost(order.getTotalCost())
                 .build();
     }
 
@@ -41,10 +44,11 @@ public class OrderInfoResponse {
         Page<OrderInfoResponse> orderDtoList = orderList.map(o -> OrderInfoResponse.builder()
                 .orderDate(o.getOrderDate())
                 .discountPoint(o.getDiscountPoint())
-                .accumulateCost(o.getAccumulateCost())
+                .accumulatePoint(o.getAccumulatePoint())
                 .cost(o.getCost())
-                .orderType(o.getOrderType())
-                .totalPrice(o.totalPrice(o.getParty()))
+                .paymentType(o.getPaymentType())
+                .orderStatus(o.getOrderStatus())
+                .totalCost(o.getTotalCost())
                 .build());
         return orderDtoList;
     }
