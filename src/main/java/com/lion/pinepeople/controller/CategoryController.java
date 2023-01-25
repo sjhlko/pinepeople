@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@Api(tags = "카테고리")
+@Api(tags = "Category API")
 @RestController
 @RequestMapping("/api/categories")
 @RequiredArgsConstructor

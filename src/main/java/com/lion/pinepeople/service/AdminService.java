@@ -55,7 +55,7 @@ public class AdminService {
         changeUser.updateRole(UserRole.ADMIN);
         userRepository.saveAndFlush(changeUser);
         //UserRoleResponse DTO 반환
-        return UserRoleResponse.of(changeUser.getName(), "관리자로 권한이 변경되었습니다.");
+        return UserRoleResponse.of("관리자로 권한이 변경되었습니다.", changeUser.getName());
     }
 
     /**
