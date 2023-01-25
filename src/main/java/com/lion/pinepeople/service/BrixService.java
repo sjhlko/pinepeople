@@ -19,7 +19,7 @@ public class BrixService {
     public final double BRIXDEFAULT = 14.0;
 
     /**
-     *
+     * 당도 계산하기
      * @param request 별점
      * @param userId 당도평가 대상 유저 아이디
      * @param loginUserId 로그인 유저 아이디
@@ -43,7 +43,7 @@ public class BrixService {
     }
 
     /**
-     *
+     * 당도 조회하기
      * @param loginUserId 로그인 유저 아이디
      * @param userId 당도를 조회할 유저 아이디
      * @return 당도
@@ -57,7 +57,7 @@ public class BrixService {
                 .orElseThrow( () -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
         //해당 유저의 당도 찾기
         Brix brix = brixRepository.findByUser(user)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new AppException(ErrorCode.BRIX_NOT_FOUND, ErrorCode.BRIX_NOT_FOUND.getMessage()));
 
         return brix.getBrixFigure();
     }

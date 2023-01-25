@@ -16,7 +16,7 @@ public class BrixController {
     private final BrixService brixService;
 
     /**
-     *
+     * 당도를 계산하는 메서드
      * @param userId 당도평가를 진행할 대상 아이디
      * @param request 별점
      * @param authentication 토큰 권한
@@ -32,7 +32,7 @@ public class BrixController {
 
 
     /**
-     *
+     * 당도를 조회하는 메서드
      * @param userId 당도를 조회할 대상 아이디
      * @param authentication 로그인한 아이디
      * @return brix개수
