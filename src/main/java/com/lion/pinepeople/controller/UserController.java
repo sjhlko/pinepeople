@@ -97,20 +97,6 @@ public class UserController {
     }
 
     /**
-     * 계정 등급 변경 메서드
-     *
-     * @param authentication userId
-     * @param id             계정 등급을 변경할 userId
-     * @return userName, message
-     */
-    @PostMapping("/{id}/change-role")
-    @ApiOperation(value = "계정 등급 변경")
-    public Response<UserRoleResponse> changeRole(@ApiIgnore Authentication authentication, @PathVariable Long id) {
-        UserRoleResponse userRoleResponse = userService.changeRole(authentication.getName(), id);
-        return Response.success(userRoleResponse);
-    }
-
-    /**
      * 유저 수정 메서드
      *
      * @param authentication    수정하는 유저 id

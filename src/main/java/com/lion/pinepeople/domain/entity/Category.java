@@ -3,7 +3,6 @@ package com.lion.pinepeople.domain.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class Category {
     private String name; // 카테고리 이름
 
     @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn (name ="parent_cagegory_id")
+    @JoinColumn (name ="parent_category_id")
     private Category parentCategory;
 
     @OneToMany (mappedBy = "parentCategory", cascade = CascadeType.ALL)

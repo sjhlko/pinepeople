@@ -21,7 +21,7 @@ public class ReportController {
      */
     @PostMapping("/users/{userId}/reports")
     public Response<Void> reported(@PathVariable Long userId, Authentication authentication){
-        Long loginUserId = Long.parseLong(authentication.getName());
+        String loginUserId = authentication.getName();
         String result = reportService.addReport(loginUserId, userId);
         return Response.success(result);
     }

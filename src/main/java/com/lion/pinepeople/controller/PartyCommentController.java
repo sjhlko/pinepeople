@@ -14,7 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags = "파티 댓글")
+@Api(tags = "PartyComment API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/partys/{partyId}/party-comments")
@@ -31,8 +31,8 @@ public class PartyCommentController {
      */
     @PostMapping
     public Response addPartyComment(@PathVariable Long partyId, @RequestBody PartyCommentRequest partyCommentRequest, Authentication authentication) {
-        long userId = Long.parseLong(authentication.getName());
-        PartyCommentResponse response = partyCommentService.addPartyComment(partyId, userId, partyCommentRequest.getBody());
+
+        PartyCommentResponse response = partyCommentService.addPartyComment(partyId, authentication.getName(), partyCommentRequest.getBody());
         return Response.success(response);
     }
 
@@ -61,8 +61,8 @@ public class PartyCommentController {
      */
     @PatchMapping("/{commentId}")
     public Response updatePartyComment(@PathVariable Long partyId, @PathVariable Long commentId ,@RequestBody PartyCommentUpdateRequest request, Authentication authentication) {
-        long userId = Long.parseLong(authentication.getName());
-        PartyCommentUpdateResponse response = partyCommentService.updateComment(partyId, commentId, request.getBody(), userId);
+
+        PartyCommentUpdateResponse response = partyCommentService.updateComment(partyId, commentId, request.getBody(), authentication.getName());
         return Response.success(response);
     }
 
@@ -75,8 +75,8 @@ public class PartyCommentController {
      */
     @DeleteMapping("/{commentId}")
     public Response deletePartyComment(@PathVariable Long partyId, @PathVariable Long commentId , Authentication authentication) {
-        long userId = Long.parseLong(authentication.getName());
-        PartyCommentDeleteResponse response = partyCommentService.deleteComment(partyId, commentId, userId);
+
+        PartyCommentDeleteResponse response = partyCommentService.deleteComment(partyId, commentId, authentication.getName());
         return Response.success(response);
     }
 
