@@ -10,16 +10,17 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
+import static javax.persistence.FetchType.*;
+
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Where(clause = "deleted_at is null")
-@SQLDelete(sql = "UPDATE user SET deleted_at = now() WHERE party_comment_id = ?")
+@SQLDelete(sql = "UPDATE party_comment SET deleted_at = now() WHERE party_comment_id = ?")
 @EntityListeners(AuditingEntityListener.class)
 public class PartyComment extends BaseEntity  {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +30,18 @@ public class PartyComment extends BaseEntity  {
     @Column(nullable = false)
     private String body;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "party_id")
+    private Party party;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
 
 
+    /**변경감지 수정 메서드**/
+    public void update(String body) {
+        this.body = body;
+    }
 }

@@ -5,7 +5,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum OrderType {
+public enum PaymentType {
 
-    CREDIT_CARD, MEET_AND_PAY
+    CREDIT_CART,
+    CONTACT_PAYMENT
 }

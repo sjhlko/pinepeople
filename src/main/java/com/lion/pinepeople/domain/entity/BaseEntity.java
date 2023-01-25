@@ -18,8 +18,8 @@ import java.sql.Timestamp;
 public abstract class BaseEntity {
 
     @CreatedDate
-    @Column(name ="registered_at" ,updatable = false)
-    private Timestamp registeredAt;
+    @Column(name ="created_at" ,updatable = false)
+    private Timestamp createdAt;
 
     @LastModifiedDate
     @Column(name ="update_at")
