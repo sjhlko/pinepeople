@@ -21,10 +21,10 @@ public class Post extends BaseEntity {
     private String body;
 
     @ManyToOne
-    @JoinColumn(name = "userID")
+    @JoinColumn(name = "user_id")
     private User user;
 
-    private Long userId;
+//    private Long userId;
 
 
 
