@@ -1,7 +1,6 @@
 package com.lion.pinepeople.domain.dto.order;
 
-import com.lion.pinepeople.domain.entity.Order;
-import com.lion.pinepeople.domain.entity.OrderType;
+import com.lion.pinepeople.domain.entity.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,13 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderRequest {
 
-    private OrderType orderType;
+    private PaymentType paymentType;
     private Integer discountPoint;
 
-    public Order toEntity() {
-        return Order.builder()
-                .discountPoint(discountPoint)
-                .orderType(orderType)
-                .build();
-    }
 }

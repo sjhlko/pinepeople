@@ -75,36 +75,7 @@ public class UserService {
         return UserLoginResponse.of(token);
     }
 
-    /**
-     * 계정 등급 변경 메서드
-     *
-     * @param id     변경할 userId
-     * @param userId 변경하는 userId
-     * @return UserRoleResponse userName, message
-     */
-    public UserRoleResponse changeRole(String userId, Long id) {
-        //admin 유저 체크
-        User admin = userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> {
-            throw new AppException(ErrorCode.USER_NOT_FOUND, "ADMIN 유저를 찾을 수 없습니다.");
-        });
-        //admin 유저가 맞는지 체크
-        if (!admin.getRole().equals(UserRole.ADMIN)) {
-            throw new AppException(ErrorCode.INVALID_PERMISSION, "계정 등급을 변경할 권한이 없습니다.");
-        }
-        //changeRole 대상 유저 체크
-        User changeUser = userRepository.findById(id).orElseThrow(() -> {
-            throw new AppException(ErrorCode.USER_NOT_FOUND, "계정 등급을 변경할 유저를 찾을 수 없습니다.");
-        });
-        //changeRole 대상 유저 role 체크
-        if (changeUser.getRole().equals(UserRole.ADMIN)) {
-            throw new AppException(ErrorCode.INVALID_PERMISSION, "해당 계정은 ADMIN 계정입니다.");
-        }
-        //changeRole 대상 유저 role 수정 및 업데이트
-        changeUser.updateRole(UserRole.ADMIN);
-        userRepository.saveAndFlush(changeUser);
-        //UserRoleResponse DTO 반환
-        return UserRoleResponse.of(changeUser.getName(), "관리자로 권한이 변경되었습니다.");
-    }
+
 
     /**
      * 유저 수정 메서드
