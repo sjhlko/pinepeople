@@ -7,6 +7,8 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +24,7 @@ public class AlarmController {
     private final AlarmService alarmService;
 
     @GetMapping("/alarms/my")
-    public Response<Page<AlarmResponse>> alarmList(Pageable pageable,@ApiIgnore Authentication authentication) {
+    public Response<Page<AlarmResponse>> alarmList(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable, @ApiIgnore Authentication authentication) {
         Long loginUserId = Long.parseLong(authentication.getName());
         Page<AlarmResponse> alarmList = alarmService.findAlarmList(pageable, loginUserId);
         return Response.success(alarmList);
