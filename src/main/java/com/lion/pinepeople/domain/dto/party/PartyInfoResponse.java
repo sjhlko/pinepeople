@@ -3,6 +3,7 @@ package com.lion.pinepeople.domain.dto.party;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lion.pinepeople.domain.entity.Participant;
 import com.lion.pinepeople.domain.entity.Party;
+import com.lion.pinepeople.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class PartyInfoResponse {
     private Timestamp updatedAt;
     private String address;
     private String announcement;
+    private User host;
 
     //파티 생성, 조회에 쓰이는 메소드
     public static PartyInfoResponse of(Party party){
@@ -42,6 +44,7 @@ public class PartyInfoResponse {
                 .partyCost(party.getPartyCost())
                 .partyTitle(party.getPartyTitle())
                 .announcement(party.getAnnouncement())
+                .host(party.getUser())
                 .createdAt(party.getCreatedAt())
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())

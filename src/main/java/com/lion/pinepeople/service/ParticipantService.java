@@ -1,9 +1,12 @@
 package com.lion.pinepeople.service;
 
 import com.lion.pinepeople.domain.dto.participant.ParticipantCreateResponse;
+import com.lion.pinepeople.domain.dto.participant.ParticipantInfoResponse;
+import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
 import com.lion.pinepeople.domain.entity.Participant;
 import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.enums.ApprovalStatus;
 import com.lion.pinepeople.enums.ParticipantRole;
 import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
@@ -15,9 +18,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ParticipantService {
     private final ParticipantRepository participantRepository;
     private final PartyRepository partyRepository;
@@ -50,7 +57,7 @@ public class ParticipantService {
      * 유저가 해당 파티의 host 가 아닐 경우 INVALID_PERMISSION 에러 발생
      */
     public void validateHost(Party party, User currentUser){
-        if(party.getUser().equals(currentUser)){
+        if(!Objects.equals(party.getUser().getId(), currentUser.getId())){
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
         }
     }
@@ -68,6 +75,19 @@ public class ParticipantService {
     }
 
     /**
+     * 특정 파티에 파티원으로서 존재하는지를 확인함
+     * @param user 존재하는 유저인지 확인하고픈 유저
+     * @param party 확인하고 싶은 파티
+     * 존재할 경우 DUPLICATED_PARTICIPANT 에러 발생
+     */
+    public void checkParticipantExist(Party party, User user){
+        if(participantRepository.findParticipantByUserAndParty(user,party).isPresent()){
+            throw new AppException(ErrorCode.DUPLICATED_PARTICIPANT,ErrorCode.DUPLICATED_PARTICIPANT.getMessage());
+        }
+    }
+
+
+    /**
      * 특정 User 를 host 로 하는 파티가 생성될때 participant table에 해당 유저와 파티정보를 저장함.
      * @param user 파티의 host
      * @param party host 에 의해 생성된 파티
@@ -77,6 +97,7 @@ public class ParticipantService {
     public Participant createHostParticipant(User user, Party party){
         validateUser(user.getId().toString());
         validateParty(party.getId());
+        checkParticipantExist(party,user);
         return participantRepository.save(Participant.of(user,party, ParticipantRole.HOST));
     }
 
@@ -90,6 +111,7 @@ public class ParticipantService {
     public ParticipantCreateResponse createGuestParticipant(Long partyId, String userId){
         User user = validateUser(userId);
         Party party = validateParty(partyId);
+        checkParticipantExist(party,user);
         Participant participant = participantRepository.save(Participant.of(user,party, ParticipantRole.GUEST));
         return ParticipantCreateResponse.of(participant);
     }
@@ -101,6 +123,31 @@ public class ParticipantService {
      */
     public Page<Participant> getMyGuestParty(Pageable pageable, User user){
         validateUser(user.getId().toString());
-        return participantRepository.findAllByUserAndParticipantRole(pageable,user,ParticipantRole.GUEST);
+        return participantRepository.findAllByUserAndParticipantRoleAndApprovalStatus(pageable,user,ParticipantRole.GUEST,ApprovalStatus.APPROVED);
+    }
+
+    /**
+     * 특정 파티의 승인된 모든 파티원의 목록을 조회함
+     * @param partyId 조회하고자 하는 파티
+     * @return participant 테이블에서 해당 파티의 approved 상태의 파티원의 목록을 리턴함
+     */
+    public Page<ParticipantInfoResponse> getApprovedParticipant(Pageable pageable, Long partyId) {
+        Party party = validateParty(partyId);
+        Page<Participant> participants = participantRepository.findAllByPartyAndApprovalStatus(pageable,party,ApprovalStatus.APPROVED);
+        return participants.map(ParticipantInfoResponse::of);
+    }
+
+    /**
+     * 특정 파티의 대기중인 모든 파티원의 목록을 조회함
+     * @param partyId 조회하고자 하는 파티
+     * @param userId 해당 파티의 파티장
+     * @return participant 테이블에서 해당 파티의 waiting 상태의 파티원의 목록을 리턴함
+     */
+    public Page<ParticipantInfoResponse> getWaitingParticipant(Pageable pageable, Long partyId, String userId) {
+        Party party = validateParty(partyId);
+        User user = validateUser(userId);
+        validateHost(party,user);
+        Page<Participant> participants = participantRepository.findAllByPartyAndApprovalStatus(pageable,party,ApprovalStatus.WAITING);
+        return participants.map(ParticipantInfoResponse::of);
     }
 }

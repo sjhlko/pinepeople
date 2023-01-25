@@ -13,9 +13,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PartyService {
     private final PartyRepository partyRepository;
     private final UserRepository userRepository;
@@ -49,7 +53,7 @@ public class PartyService {
      * 유저가 해당 파티의 host 가 아닐 경우 INVALID_PERMISSION 에러 발생
      */
     public void validateHost(Party party, User currentUser){
-        if(party.getUser().equals(currentUser)){
+        if(!Objects.equals(party.getUser().getId(), currentUser.getId())){
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
         }
     }
@@ -162,8 +166,9 @@ public class PartyService {
             Page<Party> parties = partyRepository.findAllByUser(pageable,user);
             return parties.map(PartyInfoResponse::of);
         }
-        Page<Participant> participants = participantService.getMyGuestParty(pageable,user);
-        return participants.map(PartyInfoResponse::of);
-
+        else {
+            Page<Participant> participants = participantService.getMyGuestParty(pageable,user);
+            return participants.map(PartyInfoResponse::of);
+        }
     }
 }
