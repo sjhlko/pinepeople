@@ -1,5 +1,6 @@
 package com.lion.pinepeople.domain.entity;
 
+import com.lion.pinepeople.enums.BlackListStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,10 +27,18 @@ public class BlackList extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
-    public static BlackList toEntity(LocalDateTime dateTime, User user){
+    @Enumerated(EnumType.STRING)
+    private BlackListStatus status;
+
+    public static BlackList toEntity(LocalDateTime dateTime, User user, BlackListStatus status){
         return BlackList.builder()
                 .startDate(dateTime)
                 .user(user)
+                .status(status)
                 .build();
+    }
+
+    public void updateStatus(BlackListStatus approval) {
+        this.status = approval;
     }
 }

@@ -37,7 +37,7 @@ class ReportControllerTest {
     @WithMockUser
     void report_success() throws Exception{
         String response = "신고가 정상적으로 접수되었습니다.";
-        given(reportService.addReport(any(), any())).willReturn(response);
+        given(reportService.addReport(any(), any(), any())).willReturn(response);
 
         mockMvc.perform(post(url)
                         .with(csrf()))
