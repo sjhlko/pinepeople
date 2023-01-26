@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class PostReadResponse {
 
 
-    private Long postId;
+    private Long id;
     private String title;
     private String body;
     private String userName;
@@ -27,10 +27,14 @@ public class PostReadResponse {
     private LocalDateTime updatedAt;
 
 
-    // entity -> dto
+    /***
+     * convertToDto entity를 dto로 변환
+     * @param post
+     * @return
+     */
     public static PostReadResponse convertToDto(Post post) {
         return PostReadResponse.builder()
-                .postId(post.getPostId())
+                .id(post.getId())
                 .userName(post.getUser().getName())
                 .title(post.getTitle())
                 .body(post.getBody())
@@ -39,11 +43,15 @@ public class PostReadResponse {
                 .build();
     }
 
-
-    public static Page<PostReadResponse> ConvertListToDto(Page<Post> posts) {
+    /***
+     * convertListToDto
+     * @param posts
+     * @return
+     */
+    public static Page<PostReadResponse> convertListToDto(Page<Post> posts) {
 
         return posts.map(post -> PostReadResponse.builder()
-                .postId(post.getPostId())
+                .id(post.getId())
                 .userName(post.getUser().getName())
                 .title(post.getTitle())
                 .body(post.getBody())
