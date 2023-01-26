@@ -3,6 +3,7 @@ package com.lion.pinepeople.domain.dto.party;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lion.pinepeople.domain.entity.Participant;
 import com.lion.pinepeople.domain.entity.Party;
+import com.lion.pinepeople.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +32,8 @@ public class PartyInfoResponse {
     private Timestamp updatedAt;
     private String address;
     private String announcement;
+    private String categoryName;
+    private String hostName;
 
     //파티 생성, 조회에 쓰이는 메소드
     public static PartyInfoResponse of(Party party){
@@ -42,10 +45,12 @@ public class PartyInfoResponse {
                 .partyCost(party.getPartyCost())
                 .partyTitle(party.getPartyTitle())
                 .announcement(party.getAnnouncement())
+                .hostName(party.getUser().getName())
                 .createdAt(party.getCreatedAt())
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())
+                .categoryName(party.getCategory().getName())
                 .build();
     }
 
@@ -60,6 +65,7 @@ public class PartyInfoResponse {
                 .partyTitle(party.getPartyTitle())
                 .announcement(party.getAnnouncement())
                 .createdAt(createdAt)
+                .hostName(party.getUser().getName())
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())
@@ -77,6 +83,7 @@ public class PartyInfoResponse {
                 .partyCost(party.getPartyCost())
                 .partyTitle(party.getPartyTitle())
                 .announcement(party.getAnnouncement())
+                .hostName(party.getUser().getName())
                 .createdAt(party.getCreatedAt())
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
