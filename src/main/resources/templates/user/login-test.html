@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:object="${myInfo}">
+  <h1 th:text="|*{userName}님 반갑습니다.|">여기는 PinePeople</h1>
+    <form th:action="@{/users/logout}" method="post">
+        <button type="submit" class="btn btn-primary">Logout</button>
+    </form>
+</div>
+</body>
+</html>
