@@ -47,6 +47,16 @@ public class PartyService {
     }
 
     /**
+     * 특정 캬테고리가 존재하는지를 확인함
+     * @param categoryName 존재하는 파티인지 확인하고픈 카테고리의 이름
+     * @return 존재할 경우 해당 카테고리 이름에 맞는 category 리턴, 존재하지 않을 경우 CATEGORY_NOT_FOUND 에러 발생
+     */
+    public Category validateCategory(String categoryName){
+        return categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, ErrorCode.CATEGORY_NOT_FOUND.getMessage()));
+    }
+
+    /**
      * 특정 유저가 특정 파티의 host인지 확인
      * @param currentUser 현재 로그인된 회원
      * @param party 현재 로그인된 회원이 host 인지 확인할 파티
@@ -118,9 +128,10 @@ public class PartyService {
     public PartyUpdateResponse updateParty(Long partyId, PartyUpdateRequest partyUpdateRequest, String userId) {
         User user = validateUser(userId);
         Party party = validateParty(partyId);
-        Timestamp createdAt = party.getCreatedAt();
         validateHost(party,user);
-        Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party));
+        Category category = validateCategory(partyUpdateRequest.getCategory());
+        Timestamp createdAt = party.getCreatedAt();
+        Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party,category));
         return PartyUpdateResponse.of(createdAt,updatedParty);
     }
 
