@@ -91,6 +91,11 @@ public class CategoryService {
         return data;
     }
 
+    public List<Category> getCategorySteadily(String branch,Integer level) {
+        List<Category> branches = categoryRepository.findByBranchAndLevel(branch,level);
+        return branches;
+    }
+
     /**
      * 카테고리 소분류  단건 조회 메서드
      **/
