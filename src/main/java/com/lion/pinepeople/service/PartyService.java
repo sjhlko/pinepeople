@@ -112,7 +112,7 @@ public class PartyService {
      * @param userId 현재 로그인된 유저의 userId
      * @param partyId 수정하고자 하는 파티의 partyId
      * @param partyUpdateRequest 수정사항이 담긴 request
-     * @return 수정 전 파티정보와 수정 후 파티 정보를 리턴
+     * @return 수정 후 파티 정보를 리턴
      * 파티 정보 수정은 해당 파티의 host 만 가능하다.
      */
     public PartyUpdateResponse updateParty(Long partyId, PartyUpdateRequest partyUpdateRequest, String userId) {
