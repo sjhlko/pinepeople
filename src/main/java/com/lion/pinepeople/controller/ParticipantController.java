@@ -2,8 +2,11 @@ package com.lion.pinepeople.controller;
 
 import com.lion.pinepeople.domain.dto.participant.ParticipantCreateResponse;
 import com.lion.pinepeople.domain.dto.participant.ParticipantInfoResponse;
+import com.lion.pinepeople.domain.dto.participant.ParticipantUpdateRequest;
+import com.lion.pinepeople.domain.dto.participant.ParticipantUpdateResponse;
+import com.lion.pinepeople.domain.dto.party.PartyUpdateRequest;
+import com.lion.pinepeople.domain.dto.party.PartyUpdateResponse;
 import com.lion.pinepeople.domain.response.Response;
-import com.lion.pinepeople.enums.ApprovalStatus;
 import com.lion.pinepeople.service.ParticipantService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -56,5 +59,18 @@ public class ParticipantController {
             direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long partyId, Authentication authentication) {
         Page<ParticipantInfoResponse> participantInfoResponses = participantService.getWaitingParticipant(pageable,partyId,authentication.getName());
         return Response.success(participantInfoResponses);
+    }
+
+    /**
+     * 파티원 정보 수정
+     * 대기 중인 파티원을 승인한다. 파티장만 가능하다
+     * @return 수정된 파티원의 상세정보
+     * **/
+    @PatchMapping("/{id}")
+    @ApiOperation(value = "파티원 수정")
+    public Response<ParticipantUpdateResponse> updateParticipant(@PathVariable Long partyId, @PathVariable Long id, @RequestBody ParticipantUpdateRequest participantUpdateRequest, Authentication authentication){
+        ParticipantUpdateResponse participantUpdateResponse = participantService.updateParticipant(partyId, id, participantUpdateRequest, authentication.getName());
+        return Response.success(participantUpdateResponse);
+
     }
 }

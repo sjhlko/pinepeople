@@ -2,7 +2,10 @@ package com.lion.pinepeople.service;
 
 import com.lion.pinepeople.domain.dto.participant.ParticipantCreateResponse;
 import com.lion.pinepeople.domain.dto.participant.ParticipantInfoResponse;
+import com.lion.pinepeople.domain.dto.participant.ParticipantUpdateRequest;
+import com.lion.pinepeople.domain.dto.participant.ParticipantUpdateResponse;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
+import com.lion.pinepeople.domain.dto.party.PartyUpdateResponse;
 import com.lion.pinepeople.domain.entity.Participant;
 import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.User;
@@ -20,11 +23,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ParticipantService {
     private final ParticipantRepository participantRepository;
     private final PartyRepository partyRepository;
@@ -51,13 +54,23 @@ public class ParticipantService {
     }
 
     /**
+     * 특정 파티원이 존재하는지를 확인함
+     * @param participantId 존재하는 파티원인지 확인하고픈 파티원의 id
+     * @return 존재할 경우 해당 participantId를 가지는 participant 리턴, 존재하지 않을 경우 PARTICIPANT_NOT_FOUND 에러 발생
+     */
+    public Participant validateParticipant(Long participantId){
+        return participantRepository.findById(participantId)
+                .orElseThrow(() -> new AppException(ErrorCode.PARTICIPANT_NOT_FOUND, ErrorCode.PARTICIPANT_NOT_FOUND.getMessage()));
+    }
+
+    /**
      * 특정 유저가 특정 파티의 host인지 확인
      * @param currentUser 현재 로그인된 회원
      * @param party 현재 로그인된 회원이 host 인지 확인할 파티
      * 유저가 해당 파티의 host 가 아닐 경우 INVALID_PERMISSION 에러 발생
      */
     public void validateHost(Party party, User currentUser){
-        if(!Objects.equals(party.getUser().getId(), currentUser.getId())){
+        if(!(Objects.equals(party.getUser().getId(), currentUser.getId()))){
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
         }
     }
@@ -143,11 +156,30 @@ public class ParticipantService {
      * @param userId 해당 파티의 파티장
      * @return participant 테이블에서 해당 파티의 waiting 상태의 파티원의 목록을 리턴함
      */
+
     public Page<ParticipantInfoResponse> getWaitingParticipant(Pageable pageable, Long partyId, String userId) {
         Party party = validateParty(partyId);
         User user = validateUser(userId);
         validateHost(party,user);
         Page<Participant> participants = participantRepository.findAllByPartyAndApprovalStatus(pageable,party,ApprovalStatus.WAITING);
         return participants.map(ParticipantInfoResponse::of);
+    }
+
+    /**
+     * 파티원 정보 수정
+     * @param userId 현재 로그인된 유저의 userId
+     * @param partyId 수정하고자 하는 파티원이 속한 파티의 partyId
+     * @param participantUpdateRequest approvalStatus에 관련한 수정사항이 담긴 request
+     * @return 수정 전 파티원정보와 수정 후 파티원 정보를 리턴
+     * 파티원 정보 수정은 해당 파티의 host 만 가능하다.
+     */
+    public ParticipantUpdateResponse updateParticipant(Long partyId, Long id, ParticipantUpdateRequest participantUpdateRequest, String userId) {
+        User user = validateUser(userId);
+        Party party = validateParty(partyId);
+        Participant participant = validateParticipant(id);
+        Timestamp createdAt = participant.getCreatedAt();
+        validateHost(participant.getParty(),user);
+        Participant updatedParticipant = participantRepository.save(participantUpdateRequest.toEntity(participant));
+        return ParticipantUpdateResponse.of(createdAt,updatedParticipant);
     }
 }
