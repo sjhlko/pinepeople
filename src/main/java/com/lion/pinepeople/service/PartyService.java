@@ -15,11 +15,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class PartyService {
     private final PartyRepository partyRepository;
     private final UserRepository userRepository;
@@ -118,9 +118,10 @@ public class PartyService {
     public PartyUpdateResponse updateParty(Long partyId, PartyUpdateRequest partyUpdateRequest, String userId) {
         User user = validateUser(userId);
         Party party = validateParty(partyId);
+        Timestamp createdAt = party.getCreatedAt();
         validateHost(party,user);
         Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party));
-        return PartyUpdateResponse.of(party,updatedParty);
+        return PartyUpdateResponse.of(createdAt,updatedParty);
     }
 
     /**
