@@ -170,7 +170,7 @@ public class ParticipantService {
      * @param userId 현재 로그인된 유저의 userId
      * @param partyId 수정하고자 하는 파티원이 속한 파티의 partyId
      * @param participantUpdateRequest approvalStatus에 관련한 수정사항이 담긴 request
-     * @return 수정 전 파티원정보와 수정 후 파티원 정보를 리턴
+     * @return 수정 후 파티원 정보를 리턴
      * 파티원 정보 수정은 해당 파티의 host 만 가능하다.
      */
     public ParticipantUpdateResponse updateParticipant(Long partyId, Long id, ParticipantUpdateRequest participantUpdateRequest, String userId) {
