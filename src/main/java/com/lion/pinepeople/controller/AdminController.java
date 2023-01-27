@@ -1,14 +1,13 @@
 package com.lion.pinepeople.controller;
 
 
+import com.lion.pinepeople.domain.dto.admin.AdminUpdateRequest;
 import com.lion.pinepeople.domain.dto.admin.AllBlackListResponse;
 import com.lion.pinepeople.domain.dto.admin.BlackListRequest;
 import com.lion.pinepeople.domain.dto.admin.BlackListResponse;
 import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
 import com.lion.pinepeople.domain.response.Response;
-import com.lion.pinepeople.repository.UserRepository;
 import com.lion.pinepeople.service.AdminService;
-import com.lion.pinepeople.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +51,20 @@ public class AdminController {
     public Response<Void> addBlackList(@RequestBody BlackListRequest request, Authentication authentication){
         String loginUserId = authentication.getName();
         String result = adminService.addBlackList(request, loginUserId);
+        return Response.success(result);
+    }
+
+    /**
+     * 블랙리스트 상태 변경
+     * @param blackListId 상태 변경할 블랙리스트 아이디
+     * @param authentication 로그인 권한 인증
+     * @param request 상태 변경 메세지
+     * @return 상태 변경 메세지
+     */
+    @PatchMapping("/black-lists/{blackListId}")
+    public Response<Void> updateBlackList(@PathVariable Long blackListId, Authentication authentication, @RequestBody AdminUpdateRequest request){
+        String loginUserId = authentication.getName();
+        String result = adminService.updateBlackList(loginUserId,blackListId, request);
         return Response.success(result);
     }
 
