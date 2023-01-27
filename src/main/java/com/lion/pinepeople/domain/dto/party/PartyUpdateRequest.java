@@ -34,6 +34,7 @@ public class PartyUpdateRequest {
                 .startDate(this.startDate)
                 .endDate(this.endDate)
                 .participants(party.getParticipants())
+                .category(party.getCategory())
                 .user(party.getUser())
                 .build();
     }
