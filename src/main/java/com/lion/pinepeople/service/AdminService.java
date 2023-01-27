@@ -1,11 +1,13 @@
 package com.lion.pinepeople.service;
 
+import com.lion.pinepeople.domain.dto.admin.AdminUpdateRequest;
 import com.lion.pinepeople.domain.dto.admin.AllBlackListResponse;
 import com.lion.pinepeople.domain.dto.admin.BlackListRequest;
 import com.lion.pinepeople.domain.dto.admin.BlackListResponse;
 import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
 import com.lion.pinepeople.domain.entity.BlackList;
 import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.enums.BlackListStatus;
 import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
@@ -72,9 +74,32 @@ public class AdminService {
             throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_ROLE_NOT_FOUND.getMessage());
         });
 
-        BlackList blackList = BlackList.toEntity(LocalDateTime.now(),targetUser);
+        BlackList blackList = BlackList.toEntity(LocalDateTime.now(),targetUser, BlackListStatus.APPROVAL);
         blackListRepository.save(blackList);
         return "블랙리스트 등록 완료하였습니다";
+    }
+
+    /**
+     * 블랙리스트 상태 변경
+     * @param loginUserId 로그인한 유저 아이디
+     * @param blackListId 상태변경할 블랙리스트 아이디
+     * @return 변경 성공 메세지
+     */
+    public String updateBlackList(String loginUserId, Long blackListId, AdminUpdateRequest request) {
+        isAdmin(loginUserId);
+
+        BlackList blackList = blackListRepository.findById(blackListId).orElseThrow(() -> {
+            throw new AppException(ErrorCode.BLACKLIST_NOT_FOUND, ErrorCode.BLACKLIST_NOT_FOUND.getMessage());
+        });
+
+        if(request.getStatus() == 1){
+            blackList.updateStatus(BlackListStatus.APPROVAL);
+            blackListRepository.save(blackList);
+            return "승인하였습니다.";
+        }
+        blackListRepository.deleteById(blackListId);
+        return "반려하였습니다.";
+
     }
 
     /**
@@ -114,18 +139,22 @@ public class AdminService {
                         .map(r -> r.getFromUserId())
                                 .collect(Collectors.toList());
 
-        //신고자들 아이디로 이메일로 변경해서 반환
         List<String> fromUserEmail = new ArrayList<>();
+        //신고내역이 없을 경우 admin으로 판단
         if(fromUserIdList.size() == 0){
             fromUserEmail.add("ADMIN");
         }else{
+            //신고자들 아이디를 이메일로 변경
             for (Long fromUserId : fromUserIdList) {
                 fromUserEmail.add(userRepository.findById(fromUserId).get().getEmail());
             }
         }
 
-        log.info("fromUserId{}", fromUserEmail);
-        return BlackListResponse.fromEntity(blackList, fromUserEmail);
+        //report 신고명 반환
+        List<String> reportContent = reportRepository.findAllByUser(blackList.getUser()).stream()
+                .map(b -> b.getReportContent()).collect(Collectors.toList());
+
+        return BlackListResponse.fromEntity(blackList, fromUserEmail, reportContent);
     }
 
     /**
@@ -159,4 +188,6 @@ public class AdminService {
             throw new AppException(ErrorCode.INVALID_PERMISSION, "접근 권한이 없습니다.");
         }
     }
+
+
 }

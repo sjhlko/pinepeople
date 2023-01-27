@@ -31,6 +31,7 @@ public class PartyInfoResponse {
     private String address;
     private String announcement;
     private String categoryName;
+    private String hostName;
 
     //파티 생성, 조회에 쓰이는 메소드
     public static PartyInfoResponse of(Party party){
@@ -42,6 +43,7 @@ public class PartyInfoResponse {
                 .partyCost(party.getPartyCost())
                 .partyTitle(party.getPartyTitle())
                 .announcement(party.getAnnouncement())
+                .hostName(party.getUser().getName())
                 .createdAt(party.getCreatedAt())
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
@@ -61,6 +63,7 @@ public class PartyInfoResponse {
                 .partyTitle(party.getPartyTitle())
                 .announcement(party.getAnnouncement())
                 .createdAt(createdAt)
+                .hostName(party.getUser().getName())
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())
@@ -78,6 +81,7 @@ public class PartyInfoResponse {
                 .partyCost(party.getPartyCost())
                 .partyTitle(party.getPartyTitle())
                 .announcement(party.getAnnouncement())
+                .hostName(party.getUser().getName())
                 .createdAt(party.getCreatedAt())
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())

@@ -1,8 +1,10 @@
 package com.lion.pinepeople.service;
 
+import com.lion.pinepeople.domain.dto.report.ReportRequest;
 import com.lion.pinepeople.domain.entity.BlackList;
 import com.lion.pinepeople.domain.entity.Report;
 import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.enums.BlackListStatus;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.BlackListRepository;
@@ -30,7 +32,7 @@ public class ReportService {
      * @param userId 신고할 타겟 유저
      * @return 신고 성공 여부
      */
-    public String addReport(String loginUserId, Long userId) {
+    public String addReport(String loginUserId, Long userId, ReportRequest request) {
         Long loginUser = Long.parseLong(loginUserId);
         //로그인 유저 검사
         userRepository.findById(loginUser)
@@ -44,7 +46,7 @@ public class ReportService {
         if(confirmReport.isPresent()){
             throw new AppException(ErrorCode.DUPLICATED_REPORT, ErrorCode.DUPLICATED_REPORT.getMessage());
         }
-        Report report = Report.toEntity(loginUser, targetUser);
+        Report report = Report.toEntity(loginUser, targetUser, request.getReportContent());
         reportRepository.save(report);
 
         // 신고당한사람의 정보를 플러스
@@ -53,9 +55,8 @@ public class ReportService {
 
         //3이상이면 블랙리스트처리
         if (targetUser.getWarningCnt() >= 3){
-            BlackList blackList = BlackList.toEntity(LocalDateTime.now(), targetUser);
+            BlackList blackList = BlackList.toEntity(LocalDateTime.now(), targetUser, BlackListStatus.WATING);
             blackListRepository.save(blackList);
-//            userRepository.delete(user); softdelete적용후 넣기
         }
 
         return "신고가 정상적으로 접수되었습니다.";
