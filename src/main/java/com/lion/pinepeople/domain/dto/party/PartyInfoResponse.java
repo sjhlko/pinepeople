@@ -3,11 +3,8 @@ package com.lion.pinepeople.domain.dto.party;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lion.pinepeople.domain.entity.Participant;
 import com.lion.pinepeople.domain.entity.Party;
-import com.lion.pinepeople.domain.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.domain.Page;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -16,6 +13,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@ToString
 public class PartyInfoResponse {
     private Long id;
     private String partyTitle;
@@ -89,5 +87,25 @@ public class PartyInfoResponse {
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())
                 .build();
+    }
+
+    /* Page<Entity> -> Page<Dto> 변환처리 */
+    public static Page<PartyInfoResponse> toPage(Page<Party> post){
+
+        Page<PartyInfoResponse> pageResponse = post.map(m -> PartyInfoResponse.builder()
+                .id(m.getId())
+                .categoryName(m.getCategory().getName())
+                .partyTitle(m.getPartyTitle())
+                .partyContent(m.getPartyContent())
+                .partySize(m.getPartySize())
+                .partyCost(m.getPartyCost())
+                .announcement(m.getAnnouncement())
+                .createdAt(m.getCreatedAt())
+                .updatedAt(m.getUpdatedAt())
+                .startDate(m.getStartDate())
+                .endDate(m.getEndDate())
+                .build());
+
+        return pageResponse;
     }
 }
