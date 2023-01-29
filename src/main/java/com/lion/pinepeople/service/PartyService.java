@@ -15,11 +15,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class PartyService {
     private final PartyRepository partyRepository;
     private final UserRepository userRepository;
@@ -44,6 +44,16 @@ public class PartyService {
     public Party validateParty(Long partyId){
         return partyRepository.findById(partyId)
                 .orElseThrow(() -> new AppException(ErrorCode.PARTY_NOT_FOUND, ErrorCode.PARTY_NOT_FOUND.getMessage()));
+    }
+
+    /**
+     * 특정 캬테고리가 존재하는지를 확인함
+     * @param categoryName 존재하는 파티인지 확인하고픈 카테고리의 이름
+     * @return 존재할 경우 해당 카테고리 이름에 맞는 category 리턴, 존재하지 않을 경우 CATEGORY_NOT_FOUND 에러 발생
+     */
+    public Category validateCategory(String categoryName){
+        return categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, ErrorCode.CATEGORY_NOT_FOUND.getMessage()));
     }
 
     /**
@@ -112,15 +122,17 @@ public class PartyService {
      * @param userId 현재 로그인된 유저의 userId
      * @param partyId 수정하고자 하는 파티의 partyId
      * @param partyUpdateRequest 수정사항이 담긴 request
-     * @return 수정 전 파티정보와 수정 후 파티 정보를 리턴
+     * @return 수정 후 파티 정보를 리턴
      * 파티 정보 수정은 해당 파티의 host 만 가능하다.
      */
     public PartyUpdateResponse updateParty(Long partyId, PartyUpdateRequest partyUpdateRequest, String userId) {
         User user = validateUser(userId);
         Party party = validateParty(partyId);
         validateHost(party,user);
-        Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party));
-        return PartyUpdateResponse.of(party,updatedParty);
+        Category category = validateCategory(partyUpdateRequest.getCategory());
+        Timestamp createdAt = party.getCreatedAt();
+        Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party,category));
+        return PartyUpdateResponse.of(createdAt,updatedParty);
     }
 
     /**
