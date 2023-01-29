@@ -1,9 +1,6 @@
 package com.lion.pinepeople.service;
 
-import com.lion.pinepeople.domain.dto.participant.ParticipantCreateResponse;
-import com.lion.pinepeople.domain.dto.participant.ParticipantInfoResponse;
-import com.lion.pinepeople.domain.dto.participant.ParticipantUpdateRequest;
-import com.lion.pinepeople.domain.dto.participant.ParticipantUpdateResponse;
+import com.lion.pinepeople.domain.dto.participant.*;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
 import com.lion.pinepeople.domain.dto.party.PartyUpdateResponse;
 import com.lion.pinepeople.domain.entity.Participant;
@@ -98,7 +95,10 @@ public class ParticipantService {
             throw new AppException(ErrorCode.DUPLICATED_PARTICIPANT,ErrorCode.DUPLICATED_PARTICIPANT.getMessage());
         }
     }
-
+    public Participant validateParticipant(Party party, User user){
+        return participantRepository.findParticipantByUserAndParty(user,party)
+                .orElseThrow(() -> new AppException(ErrorCode.PARTICIPANT_NOT_FOUND, ErrorCode.PARTICIPANT_NOT_FOUND.getMessage()));
+    }
 
     /**
      * 특정 User 를 host 로 하는 파티가 생성될때 participant table에 해당 유저와 파티정보를 저장함.
@@ -181,5 +181,19 @@ public class ParticipantService {
         validateHost(participant.getParty(),user);
         Participant updatedParticipant = participantRepository.save(participantUpdateRequest.toEntity(participant));
         return ParticipantUpdateResponse.of(createdAt,updatedParticipant);
+    }
+
+    /**
+     * 파티 탈퇴
+     * @param partyId 탈퇴하고자 하는 파티원이 속한 파티의 partyId
+     * @return 삭제 후 해당 파티원 정보를 리턴
+     */
+    public ParticipantDeleteResponse deleteParticipant(Long partyId, String userId) {
+        User user = validateUser(userId);
+        Party party = validateParty(partyId);
+        Participant participant = validateParticipant(party,user);
+        participantRepository.delete(participant);
+        return ParticipantDeleteResponse.of(participant);
+
     }
 }
