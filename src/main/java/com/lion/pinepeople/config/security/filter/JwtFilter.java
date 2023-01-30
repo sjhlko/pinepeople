@@ -48,19 +48,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
         Cookie[] list = request.getCookies();
 
-        if(list.length==0){
-            log.error("쿠키 리스트의 길이는 0입니다.");
+        if(list==null){
+            log.info("쿠키가 존재하지 않습니다.");
             filterChain.doFilter(request, response);
             return;
         }
 
         for (Cookie cookie:list) {
-
-            if(cookie==null) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
             if(cookie.getName().equals("token")){
                 token = cookie.getValue();
             }
