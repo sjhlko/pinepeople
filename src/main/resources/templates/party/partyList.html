@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Shop Homepage - Start Bootstrap Template</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link rel="stylesheet" href="css/PartyListStyles.css"  />
+        <link rel="stylesheet"  th:href="@{/static/assets/css/PartyListStyles.css}"/>
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="#!">Start Bootstrap</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#!">All Products</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" href="#!">Popular Items</a></li>
+                                <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <form class="d-flex">
+                        <button class="btn btn-outline-dark" type="submit">
+                            <i class="bi-cart-fill me-1"></i>
+                            Cart
+                            <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Pine People</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">파인피플에 오신것을 환영합니다.</p>
+                </div>
+            </div>
+        </header>
+        <!-- Section-->
+        <div class="dropdown" style="float: left">
+            <button class="dropbtn">
+                <span class="dropbtn_icon">more_horiz</span>
+                Right Now!
+            </button>
+
+                    <div class="dropdown-content" >
+                      <tr th:each="rightNow: ${rightNows}">
+                        <a th:href="@{/party/category/{name}(name=${rightNow.name})}" th:text="${rightNow.name}" >profile</a>
+                      </tr>
+                    </div>
+                    <div class="dropdown" >
+                        <button class="dropbtn">
+                            <span class="dropbtn_icon">more_horiz</span>
+                            Stedily
+                        </button>
+                        <div class="dropdown-content">
+                            <tr th:each="steadily: ${steadilys}">
+                                <a th:href="@{/party/category/{name}(name=${steadily.name})}" th:text="${steadily.name}" >profile</a>
+                            </tr>
+                        </div>
+                    </div>
+        </div>
+        <nav class="navbar bg-light">
+            <div class="container-fluid">
+                <form class="d-flex" th:action="@{/party/list}"  method="get" >
+                    <input class="form-control me-2" type="text" name="address" th:value="${address}" placeholder="지역" >
+                    <input class="form-control me-2" type="text" name="partyTitle" th:value="${partyTitle}" placeholder="파티 제목" >
+                    <button type="submit" class="btn btn-outline-success" >Search</button>
+                </form>
+            </div>
+        </nav>
+        <section class="py-5">
+            <div style="width: 40% " class="container px-4 px-lg-5 mt-5">
+                <div th:each="party:${partys}">
+                <div style="margin-bottom: 55px; " class="card text-center">
+                    <div class="card-body">
+                        <h4 class="card-title" th:text="${party.categoryName}" >Special title treatment</h4>
+                        <h5 class="card-title" th:text="${party.partyTitle}" >Special title treatment</h5>
+                       <div>
+                        <span th:text="'지역 : ' + ${party.address}"></span>
+                       </div>
+                           <div>
+                            <span th:text="'금액 : ' + ${party.partyCost}"></span>
+                            <span th:text="'/ 인원 : ' + ${party.partySize}"></span>
+                        </div>
+                        <p class="card-text" th:text="${party.partyContent}">With supporting text below as a natural lead-in to additional content.</p>
+                        <a href="#" class="btn btn-primary" th:href="@{/party/detail/{id}(id=${party.id})}" >Go somewhere</a>
+                    </div>
+                    <div class="card-footer text-muted" th:text="'마감일 : ' +${party.endDate}">
+                        2 days ago
+                    </div>
+                </div>
+                </div>
+                <div>
+                    <th:block  th:each="page:${#numbers.sequence(startPage,endPage)}">
+                    <a class="page-item" th:if="${page != nowPage}" th:href="@{/party/list(page=${page-1},title=${param.title})}" th:text ="${page}" style="font-size:25px"></a>
+                    <strong th:if="${page==nowPage}" th:text ="${page}" style="color:lightskyblue; font-size:25px"></strong>
+                    </th:block>
+                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2022</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+<style>
+
+</style>
+</html>
