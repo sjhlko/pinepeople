@@ -5,10 +5,10 @@ import com.lion.pinepeople.domain.dto.user.join.UserJoinRequest;
 import com.lion.pinepeople.domain.dto.user.join.UserJoinResponse;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginRequest;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginResponse;
+import com.lion.pinepeople.domain.dto.user.logout.UserLogoutResponse;
 import com.lion.pinepeople.domain.dto.user.myInfo.MyInfoResponse;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateRequest;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateResponse;
-import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
 import com.lion.pinepeople.domain.dto.user.userInfo.UserInfoResponse;
 import com.lion.pinepeople.domain.dto.user.userInfoList.UserInfoListResponse;
 import com.lion.pinepeople.domain.entity.User;
@@ -23,6 +23,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -56,11 +59,11 @@ public class UserService {
 
     /**
      * 로그인 메서드
-     *
-     * @param userLoginRequest email, password
-     * @return UserLoginResponse jwt
+     * @param userLoginRequest 로그인 dto
+     * @param response 쿠키를 설정하기 위해 매개변수로 받은 response
+     * @return jwt를 반환한다.
      */
-    public UserLoginResponse login(UserLoginRequest userLoginRequest) {
+    public UserLoginResponse login(UserLoginRequest userLoginRequest, HttpServletResponse response) {
         final long expireTimeMs = 1000 * 60 * 60L;
         //이메일 체크
         User findUser = userRepository.findByEmail(userLoginRequest.getEmail()).orElseThrow(() -> {
@@ -72,10 +75,24 @@ public class UserService {
         }
         //토큰 발행
         String token = JwtTokenUtil.createToken(findUser.getId(), key, expireTimeMs);
+
+        Cookie cookie = new Cookie("token", token);
+        response.addCookie(cookie);
+
         return UserLoginResponse.of(token);
     }
 
-
+    /**
+     * 로그아웃 메서드
+     * @param response 쿠키를 설정하기 위해 매개변수로 받은 response
+     * @return 로그아웃 성공 여부 메세지를 반환한다.
+     */
+    public UserLogoutResponse logout(HttpServletResponse response){
+        Cookie cookie = new Cookie("token",null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return new UserLogoutResponse("로그아웃되었습니다.");
+    }
 
     /**
      * 유저 수정 메서드

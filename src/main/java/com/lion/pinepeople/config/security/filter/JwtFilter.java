@@ -6,7 +6,6 @@ import com.lion.pinepeople.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,17 +33,34 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        log.info("authorization : {}", authorization);
+//        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+//        log.info("authorization : {}", authorization);
+//
+//        if (authorization == null || !authorization.startsWith("Bearer ")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+//
+//        String token = authorization.split(" ")[1];
+//        log.info("token : {}", token);
 
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
+        String token = "token";
+
+        Cookie[] list = request.getCookies();
+
+        if(list==null){
+            log.info("쿠키가 존재하지 않습니다.");
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authorization.split(" ")[1];
-        log.info("token : {}", token);
+        for (Cookie cookie:list) {
+            if(cookie.getName().equals("token")){
+                token = cookie.getValue();
+            }
+        }
 
+        log.info("token : {}",token);
         if (!JwtTokenUtil.isValidToken(request, token, key)) {
             filterChain.doFilter(request, response);
             return;

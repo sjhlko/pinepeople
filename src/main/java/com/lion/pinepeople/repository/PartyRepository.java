@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PartyRepository extends JpaRepository<Party, Long>, PartyRepositoryCustom {
     Page<Party> findAllByUser(Pageable pageable, User user);
+
+    Page<Party> findByCategory_Name(Pageable pageable, String name);
 }

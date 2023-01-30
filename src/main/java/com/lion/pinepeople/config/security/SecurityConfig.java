@@ -23,7 +23,10 @@ public class SecurityConfig {
     private final String[] PERMMIT = {
             "/swagger-ui/**",
             "/api/users/join",
-            "/api/users/login"
+            "/api/users/login",
+            "/users/login",
+            "/api/users/logout",
+            "/users/logout"
     };
 
     private final String[] GET_AUTHENTICATED = {
