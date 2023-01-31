@@ -183,4 +183,15 @@ public class PartyService {
             return participants.map(PartyInfoResponse::of);
         }
     }
+
+    /**
+     * 내가 대기중인 파티 조회
+     * @param userId 현재 로그인한 사용자의 id
+     * @return 파티 부합하는 파티의 상세 정보를 페이징해 리턴
+     */
+    public Page<PartyInfoResponse> getMyWaitingParty(Pageable pageable, String userId) {
+        User user = validateUser(userId);
+        Page<Participant> participants = participantService.getMyWaitingParty(pageable,user);
+        return participants.map(PartyInfoResponse::of);
+    }
 }
