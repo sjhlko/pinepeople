@@ -19,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -71,6 +73,13 @@ public class PartyCommentService {
         Page<PartyComment> partyComments = partyCommentRepository.findAllByParty(party, pageable);
         return PartyCommentListResponse.toResponse(partyComments);
     }
+
+    public List<PartyComment> getCommentList(Long partyId) {
+        Party party = getParty(partyId, ErrorCode.BRIX_NOT_FOUND);
+        List<PartyComment> partyComments = partyCommentRepository.findListByParty(party);
+        return partyComments;
+    }
+
 
     /**
      * 파티모집글에 댓글 수정
