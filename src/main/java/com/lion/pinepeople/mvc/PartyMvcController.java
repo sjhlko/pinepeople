@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,8 +64,14 @@ public class PartyMvcController {
     public String getPartyDetail(@PathVariable Long id, Model model, Authentication authentication) {
         log.info("로그인 파트-----------------------");
         log.info("id:{}", id);
+
+        if (authentication == null) {
+            PartyInfoResponse party = partyService.getParty(id);
+            model.addAttribute("party", party);
+            model.addAttribute(new PartyComment());
+            return "party/partyDetailNonLogin";
+        }
         PartyInfoResponse party = partyService.getParty(id);
-        log.info("로그인한 회원의 id:{}",  authentication.getName());
         User user = getUser(authentication);
         model.addAttribute("party", party);
         model.addAttribute("user", user);
