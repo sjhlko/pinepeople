@@ -44,8 +44,16 @@ public class JwtFilter extends OncePerRequestFilter {
 //        String token = authorization.split(" ")[1];
 //        log.info("token : {}", token);
 
+        String token = "token";
+
         Cookie[] list = request.getCookies();
-        String token = null;
+
+        if(list==null){
+            log.info("쿠키가 존재하지 않습니다.");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         for (Cookie cookie:list) {
             if(cookie.getName().equals("token")){
                 token = cookie.getValue();
