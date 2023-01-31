@@ -24,9 +24,10 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/api/users/join",
             "/api/users/login",
-            "/users/login",
+            "/pinepeople/login",
             "/api/users/logout",
-            "/users/logout"
+            "/pinepeople/logout",
+            "/pinepeople/join"
     };
 
     private final String[] GET_AUTHENTICATED = {
