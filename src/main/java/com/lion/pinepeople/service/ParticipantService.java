@@ -140,6 +140,16 @@ public class ParticipantService {
     }
 
     /**
+     * participant 테이블에서 특정 유저가 승인 대기중인 경우에 해당하는 row 를 검색함
+     * @param user 현재 로그인된 유저
+     * @return participant 테이블에서 user 가 guest 자격인 경우에 해당하는 row 를 리턴함
+     */
+    public Page<Participant> getMyWaitingParty(Pageable pageable, User user){
+        validateUser(user.getId().toString());
+        return participantRepository.findAllByUserAndParticipantRoleAndApprovalStatus(pageable,user,ParticipantRole.GUEST,ApprovalStatus.WAITING);
+    }
+
+    /**
      * 특정 파티의 승인된 모든 파티원의 목록을 조회함
      * @param partyId 조회하고자 하는 파티
      * @return participant 테이블에서 해당 파티의 approved 상태의 파티원의 목록을 리턴함
