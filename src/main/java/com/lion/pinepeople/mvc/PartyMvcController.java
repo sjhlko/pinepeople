@@ -1,5 +1,6 @@
 package com.lion.pinepeople.mvc;
 
+import com.lion.pinepeople.domain.dto.party.PartyCreateRequest;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
 import com.lion.pinepeople.domain.entity.Category;
 import com.lion.pinepeople.domain.entity.Party;
@@ -79,7 +80,11 @@ public class PartyMvcController {
         return "party/partyDetail";
     }
 
-
+    @GetMapping("/create-new")
+    public String getCreateParty(Model model) {
+        model.addAttribute("partyCreateRequest", new PartyCreateRequest());
+        return "party/partyCreate";
+    }
 
 
     @GetMapping("/category/{name}")
