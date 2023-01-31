@@ -8,21 +8,20 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class PartyUpdateResponse {
     String message;
-    PartyInfoResponse beforeEditing;
     PartyInfoResponse edited;
 
-
-    public static PartyUpdateResponse of(Party beforeEditing, Party edited){
+    public static PartyUpdateResponse of(Timestamp createdAt, Party edited){
         return PartyUpdateResponse.builder()
                 .message("파티 수정이 완료되었습니다.")
-                .beforeEditing(PartyInfoResponse.of(beforeEditing))
-                .edited(PartyInfoResponse.of(edited, beforeEditing.getCreatedAt()))
+                .edited(PartyInfoResponse.of(edited, createdAt))
                 .build();
     }
 

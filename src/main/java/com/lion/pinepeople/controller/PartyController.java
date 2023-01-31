@@ -65,11 +65,11 @@ public class PartyController {
      * 파티 id를 통해 파티를 수정한다.
      * @param id 조회하고자 하는 파티의 id
      * @param authentication 로그인한 회원이면서 자신의 파티를 수정하는 경우만 가능
-     * @return 수정 전 파티 상세정보와 수정 후 파티 상세정보
+     * @return  수정 후 파티 상세정보
      */
     @PatchMapping("/{id}")
     @ApiOperation(value = "파티 수정")
-    public Response<PartyUpdateResponse> modifyPost(@PathVariable Long id, @RequestBody PartyUpdateRequest partyUpdateRequest, Authentication authentication){
+    public Response<PartyUpdateResponse> modifyParty(@PathVariable Long id, @RequestBody PartyUpdateRequest partyUpdateRequest, Authentication authentication){
         PartyUpdateResponse partyUpdateResponse = partyService.updateParty(id, partyUpdateRequest, authentication.getName());
         return Response.success(partyUpdateResponse);
 
@@ -111,7 +111,7 @@ public class PartyController {
      */
     @GetMapping("/my")
     @ApiOperation(value = "내가 참가한 파티 조회")
-    public Response<Page<PartyInfoResponse>> getMyPosts(@PageableDefault(size = 20, sort ="createdAt",
+    public Response<Page<PartyInfoResponse>> getMyParty(@PageableDefault(size = 20, sort ="createdAt",
             direction = Sort.Direction.DESC) Pageable pageable, @RequestParam String role, Authentication authentication) {
         Page<PartyInfoResponse> parties = partyService.getMyParty(pageable, role, authentication.getName());
         return Response.success(parties);

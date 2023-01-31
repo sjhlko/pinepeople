@@ -37,4 +37,17 @@ public class ParticipantInfoResponse {
                 .build();
     }
 
+    //파티원 정보 수정시 createdAt이 null로 리턴되는 현상 해결을 위한 메소드
+    public static ParticipantInfoResponse of(Participant participant, Timestamp createdAt){
+        return ParticipantInfoResponse.builder()
+                .id(participant.getId())
+                .approvalStatus(participant.getApprovalStatus())
+                .participantRole(participant.getParticipantRole())
+                .createdAt(createdAt)
+                .updatedAt(participant.getUpdatedAt())
+                .partyId(participant.getParty().getId())
+                .userId(participant.getUser().getId())
+                .build();
+    }
+
 }
