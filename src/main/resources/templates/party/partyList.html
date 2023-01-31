@@ -104,7 +104,7 @@
                             <span th:text="'/ 인원 : ' + ${party.partySize}"></span>
                         </div>
                         <p class="card-text" th:text="${party.partyContent}">With supporting text below as a natural lead-in to additional content.</p>
-                        <a href="#" class="btn btn-primary" th:href="@{/party/detail/{id}(id=${party.id})}" >Go somewhere</a>
+                        <a href="#" class="btn btn-primary" th:href="@{/users/party/detail/{id}(id=${party.id})}" >Go somewhere</a>
                     </div>
                     <div  style="background-color: lightyellow;" class="card-footer text-muted" th:text="'마감일 : ' +${party.endDate}">
                         2 days ago
