@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="/user/template/layout :: common_header"></th:block>
+    <style>
+        form {
+            width: 100%;
+        }
+
+        .form-control {
+            height: 50px;
+        }
+
+        .google-img {
+            width: 25px;
+            margin-right: 10px;
+        }
+
+        button {
+            display: flex;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .link {
+            text-align: center;
+        }
+
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+    </style>
+</head>
+<body>
+<th:block th:replace="/user/template/layout :: common_content(~{::section})">
+    <section>
+        <form th:action th:object="${userJoinRequest}" method="post">
+            <div th:if="${#fields.hasGlobalErrors()}">
+                <div class="alert alert-danger" role="alert" th:each="err : ${#fields.globalErrors()}" th:text="${err}">
+                    A simple danger alert—check it out!
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" th:field="*{email}" th:errorclass="field-error"
+                       placeholder="Email">
+                <div class="field-error" th:errors="*{email}">Email 오류</div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" th:field="*{password}"
+                       th:errorclass="field-error" placeholder="비밀번호">
+                <div class="field-error" th:errors="*{password}">Password 오류</div>
+            </div>
+            <div class="mb-3">
+                <label for="passwordCheck" class="form-label">PasswordCheck</label>
+                <input type="password" class="form-control" id="passwordCheck" th:field="*{passwordCheck}"
+                       th:errorclass="field-error" placeholder="비밀번호 확인">
+                <div class="field-error" th:errors="*{password}">PasswordCheck 오류</div>
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" th:field="*{name}"
+                       th:errorclass="field-error" placeholder="이름">
+                <div class="field-error" th:errors="*{password}">name 오류</div>
+            </div>
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" class="form-control" id="address" th:field="*{address}"
+                       th:errorclass="field-error" placeholder="주소">
+                <div class="field-error" th:errors="*{address}">address 오류</div>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="text" class="form-control" id="phone" th:field="*{phone}"
+                       th:errorclass="field-error" placeholder="전화번호">
+                <div class="field-error" th:errors="*{phone}">Phone 오류</div>
+            </div>
+            <div class="mb-3">
+                <label for="birth" class="form-label">Birth</label>
+                <input type="date" class="form-control" id="birth" th:field="*{birth}"
+                       th:errorclass="field-error" placeholder="생일">
+                <div class="field-error" th:errors="*{birth}">Birth 오류</div>
+            </div>
+            <div class="mb-3">
+                <label for="friendEmail" class="form-label">Friend Email</label>
+                <input type="text" class="form-control" id="friendEmail" th:field="*{friendEmail}"
+                       th:errorclass="field-error" placeholder="추천인">
+                <div class="field-error" th:errors="*{friendEmail}">friendEmail 오류</div>
+            </div>
+            <button type="submit" class="btn btn-warning">Join</button>
+        </form>
+    </section>
+</th:block>
+<th:block th:replace="/user/template/layout :: common_footer"></th:block>
+</body>
+</html>

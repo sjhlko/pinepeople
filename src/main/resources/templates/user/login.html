@@ -1,40 +1,14 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pine People</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <link rel="icon" th:href="@{/static/image/icon.png}">
+    <th:block th:replace="/user/template/layout :: common_header"></th:block>
     <style>
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-        }
-
-        .login-from {
-            width: 40%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 100px;
-        }
-
         form {
             width: 100%;
         }
 
         .form-control {
             height: 50px;
-        }
-
-        .pinepeople-img {
-            width: 80%;
         }
 
         .google-img {
@@ -47,31 +21,49 @@
             width: 100%;
             margin-bottom: 20px;
         }
+
+        .link {
+            text-align: center;
+        }
+
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
     </style>
 </head>
 <body>
-<div class="login-from">
-    <img class="pinepeople-img" th:src="@{/static/image/pinepeople.png}" src="../../static/image/pinepeople.png">
-    <!-- 로그인 입력폼 -->
-    <form th:action th:object="${useLoginRequest}" method="post">
-        <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="email" th:field="*{email}">
+<th:block th:replace="/user/template/layout :: common_content(~{::section})">
+    <section>
+        <form th:action th:object="${userLoginRequest}" method="post">
+            <div th:if="${#fields.hasGlobalErrors()}">
+                <div class="alert alert-danger" role="alert" th:each="err : ${#fields.globalErrors()}" th:text="${err}">
+                    A simple danger alert—check it out!
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email" th:field="*{email}" th:errorclass="field-error"
+                       placeholder="Email">
+                <div class="field-error" th:errors="*{email}">Email 오류</div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" th:field="*{password}"
+                       th:errorclass="field-error" placeholder="Password">
+                <div class="field-error" th:errors="*{password}">Password 오류</div>
+            </div>
+            <button type="submit" class="btn btn-warning">Login</button>
+            <button type="button" class="btn btn-secondary"><img class="google-img" src="../../static/image/google.png"
+                                                                 th:src="@{/static/image/google.png}">Google Login
+            </button>
+        </form>
+        <div class="link">
+            <a href="/pinepeople/join">회원가입</a> / <a href="#">아이디 찾기</a> / <a href="#">비밀번호 찾기</a>
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" th:field="*{password}">
-        </div>
-        <button type="submit" class="btn btn-warning">Login</button>
-        <button type="button" class="btn btn-secondary"><img class="google-img" src="../../static/image/google.png" th:src="@{/static/image/google.png}">Google Login
-        </button>
-    </form>
-    <div class="link">
-        <a href="#">회원가입</a> / <a href="#">아이디 찾기</a> / <a href="#">비밀번호 찾기</a>
-    </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-        crossorigin="anonymous"></script>
+    </section>
+</th:block>
+<th:block th:replace="/user/template/layout :: common_footer"></th:block>
 </body>
 </html>
