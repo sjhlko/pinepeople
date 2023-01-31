@@ -10,6 +10,7 @@ import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.PartyRepository;
 import com.lion.pinepeople.repository.UserRepository;
 import com.lion.pinepeople.service.CategoryService;
+import com.lion.pinepeople.service.PartyCommentService;
 import com.lion.pinepeople.service.PartyService;
 import com.lion.pinepeople.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,6 +37,7 @@ public class PartyMvcController {
 
     private final CategoryService categoryService;
     private final PartyService partyService;
+    private final PartyCommentService partyCommentService;
     private final PartyRepository partyRepository;
     private final UserRepository userRepository;
 
@@ -63,18 +66,26 @@ public class PartyMvcController {
     public String getPartyDetail(@PathVariable Long id, Model model, Authentication authentication) {
         log.info("로그인 파트-----------------------");
         log.info("id:{}", id);
+        List<PartyComment> comments = partyCommentService.getCommentList(id);
+        if (authentication == null) {
+            PartyInfoResponse party = partyService.getParty(id);
+            model.addAttribute("party", party);
+            model.addAttribute("comments", comments);
+            model.addAttribute(new PartyComment());
+            return "party/partyDetailNonLogin";
+        }
         PartyInfoResponse party = partyService.getParty(id);
-        log.info("로그인한 회원의 id:{}",  authentication.getName());
         User user = getUser(authentication);
         model.addAttribute("party", party);
         model.addAttribute("user", user);
+        model.addAttribute("comments", comments);
         model.addAttribute(new PartyComment());
         return "party/partyDetail";
     }
 
 
 
-
+    /**카테고리별 파티 조회**/
     @GetMapping("/category/{name}")
     public String getCategoryParties(@PathVariable String name,Model model,@PageableDefault(page = 0, size = 5, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable) {

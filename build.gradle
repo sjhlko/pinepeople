@@ -57,6 +57,11 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation group: 'org.springframework.security', name: 'spring-security-test'
 
+    //vaild
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    //Oauth
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
     //test
     testCompileOnly 'org.projectlombok:lombok:1.18.20'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'

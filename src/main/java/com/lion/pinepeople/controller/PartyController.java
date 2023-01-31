@@ -117,4 +117,17 @@ public class PartyController {
         return Response.success(parties);
     }
 
+    /**
+     * 대기중인 파티를 조회한다.
+     * @param authentication 로그인된 유저만 이용 가능
+     * @return 대기중인 파티의 상세 정보들을 페이징 해서 리턴함
+     */
+    @GetMapping("/my-waitings")
+    @ApiOperation(value = "대기중인 파티 조회")
+    public Response<Page<PartyInfoResponse>> getMyWaitingParty(@PageableDefault(size = 20, sort ="createdAt",
+            direction = Sort.Direction.DESC) Pageable pageable, Authentication authentication) {
+        Page<PartyInfoResponse> parties = partyService.getMyWaitingParty(pageable,authentication.getName());
+        return Response.success(parties);
+    }
+
 }
