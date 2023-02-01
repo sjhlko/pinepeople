@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 @Getter
 @ToString
 public class PartyInfoResponse {
-    private Long id;
+    private Long partyId;
     private String partyTitle;
     private String partyContent;
     private Integer partySize;
@@ -41,7 +41,7 @@ public class PartyInfoResponse {
     //파티 수정시 createdAt이 null로 리턴되는 현상 해결을 위한 메소드
     public static PartyInfoResponse of(Party party, Timestamp createdAt){
         return PartyInfoResponse.builder()
-                .id(party.getId())
+                .partyId(party.getId())
                 .partyContent(party.getPartyContent())
                 .address(party.getAddress())
                 .partySize(party.getPartySize())
@@ -66,7 +66,7 @@ public class PartyInfoResponse {
     //파티 정보 리턴을 위한 of 메소드 사용시 중복되는 부분 분리
     private static PartyInfoResponse getPartyInfoResponse(Party party) {
         return PartyInfoResponse.builder()
-                .id(party.getId())
+                .partyId(party.getId())
                 .partyContent(party.getPartyContent())
                 .address(party.getAddress())
                 .partySize(party.getPartySize())
@@ -86,7 +86,7 @@ public class PartyInfoResponse {
     public static Page<PartyInfoResponse> toPage(Page<Party> post){
 
         Page<PartyInfoResponse> pageResponse = post.map(m -> PartyInfoResponse.builder()
-                .id(m.getId())
+                .partyId(m.getId())
                 .categoryName(m.getCategory().getName())
                 .partyTitle(m.getPartyTitle())
                 .partyContent(m.getPartyContent())

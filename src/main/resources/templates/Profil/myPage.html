@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Shop Homepage - Start Bootstrap Template</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link   rel="stylesheet"  th:href="@{/static/assets/css/styles.css}"/>
+
+
+        <style>
+            table.type06 {
+                border-collapse: collapse;
+                text-align: left;
+                line-height: 1.5;
+                border-top: 1px solid #ccc;
+                border-bottom: 1px solid #ccc;
+                margin: 20px 10px;
+                }
+                table.type06 th {
+                width: 150px;
+                padding: 10px;
+                font-weight: bold;
+                vertical-align: top;
+                }
+                table.type06 td {
+                width: 350px;
+                padding: 10px;
+                vertical-align: top;
+                }
+                table.type06 .even {
+                background: #efefef;
+            }
+
+        </style>
+
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="#!">pine people</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#!">All Products</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" href="#!">Popular Items</a></li>
+                                <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <form class="d-flex">
+                        <button class="btn btn-outline-dark" type="submit">
+                            <i class="bi-cart-fill me-1"></i>
+                            Cart
+                            <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Shop in style</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+                </div>
+            </div>
+        </header>
+        <!-- Section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2  justify-content-center">
+
+                     <!-- profile start -->
+                    <div class="col-6 h-100">
+                        나의 프로필
+                        <div class="card h-100 p-3">
+
+                            <!-- profile-header -->
+                            <div class="h-40 p-2">
+                                <div class="row">
+                                    <div class="col-3 p-1 h-100">
+                                        <img class="border p-1 rounded h-100 w-100" src="../../static/image/profile.png" alt="profileImg" />
+                                    </div>
+                                    <div class="col-9 brix-bar p-1">
+                                        <div th:text="${myInfo.userName}"></div>
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-striped bg-warning" role="progressbar"  th:style="'width:'+${myInfo.brixFiguer}+'%'" th:aria-valuenow="${myInfo.brixFiguer}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+
+                                </div>     
+                            </div>
+                            
+                            <!-- profile-body -->
+                            <table class="h-50 type06 p-2 text-center">
+                                <tr>
+                                    <th scope="row">보유 포인트</th>
+                                    <td th:text = "${myInfo.point}"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">닉네임</th>
+                                    <td th:text = "${myInfo.userName}"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">이메일</th>
+                                    <td th:text = "${myInfo.email}"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">연락처</th>
+                                    <td th:text = "${myInfo.phone}"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">주소</th>
+                                    <td th:text = "${myInfo.address}"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">생년월일</th>
+                                    <td th:text = "${myInfo.birth}"></td>
+                                </tr>
+                            </table>
+                            <div class="h-10 p-2">
+                                <button type="button" class="btn btn-secondary">회원정보수정</button>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- profile end -->
+
+                    <!-- party list start -->
+                    <div class="col-6 h-100">
+                        나의 파티 확인
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link my-party" aria-current="page" href="#">대기중</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link my-party" href="#">참가중</a>
+                            </li>
+                            <li class="nav-item" >
+                                <a class="nav-link my-party" href="#">운영중</a>
+                            </li>
+                        </ul>
+                        <div class="card h-100">
+                            <table class="table" id="partysTable">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>번호</th>
+                                        <th>카테고리</th>
+                                        <th>파티이름</th>
+                                        <th>호스트</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="party-body">
+                                </tbody>
+                            </table>
+<!--                            <div>-->
+<!--                                <th:block  th:each="page:${#numbers.sequence(startPage,endPage)}">-->
+<!--                                    <a class="page-item" th:if="${page != nowPage}" th:href="@{/party/list(page=${page-1},title=${param.title})}" th:text ="${page}" style="font-size:25px"></a>-->
+<!--                                    <strong th:if="${page==nowPage}" th:text ="${page}" style="color:lightskyblue; font-size:25px"></strong>-->
+<!--                                </th:block>-->
+<!--                            </div>-->
+
+                              <div class="text-center">
+                                <nav  aria-label="...">
+                                    <ul class="pagination pagination-sm" style="justify-content : center">
+                                      <li class="page-item active" aria-current="page">
+                                        <span class="page-link">1</span>
+                                      </li>
+                                      <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                      <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    </ul>
+                                </nav>
+                              </div>
+                        </div>
+                    </div>
+                    <!-- party list end -->
+                </div>
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2022</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+<!--        <script src="js/scripts.js"></script>-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+            $('.my-party').on("click", function(){
+                // $('#party-body').replaceWith("")
+                let urls = [
+                    `http://localhost:8787/pinepeople/api/partys/my-waitings`,
+                    `http://localhost:8787/pinepeople/api/partys/my?role=GUEST`,
+                    `http://localhost:8787/pinepeople/api/partys/my?role=HOST`
+                ]
+                let idx = $(".my-party").index($(this))
+
+                $.ajax({
+                    url: urls[idx],
+                    dataType:'json',
+                    type:'GET',
+                    success:function(data){
+                        $('#party-body').empty()
+                        for(var i=0; i<data.result.content.length; i++){
+                            var tableId = '<tr>';
+                            tableId += '<td>' + data.result.content[i].partyId + '</td>';
+                            tableId += '<td>' + data.result.content[i].categoryName + '</td>';
+                            tableId += '<td>' + data.result.content[i].partyTitle + '</td>';
+                            tableId += '<td>' + data.result.content[i].hostName + '</td>';
+                            tableId += '</tr>';
+                            $('#party-body').append(tableId)
+                        }
+                    }
+                })
+            })
+
+        </script>
+    </body>
+</html>

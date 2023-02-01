@@ -75,6 +75,7 @@
                 </div>
             </div>
         </section>
+        <form action="/users/party/write-comment" method="post">
         <div class="card mb-2">
         <div class="card-header bg-light">
             <i class="fa fa-comment fa"></i> REPLY
@@ -82,18 +83,47 @@
         <div class="card-body">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                 <!--   <div class="form-inline mb-2">
+                    <div class="form-inline mb-2">
                         <label for="replyId"><i class="fa fa-user-circle-o fa-2x"></i></label>
-                        <input type="text" class="form-control ml-2" placeholder="Enter yourId" id="replyId">
+                        <input type="text" th:field="${party.partyId}" class="form-control ml-2" placeholder="Enter yourId" id="replyId">
+                       <th:block th:if="${user != null}">
                         <label for="replyPassword" class="ml-4"><i class="fa fa-unlock-alt fa-2x"></i></label>
-                        <input type="password" class="form-control ml-2" placeholder="Enter password" id="replyPassword">
-                    </div>-->
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                    <button type="button" class="btn btn-dark mt-3" onClick="javascript:addReply();">post reply</button>
+                        <input type="text" th:field="${user.id}"  class="form-control ml-2" placeholder="Enter password" id="replyPassword">
+                       </th:block>
+                    </div>
+                    <textarea class="form-control" th:field="${partyComment.body}" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    <button type="submit" class="btn btn-dark mt-3" onClick="javascript:addReply();">post reply</button>
                 </li>
             </ul>
         </div>
+            <div class="card" th:if="${!#lists.isEmpty(comments)}">
+                <div class="card-header bi bi-chat-dots"th:text="'현재 댓글 개수 : '+${#lists.size(comments)}+'개'"> Comments</div>
+                <ul class="list-group-flush" th:each="comment :${comments}" >
+                    <li class="list-group-item">
+                <span>
+                    <span style="font-size: small" th:text="${comment.user.name}"></span>
+                    <span style="font-size: xx-small"th:text="${comment.createdAt}"></span>
+
+                 <form style="display: inline;" onclick="main.commentDelete(this)" >
+                    <input type="hidden"  name="commentId" th:value="${comment.id}">
+                           <input type="hidden" name="partyId" th:value="${party.partyId}" >
+                       <input type="hidden" name="userId" th:value="${comment.user.id}" >
+                            <a type="button" >
+                            삭제
+                            </a>
+                </form>
+                    </span>
+                        <div th:text="${comment.body}">댓글 내용</div>
+                    </li>
+                </ul>
+                <div class="chat__message-box">
+                    <ul class="chat__message-ul">
+                        <!--댓긇이 들어갈 공간-->
+                    </ul>
+                </div>
+            </div>
         </div>
+        </form>
         <!-- Related items section-->
         <section class="py-5 bg-light">
             <div class="container px-4 px-lg-5 mt-5">
@@ -209,4 +239,39 @@
         <!-- Core theme JS-->
         <script src="js/scripts.js"></script>
     </body>
+    <script>
+        let main = {
+
+
+            commentDelete: function (form) {
+                const con_check = confirm("삭제하시겠습니까?");
+                if (con_check === true) {
+                    let commentId = form.commentId.value.trim();
+                    let partyId = form.partyId.value.trim();
+                    let userId = form.userId.value.trim();
+                    window.location.href = '/users/party/delete/' + partyId + '/' + commentId+'/'+userId;
+                }
+            }
+               /* console.log("commentId:");
+                let commentId = form.commentId.value.trim();
+                let partyId = form.partyId.value.trim();
+                console.log("commentId:" + commentId);
+
+                axios.post('api/partys/'+ partyId+'/party-comments'+commentId, JSON.stringify(data),
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'}
+                    }).then((response) => {
+                    console.log(response);
+                    console.log("삭제 axios");
+                    alert("댓글이 삭제되었습니다.");
+                    window.location.href = '/users/party/show-comment/' + commentId;
+                })
+            }*/
+
+        };
+
+        main.init();
+    </script>
+
 </html>

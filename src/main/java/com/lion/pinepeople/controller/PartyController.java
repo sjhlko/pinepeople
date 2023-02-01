@@ -7,6 +7,7 @@ import com.lion.pinepeople.service.PartyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -19,8 +20,9 @@ import java.util.List;
 
 @Api(tags = "Party API")
 @RestController
-@RequestMapping("/api/partys")
+@RequestMapping("/pinepeople/api/partys")
 @RequiredArgsConstructor
+@Slf4j
 public class PartyController {
     private final PartyService partyService;
 
@@ -114,6 +116,20 @@ public class PartyController {
     public Response<Page<PartyInfoResponse>> getMyParty(@PageableDefault(size = 20, sort ="createdAt",
             direction = Sort.Direction.DESC) Pageable pageable, @RequestParam String role, Authentication authentication) {
         Page<PartyInfoResponse> parties = partyService.getMyParty(pageable, role, authentication.getName());
+        return Response.success(parties);
+    }
+
+    /**
+     * 대기중인 파티를 조회한다.
+     * @param authentication 로그인된 유저만 이용 가능
+     * @return 대기중인 파티의 상세 정보들을 페이징 해서 리턴함
+     */
+    @GetMapping("/my-waitings")
+    @ApiOperation(value = "대기중인 파티 조회")
+    public Response<Page<PartyInfoResponse>> getMyWaitingParty(@PageableDefault(size = 20, sort ="createdAt",
+            direction = Sort.Direction.DESC) Pageable pageable, Authentication authentication) {
+        log.info("hello");
+        Page<PartyInfoResponse> parties = partyService.getMyWaitingParty(pageable,authentication.getName());
         return Response.success(parties);
     }
 
