@@ -85,7 +85,7 @@
       </div>
       <div class="mb-3">
         <label for="title">가격</label>
-        <input type="text" class="form-control" name="partyCost" id="cost" placeholder="비용을 입력해 주세요" required="required"
+        <input type="number" class="form-control" name="partyCost" id="cost" placeholder="비용을 입력해 주세요" required="required"
                th:field="*{partyCost}" th:errorclass="field-error">
         <div class="field-error" th:errors="*{partyCost}">비용 오류</div>
       </div>
@@ -103,7 +103,7 @@
       </div>
       <div class="mb-3">
         <label for="title">인원수</label>
-        <input type="text" class="form-control" name="partySize" id="size" placeholder="인원수를 입력해 주세요" required="required"
+        <input type="number" class="form-control" name="partySize" id="size" placeholder="인원수를 입력해 주세요" required="required"
                th:field="*{partySize}" th:errorclass="field-error">
         <div class="field-error" th:errors="*{partySize}">인원수 오류</div>
       </div>
