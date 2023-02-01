@@ -97,7 +97,7 @@ public class Order {
     /**
      * 주문 취소 시 주문 상태 변경하는 메소드
      **/
-    public void cancelOrder(OrderStatus orderStatus) {
+    public void orderStatusChange(OrderStatus orderStatus) {
         if (orderStatus.equals(OrderStatus.ORDER_CANCEL)) {
             throw new AppException(ErrorCode.DATABASE_ERROR, "이미 취소된 주문입니다.");
         }
