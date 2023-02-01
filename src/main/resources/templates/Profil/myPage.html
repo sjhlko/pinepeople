@@ -164,13 +164,7 @@
                                         <th>호스트</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr th:each="party : ${myHostPartys}">
-                                        <th><span th:text = "${party.id}"></span></th>
-                                        <th><span th:text = "${party.categoryName}"></span></th>
-                                        <th><span th:text = "${party.partyTitle}"></span></th>
-                                        <th><span th:text = "${party.hostName}"></span></th>
-                                    </tr>
+                                <tbody id="party-body">
                                 </tbody>
                             </table>
 <!--                            <div>-->
@@ -208,6 +202,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script>
             $('.my-party').on("click", function(){
+                // $('#party-body').replaceWith("")
                 let urls = [
                     `http://localhost:8787/pinepeople/api/partys/my-waitings`,
                     `http://localhost:8787/pinepeople/api/partys/my?role=GUEST`,
@@ -220,10 +215,16 @@
                     dataType:'json',
                     type:'GET',
                     success:function(data){
-                        // console.log(data);
-                        // console.log(data.result);
-                        console.log(data.result)
-                        $('#partysTable').replaceWith(data.result)
+                        $('#party-body').empty()
+                        for(var i=0; i<data.result.content.length; i++){
+                            var tableId = '<tr>';
+                            tableId += '<td>' + data.result.content[i].partyId + '</td>';
+                            tableId += '<td>' + data.result.content[i].categoryName + '</td>';
+                            tableId += '<td>' + data.result.content[i].partyTitle + '</td>';
+                            tableId += '<td>' + data.result.content[i].hostName + '</td>';
+                            tableId += '</tr>';
+                            $('#party-body').append(tableId)
+                        }
                     }
                 })
             })
