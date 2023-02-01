@@ -81,4 +81,11 @@ public class PartyCommentController {
     }
 
 
+    @PostMapping("/{commentId}")
+    public Response deletePostPartyComment(@PathVariable Long partyId, @PathVariable Long commentId , Authentication authentication) {
+        PartyCommentDeleteResponse response = partyCommentService.deleteComment(partyId, commentId, authentication.getName());
+        return Response.success(response);
+    }
+
+
 }
