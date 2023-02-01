@@ -82,7 +82,7 @@ public class OrderController {
      * @return
      */
     @ApiOperation(value = "주문 취소")
-    @PatchMapping("/users/{partyId}/orders/{orderId}")
+    @PatchMapping("/users/{partyId}/orders-cancel/{orderId}")
     public Response<OrderCancelResponse> cancelOrder(@PathVariable Long orderId, @PathVariable Long partyId, @ApiIgnore Authentication authentication) {
         String userName = authentication.getName();
         OrderCancelResponse deleteOrder = orderservice.cancelOrder(userName, orderId, partyId);

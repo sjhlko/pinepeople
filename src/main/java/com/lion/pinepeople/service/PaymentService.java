@@ -17,10 +17,10 @@ import java.util.Map;
 @Slf4j
 public class PaymentService {
 
-    @Value("${imp_key}")
+    @Value("${IMP_KEY}")
     private String imp_key;
 
-    @Value("${imp_secret}")
+    @Value("${IMP_SECRET}")
     private String imp_secret;
 
     @Getter

@@ -1,11 +1,14 @@
 package com.lion.pinepeople.mvc;
 
+import com.lion.pinepeople.domain.dto.order.OrderInfoResponse;
 import com.lion.pinepeople.domain.dto.order.OrderVo;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
+import com.lion.pinepeople.domain.entity.Order;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.UserRepository;
+import com.lion.pinepeople.service.OrderService;
 import com.lion.pinepeople.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,11 +28,12 @@ public class OrderMvcController {
 
     private final PartyService partyService;
     private final UserRepository userRepository;
+    private final OrderService orderService;
 
     /**
      * 주문 하기 form
      */
-    @GetMapping("/users/party/{partyId}/order")
+    @GetMapping("/party/{partyId}/order")
     public String orderForm(@PathVariable Long partyId, @ModelAttribute("discountPoint") OrderVo orderVo, Model model, Authentication authentication) {
         PartyInfoResponse party = partyService.getParty(partyId);
         User user = getUser(authentication);
@@ -42,7 +46,22 @@ public class OrderMvcController {
         model.addAttribute("cost", cost);
         model.addAttribute("commission", commission);
         model.addAttribute("user", user);
-        return "pay/oder";
+        return "pay/order";
+    }
+
+    /**
+     * 주문 내역 상세 보기
+     */
+    @GetMapping("/party/order-detail/{orderId}")
+    public String orderDetail(@PathVariable Long orderId, Authentication authentication, Model model) {
+        User user = getUser(authentication);
+        Order order = orderService.getOrder(orderId);
+        OrderInfoResponse orderDetail = orderService.getOrderDetail(String.valueOf(user.getId()), orderId);
+
+        model.addAttribute("order", order);
+        model.addAttribute("user", user);
+        model.addAttribute("orderDetail", orderDetail);
+        return "pay/orderDetail";
     }
 
 

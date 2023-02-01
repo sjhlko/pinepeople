@@ -1,0 +1,112 @@
+html {
+    font-size: 130%;
+}
+
+main {
+    width: 800px;
+    margin: 50px auto 80px;
+}
+
+.container2 {
+    border: 1px solid #444444;
+}
+
+.orderDate {
+    font-size: small;
+    margin-left: 40px;
+}
+
+.orderDetailTable {
+    width: 90%;
+    height: 600%;
+    border-collapse: collapse;
+    border: 1px solid #444444;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.orderDetailTable tr {
+    border: 1px solid #444444;
+    line-height: 3rem;
+    margin-left: 40px;
+    /*text-align: right;*/
+    padding: 0 50px 0 0px;
+}
+
+.orderDetailTable th {
+    background: #bcbebf;
+    /*text-align: left;*/
+    margin-left: 40px;
+}
+
+.paymentInfo {
+    width: 80%;
+    border-collapse: collapse;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.paymentInfo tr {
+    border: 1px solid #444444;
+}
+
+.paymentInfo td {
+    text-align: right;
+    padding: 0 30px 0 0;
+}
+
+.paymentInfo th {
+    text-align: left;
+    padding: 0 0 0 10px;
+}
+
+.accumulatePoint {
+    width: 30%;
+    border-collapse: collapse;
+    border: 1px solid #444444;
+    margin-left: 80px;
+    /*margin-left: auto;*/
+}
+
+.accumulatePoint th {
+    text-align: left;
+    padding: 0 0 0 10px;
+}
+
+.accumulatePoint td {
+    text-align: right;
+    padding: 0 30px 0 0px;
+}
+
+.frame {
+    text-align: right;
+}
+
+button.button_2 {
+    border: 0;
+    outline: none;
+    font-size: 20px;
+    margin: 10px;
+    background: black;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+button.button_2:hover {
+    color: white;
+    background: red;
+}
+
+.backdrop-ux {
+    font-size: 70%;
+    margin-left: 10px;
+}
+
+a {
+    text-decoration-line: none;
+}
+

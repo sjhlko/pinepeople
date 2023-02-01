@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="🍍파인 피플🍍" />
+    <meta name="author" content="" />
+    <title>파인 피플 하나가 여럿이 되는 공간</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="/static/image/icon.png" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link rel="stylesheet" href="css/styles.css"  />
+    <link rel="stylesheet"  th:href="@{/static/assets/css/styles.css}"/>
+  </head>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container px-4 px-lg-5">
+    <a class="navbar-brand" href="#!">🍍파인 피플 하나가 여럿이 되는 공간</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="#!">All Products</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" href="#!">Popular Items</a></li>
+            <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="d-flex">
+        <button class="btn btn-outline-dark" type="submit">
+          <i class="bi-cart-fill me-1"></i>
+          Cart
+          <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</nav>
+<article>
+  <form th:action th:object="${partyCreateRequest}" method="post">
+  <div class="container" role="main">
+    <h2>파티 만들기🎉</h2>
+    <form name="form" id="form" role="form" method="post" action="${pageContext.request.contextPath}/board/saveBoard">
+      <div class="mb-3">
+        <label for="title">카테고리</label>
+        <select class="form-select" aria-label="Default select example" id="branch" th:name="branch" required="required"
+                th:field="*{branch}" th:errorclass="field-error">
+          <option value="Right now!">지금 당장✨</option>
+          <option value="Steadily!">꾸준히⌛</option>
+        </select>
+        <div class="field-error" th:errors="*{branch}">branch 오류</div>
+      </div>
+      <div class="mb-3" id="rightNowCategory" >
+        <label for="title">세부 카테고리</label>
+        <select class="form-select" aria-label="Default select example" th:name="code" required="required"
+                th:field="*{code}" th:errorclass="field-error">
+          <option th:each="val : ${rightNowCategory}" th:value="${val?.getCode()}"
+                  th:utext="${val?.getName()}">
+          </option>
+        </select>
+      </div>
+      <div class="mb-3" id="steadilyCategory" style="display: none">
+        <label for="title">세부 카테고리</label>
+        <select class="form-select" aria-label="Default select example" th:name="code" required="required"
+                th:field="*{code}" th:errorclass="field-error">
+          <option th:each="val : ${steadilyCategory}" th:value="${val?.getCode()}"
+                  th:utext="${val?.getName()}">
+          </option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="address">주소</label>
+        <input type="text" class="form-control" id="address" placeholder="주소를 입력해 주세요" required="required"
+               th:field="*{address}" th:errorclass="field-error">
+        <div class="field-error" th:errors="*{address}">주소 오류</div>
+      </div>
+      <div class="mb-3">
+        <label for="title">가격</label>
+        <input type="number" class="form-control" name="partyCost" id="cost" placeholder="비용을 입력해 주세요" required="required"
+               th:field="*{partyCost}" th:errorclass="field-error">
+        <div class="field-error" th:errors="*{partyCost}">비용 오류</div>
+      </div>
+      <div class="mb-3">
+        <label for="title">시작일</label>
+        <input type="date" class="form-control" name="startDate" id="startDate" placeholder="시작일을 입력해주세요" required="required"
+               th:field="*{startDate}" th:errorclass="field-error">
+        <div class="field-error" th:errors="*{startDate}">시작일 오류</div>
+      </div>
+      <div class="mb-3">
+        <label for="title">종료일</label>
+        <input type="date" class="form-control" name="endDate" id="endDate" placeholder="종료일을 입력해 주세요" required="required"
+               th:field="*{endDate}" th:errorclass="field-error">
+        <div class="field-error" th:errors="*{endDate}">종료일 오류</div>
+      </div>
+      <div class="mb-3">
+        <label for="title">인원수</label>
+        <input type="number" class="form-control" name="partySize" id="size" placeholder="인원수를 입력해 주세요" required="required"
+               th:field="*{partySize}" th:errorclass="field-error">
+        <div class="field-error" th:errors="*{partySize}">인원수 오류</div>
+      </div>
+      <div class="mb-3">
+        <label for="title">제목</label>
+        <input type="text" class="form-control" name="partyTitle" id="title" placeholder="제목을 입력해 주세요" required="required"
+               th:field="*{partyTitle}" th:errorclass="field-error">
+        <div class="field-error" th:errors="*{partyTitle}">제목 오류</div>
+      </div>
+      <div class="mb-3">
+        <label for="content">내용</label>
+        <textarea class="form-control" rows="5" name="partyContent" id="content" placeholder="파티 규칙을 포함한 설명을 적어주세요" required="required"
+                  th:field="*{partyContent}" th:errorclass="field-error" ></textarea>
+        <div class="field-error" th:errors="*{partyContent}">내용 오류</div>
+      </div>
+    </form>
+    <div >
+      <button type="submit" class="btn btn-sm btn-primary" id="btnSave">파티 등록하기✨</button>
+      <button type="button" class="btn btn-sm btn-primary" id="btnList" onclick="location.href='/pinepeople/party/list'"> 파티 목록으로 가기📜 </button>
+    </div>
+  </div>
+  </form>
+</article>
+<!-- JQuery-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+  $(document).ready(function() {
+    $('#branch').change(function() {
+      var result = $('#branch option:selected').val();
+      if (result === 'Right now!') {
+        $('#rightNowCategory').show();
+        $('#steadilyCategory').hide();
+      } else {
+        $('#rightNowCategory').hide();
+        $('#steadilyCategory').show();
+      }
+    });
+  });
+</script>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
