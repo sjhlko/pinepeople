@@ -62,6 +62,9 @@ dependencies {
     //Oauth
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
+    // JSON 데이터 처리하기
+    implementation 'com.google.code.gson:gson:2.9.0'
+
     //test
     testCompileOnly 'org.projectlombok:lombok:1.18.20'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
