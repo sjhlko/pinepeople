@@ -119,7 +119,7 @@ public class OrderService {
         findUser.updatePoint(plusPoint(findUser, findOrder));
 
         // 주문 취소로 변경
-        findOrder.cancelOrder(findOrder.getOrderStatus());
+        findOrder.orderStatusChange(findOrder.getOrderStatus());
 
         // 업데이트한 유저 저장
         userRepository.save(findUser);
@@ -187,7 +187,7 @@ public class OrderService {
         if (findUser.getPoint() < discount) {
             throw new AppException(ErrorCode.INVALID_ORDER_POINT, "현재 사용할 수 있는 포인트는 총 " + findUser.getPoint() + "포인트 입니다.");
         }
-        System.out.println("수수료 = " + (userOneCost * 0.1));
+        System.out.println("수수료 = " + (int) (userOneCost * 0.1));
 
         int totalCost = (int) (userOneCost + (userOneCost * 0.1)) - discount;
         if (totalCost < 0) {
@@ -222,7 +222,9 @@ public class OrderService {
     @Transactional
     public OrderResponse orderMvc(String userId, Long partyId, OrderVo orderVo) {
         User findUser = getUser(userId);
+        log.info("findUser={}", findUser);
         Party findParty = getParty(partyId);
+        log.info("findParty={}", findParty);
 
         // 한명의 파티 참가 비용
         Integer userOneCost = userOneCost(findParty);
@@ -264,4 +266,32 @@ public class OrderService {
         }
     }
 
+
+    /**
+     * 주문을 취소한다. 취소 시 적립금과 회원의 포인트 정보 및 파티 인원수를 업데이트한다.
+     *
+     * @param userId  취소하는 유저 아이디
+     * @param orderId 주문 아이디
+     * @param partyId 참가한 파티 아이디
+     * @return 주문 취소 완료
+     */
+    @Transactional
+    public OrderCancelResponse cancelMveOrder(String userId, Long orderId, Long partyId) {
+        User findUser = getUser(userId);
+        getParty(partyId);
+        Order findOrder = getOrder(orderId);
+        validateUser(findUser, findOrder);
+
+        // 주문 시 회원 포인트 정보 수정
+        findUser.updatePoint(plusPoint(findUser, findOrder));
+
+        // 주문 상태 취소로 변경
+        findOrder.orderStatusChange(findOrder.getOrderStatus());
+
+        // 업데이트한 유저 저장
+        userRepository.save(findUser);
+        // 주문 저장
+        orderRepository.save(findOrder);
+        return OrderCancelResponse.of(findOrder);
+    }
 }
