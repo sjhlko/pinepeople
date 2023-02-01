@@ -24,16 +24,20 @@ spring:
     #    hibernate.naming.physical-strategy : org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     generate-ddl: false
 
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          google:
-#            client-id: ${OAUTH_CLIENT_ID}
-#            client-secret: ${OAUTH_CLIENT_SECRET}
-#            scope:
-#              - email
-#              - profile
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH_CLIENT_ID}
+            client-secret: ${OAUTH_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+
+  redis:
+    host: ${REDIS_HOST}
+    port: 6379
 
 jwt:
   token:
