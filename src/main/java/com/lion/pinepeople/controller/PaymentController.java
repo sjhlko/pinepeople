@@ -1,5 +1,7 @@
 package com.lion.pinepeople.controller;
 
+import com.lion.pinepeople.domain.dto.order.OrderCancelResponse;
+import com.lion.pinepeople.domain.dto.order.OrderCancelVo;
 import com.lion.pinepeople.domain.dto.order.OrderResponse;
 import com.lion.pinepeople.domain.dto.order.OrderVo;
 import com.lion.pinepeople.domain.entity.User;
@@ -94,6 +96,34 @@ public class PaymentController {
             return ResponseEntity.badRequest().body(Response.error(new ErrorResponse(ErrorCode.INVALID_ORDER, "사용자가 결제를 취소하셨습니다.")));
         }
     }
+
+
+    @ApiOperation(value = "결제 취소")
+    @PostMapping(value = "/order/payment/cancel")
+    public ResponseEntity<Response<?>> paymentCancel(@RequestBody OrderCancelVo orderCancelVo, Authentication authentication) throws IOException {
+        log.info("authentication.getName()={}", authentication.getName());
+
+        // 1. 아임포트 API 키와 SECRET키로 토큰을 생성
+        String token = paymentService.getToken();
+        log.info("token = {}", token);
+
+        Long partyId = orderCancelVo.getPartyId();
+        log.info("partyId={}", partyId);
+        String imp_uid = orderCancelVo.getImp_uid();
+        System.out.println("imp_uid = " + imp_uid);
+
+        // ** 주문 취소 **
+        // Imp_uid가 null이면 만나서 결제라 아임포트 결제 취소할 필요 없음
+        if (orderCancelVo.getImp_uid() != null) {
+            // 2. 토큰으로 결제 완료된 결제정보(결제 완료된 금액) 가져옴
+            int amount = paymentService.paymentInfo(orderCancelVo.getImp_uid(), token);
+            log.info("amount={}", amount);
+            paymentService.paymentCancel(token, orderCancelVo.getImp_uid(), amount, "결제 에러");
+        }
+        OrderCancelResponse orderCancelResponse = orderService.cancelMveOrder(authentication.getName(), orderCancelVo.getOrderId(), orderCancelVo.getPartyId());
+        return ResponseEntity.ok().body(Response.success(orderCancelResponse));
+    }
 }
+
 
 

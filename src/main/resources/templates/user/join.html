@@ -36,7 +36,7 @@
 <body>
 <th:block th:replace="/user/template/layout :: common_content(~{::section})">
     <section>
-        <form th:action th:object="${userJoinRequest}" method="post">
+        <form th:action="@{/pinepeople/join}" th:object="${userJoinRequest}" method="post">
             <div th:if="${#fields.hasGlobalErrors()}">
                 <div class="alert alert-danger" role="alert" th:each="err : ${#fields.globalErrors()}" th:text="${err}">
                     A simple danger alert—check it out!
