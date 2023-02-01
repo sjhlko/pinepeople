@@ -99,7 +99,7 @@ public class Order {
      **/
     public void orderStatusChange(OrderStatus orderStatus) {
         if (orderStatus.equals(OrderStatus.ORDER_CANCEL)) {
-            throw new AppException(ErrorCode.DATABASE_ERROR, "이미 취소된 주문입니다.");
+            throw new AppException(ErrorCode.INVALID_ORDER, "이미 취소된 주문입니다.");
         }
         this.orderStatus = OrderStatus.ORDER_CANCEL;
     }
