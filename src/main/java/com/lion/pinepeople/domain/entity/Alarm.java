@@ -21,7 +21,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 public class
-Alarm extends BaseEntity{
+Alarm extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -50,7 +50,7 @@ Alarm extends BaseEntity{
     public static Alarm fromPost(User user, Post post, AlarmType alarmType) {
         return Alarm.builder()
                 .fromUserId(user.getId())
-                .targetId(post.getPostId())
+                .targetId(post.getId())
                 .alarmType(alarmType)
                 .user(post.getUser())
                 .build();
