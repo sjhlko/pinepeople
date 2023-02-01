@@ -7,6 +7,7 @@ import com.lion.pinepeople.service.PartyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -19,8 +20,9 @@ import java.util.List;
 
 @Api(tags = "Party API")
 @RestController
-@RequestMapping("/api/partys")
+@RequestMapping("/pinepeople/api/partys")
 @RequiredArgsConstructor
+@Slf4j
 public class PartyController {
     private final PartyService partyService;
 
@@ -126,6 +128,7 @@ public class PartyController {
     @ApiOperation(value = "대기중인 파티 조회")
     public Response<Page<PartyInfoResponse>> getMyWaitingParty(@PageableDefault(size = 20, sort ="createdAt",
             direction = Sort.Direction.DESC) Pageable pageable, Authentication authentication) {
+        log.info("hello");
         Page<PartyInfoResponse> parties = partyService.getMyWaitingParty(pageable,authentication.getName());
         return Response.success(parties);
     }
