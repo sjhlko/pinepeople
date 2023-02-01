@@ -1,5 +1,6 @@
 package com.lion.pinepeople.mvc;
 
+import com.lion.pinepeople.domain.dto.party.PartyCategoryRequest;
 import com.lion.pinepeople.domain.dto.party.PartyCreateRequest;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
 import com.lion.pinepeople.domain.entity.Category;
@@ -24,16 +25,15 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("users/party")
+@RequestMapping("pinepeople/party")
 public class PartyMvcController {
 
     private final CategoryService categoryService;
@@ -84,11 +84,7 @@ public class PartyMvcController {
         return "party/partyDetail";
     }
 
-    @GetMapping("/create-new")
-    public String getCreateParty(Model model) {
-        model.addAttribute("partyCreateRequest", new PartyCreateRequest());
-        return "party/partyCreate";
-    }
+
 
     /**카테고리별 파티 조회**/
     @GetMapping("/category/{name}")
@@ -115,6 +111,28 @@ public class PartyMvcController {
         model.addAttribute("nowPage", nowPage);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
+    }
+
+    @GetMapping("/create-new")
+    public String getCreateParty(Model model) {
+        model.addAttribute("partyCreateRequest", new PartyCategoryRequest());
+        model.addAttribute("rightNowCategory", categoryService.getCategorySteadily("Right now!",1));
+        model.addAttribute("steadilyCategory", categoryService.getCategorySteadily("Steadily!",1));
+        return "party/partyCreate";
+    }
+    @PostMapping("/create-new")
+    public String createParty(Authentication authentication, @Validated @ModelAttribute PartyCategoryRequest partyCategoryRequest,
+                              @RequestParam String branch, @RequestParam String code) {
+        try {
+            PartyCategoryRequest request = PartyCategoryRequest.of(partyCategoryRequest,branch,code.split(",")[0]);
+            if(branch.equals("Steadily!")){
+                request = PartyCategoryRequest.of(partyCategoryRequest,branch,code.split(",")[1]);
+            }
+            partyService.createPartyWithCategory(request,authentication.getName());
+        } catch (AppException e) {
+            log.info("파티 생성 실패 : {}", e.getErrorCode());
+        }
+        return "redirect:/pinepeople/party/list";
     }
 
     private User getUser(Authentication authentication) {
