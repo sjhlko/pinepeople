@@ -7,6 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum PaymentType {
 
-    CREDIT_CART,
+    CREDIT_CARD,
     CONTACT_PAYMENT
 }

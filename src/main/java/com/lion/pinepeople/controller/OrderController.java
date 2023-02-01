@@ -35,7 +35,7 @@ public class OrderController {
      * @return 주문 성공 메세지
      */
     @ApiOperation(value = "주문 생성")
-    @PostMapping("/party/{partyId}/orders")
+    @PostMapping("/users/party/{partyId}/orders")
     public Response<OrderResponse> order(@PathVariable Long partyId, @RequestBody OrderRequest orderRequest, @ApiIgnore Authentication authentication) {
         log.info("controller");
         String userName = authentication.getName();
@@ -54,7 +54,7 @@ public class OrderController {
     @GetMapping("/users/order-lists/{orderId}")
     public Response<OrderInfoResponse> getOrder(@PathVariable Long orderId, @ApiIgnore Authentication authentication) {
         String userName = authentication.getName();
-        OrderInfoResponse findOne = orderservice.getOrder(userName, orderId);
+        OrderInfoResponse findOne = orderservice.getOrderDetail(userName, orderId);
         return Response.success(findOne);
     }
 
@@ -83,7 +83,7 @@ public class OrderController {
      */
     @ApiOperation(value = "주문 취소")
     @PatchMapping("/users/{partyId}/orders/{orderId}")
-    public Response<OrderCancelResponse> deleteOrder(@PathVariable Long orderId, @PathVariable Long partyId, @ApiIgnore Authentication authentication) {
+    public Response<OrderCancelResponse> cancelOrder(@PathVariable Long orderId, @PathVariable Long partyId, @ApiIgnore Authentication authentication) {
         String userName = authentication.getName();
         OrderCancelResponse deleteOrder = orderservice.cancelOrder(userName, orderId, partyId);
         return Response.success(deleteOrder);
