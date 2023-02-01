@@ -10,14 +10,21 @@ import lombok.*;
 public class PostResponse {
 
     private String message;
-    private Long postId;
+    private Long id;
+    private String userName;
 
 
-    // Post(Entity) -> PostCreateResponse(DTO)
-    public static PostResponse convertToDto(String message, Long postId) {
+    /***
+     * convertToDto
+     * Entity를 Dto로 변환
+     * @param message
+     * @param id
+     * @return
+     */
+    public static PostResponse convertToDto(String message, Long id) {
         return PostResponse.builder()
                 .message(message)
-                .postId(postId)
+                .id(id)
                 .build();
     }
 }
