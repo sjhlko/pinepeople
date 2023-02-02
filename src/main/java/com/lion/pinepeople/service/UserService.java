@@ -16,8 +16,10 @@ import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.UserRepository;
+import com.lion.pinepeople.utils.CookieUtil;
 import com.lion.pinepeople.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,15 +27,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final BrixService brixService;
+    private final RedisService redisService;
+    private final long accessTokenExpireTimeMs = 1000 * 60 * 15L;
+    private final long refreshTokenExpireTimeMs = 1000 * 60 * 60 * 24L;
     @Value("${jwt.token.secret}")
     private String key;
 
@@ -59,12 +66,12 @@ public class UserService {
 
     /**
      * 로그인 메서드
+     *
      * @param userLoginRequest 로그인 dto
-     * @param response 쿠키를 설정하기 위해 매개변수로 받은 response
+     * @param response         쿠키를 설정하기 위해 매개변수로 받은 response
      * @return jwt를 반환한다.
      */
     public UserLoginResponse login(UserLoginRequest userLoginRequest, HttpServletResponse response) {
-        final long expireTimeMs = 1000 * 60 * 60L;
         //이메일 체크
         User findUser = userRepository.findByEmail(userLoginRequest.getEmail()).orElseThrow(() -> {
             throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage());
@@ -74,24 +81,80 @@ public class UserService {
             throw new AppException(ErrorCode.INVALID_PASSWORD, ErrorCode.INVALID_PASSWORD.getMessage());
         }
         //토큰 발행
-        String token = JwtTokenUtil.createToken(findUser.getId(), key, expireTimeMs);
+        String accessToken = JwtTokenUtil.createToken(findUser.getId(), key, accessTokenExpireTimeMs);
+        String refreshToken = JwtTokenUtil.createToken(findUser.getId(), key, refreshTokenExpireTimeMs);
 
-        Cookie cookie = new Cookie("token", token);
-        response.addCookie(cookie);
+        //레디스 저장
+        redisService.setDataExpire(accessToken, refreshToken, refreshTokenExpireTimeMs / 1000);
 
-        return UserLoginResponse.of(token);
+        //쿠키 저장
+        CookieUtil.saveCookie(response, "token", accessToken);
+
+        return UserLoginResponse.of(accessToken);
+    }
+
+    /**
+     * OAuth 로그인 메서드
+     *
+     * @param email    OAuth 로그인시 Authentcation에 올라온 emali을 통해 토큰 발행
+     * @param response 리다리렉션 시 사용
+     * @return access 토큰 반환
+     */
+    public UserLoginResponse oAuthLogin(String email, HttpServletResponse response) {
+        //이메일 체크
+        User findUser = userRepository.findByEmail(email).orElseThrow(() -> {
+            throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage());
+        });
+        //토큰 발행
+        String accessToken = JwtTokenUtil.createToken(findUser.getId(), key, accessTokenExpireTimeMs);
+        String refreshToken = JwtTokenUtil.createToken(findUser.getId(), key, refreshTokenExpireTimeMs);
+
+        //레디스 저장
+        redisService.setDataExpire(accessToken, refreshToken, refreshTokenExpireTimeMs / 1000);
+
+        //쿠키 저장
+        CookieUtil.savePathCookie(response, "token", accessToken, "/pinepeople");
+
+        return UserLoginResponse.of(accessToken);
     }
 
     /**
      * 로그아웃 메서드
+     *
      * @param response 쿠키를 설정하기 위해 매개변수로 받은 response
      * @return 로그아웃 성공 여부 메세지를 반환한다.
      */
-    public UserLogoutResponse logout(HttpServletResponse response){
-        Cookie cookie = new Cookie("token",null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+    public UserLogoutResponse logout(HttpServletRequest request, HttpServletResponse response) {
+        //redis aceess token logout
+        String accessToken = CookieUtil.getCookieValue(request, "token");
+        redisService.setDataExpire(accessToken, "LOGOUT", accessTokenExpireTimeMs / 1000);
+        //쿠키 초기화
+        CookieUtil.initCookie(response, "token");
         return new UserLogoutResponse("로그아웃되었습니다.");
+    }
+
+    public boolean isReissueable(HttpServletRequest request, HttpServletResponse resoponse) {
+        log.info("토큰 재발급 시도");
+        //accessToken 가져옴
+        String accessToken = CookieUtil.getCookieValue(request, "token");
+        //redis에서 refreshToken 가져오기 및 refresh 유효성 체크
+        String refreshToken = redisService.getData(accessToken);
+        if (refreshToken == null) return false;
+        if (!JwtTokenUtil.isValid(refreshToken, key).equals("OK")) return false;
+        Long userId = JwtTokenUtil.getUserId(refreshToken, key);
+        //redis에서 기존 refresh 데이터 삭제
+        redisService.deleteData(accessToken);
+        //토큰 재발행 및 redis에 저장
+        String newAccessToken = JwtTokenUtil.createToken(userId, key, accessTokenExpireTimeMs);
+        String newRefreshToken = JwtTokenUtil.createToken(userId, key, refreshTokenExpireTimeMs);
+        redisService.setDataExpire(newAccessToken, newRefreshToken, refreshTokenExpireTimeMs / 1000);
+        //accessToken 쿠키에 저장
+        if (request.getRequestURL().toString().contains("api"))
+            CookieUtil.saveCookie(resoponse, "token", newAccessToken);
+        else CookieUtil.savePathCookie(resoponse, "token", newAccessToken, "/pinepeople");
+        log.info(request.getRequestURL().toString());
+        log.info("토큰 재발급 성공");
+        return true;
     }
 
     /**

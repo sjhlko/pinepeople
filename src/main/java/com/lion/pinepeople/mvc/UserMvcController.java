@@ -12,11 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
@@ -92,8 +90,8 @@ public class UserMvcController {
      * @return 로그아웃 이후 test 페이지로 리다이렉트한다.
      */
     @PostMapping("/logout")
-    public String doLogout(HttpServletResponse response) {
-        userService.logout(response);
+    public String doLogout(HttpServletRequest request, HttpServletResponse response) {
+        userService.logout(request, response);
         return "redirect:/pinepeople";
     }
 
@@ -104,8 +102,12 @@ public class UserMvcController {
      * @return join 페이지를 반환한다.
      */
     @GetMapping("/join")
-    public String join(Model model) {
-        model.addAttribute("userJoinRequest", new UserJoinRequest());
+    public String join(@RequestParam(required = false) String email, Model model) {
+        UserJoinRequest userJoinRequest = new UserJoinRequest();
+        if (email != null) {
+            userJoinRequest.setEmail(email);
+        }
+        model.addAttribute("userJoinRequest", userJoinRequest);
         return "user/join";
     }
 
