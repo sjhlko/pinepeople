@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -17,10 +18,10 @@ import java.util.Map;
 @Slf4j
 public class PaymentService {
 
-    @Value("${IMP.KEY}")
+    @Value("${IMP_KEY}")
     private String imp_key;
 
-    @Value("${IMP.SECRET}")
+    @Value("${IMP_SECRET}")
     private String imp_secret;
 
     @Getter
@@ -46,15 +47,11 @@ public class PaymentService {
         conn.setRequestProperty("Accept", "application/json");
         conn.setDoOutput(true);
         JsonObject json = new JsonObject();
-//        JSONObject json = new JSONObject();
-//        json.put("imp_key", imp_key);
-//        json.put("imp_secret", imp_secret);
         json.addProperty("imp_key", imp_key);
         json.addProperty("imp_secret", imp_secret);
 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
 
-//        bw.write(json.toString());
         bw.write(json.toString());
         bw.flush();
         bw.close();
@@ -72,6 +69,7 @@ public class PaymentService {
     }
 
     // 결제 완료된 금액 반환(amount)
+    @Transactional
     public int paymentInfo(String imp_uid, String access_token) throws IOException {
         HttpsURLConnection conn = null;
         URL url = new URL("https://api.iamport.kr/payments/" + imp_uid);
@@ -95,6 +93,7 @@ public class PaymentService {
     }
 
     // 결제 취소
+    @Transactional
     public void paymentCancel(String access_token, String imp_uid, int returnAmount, String reason) throws IOException {
         System.out.println("결제 취소");
         System.out.println(access_token);
