@@ -4,7 +4,6 @@ import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginRequest;
 import com.lion.pinepeople.domain.dto.user.myInfo.MyInfoResponse;
 import com.lion.pinepeople.domain.dto.user.userInfo.UserInfoResponse;
-import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.service.BrixService;
 import com.lion.pinepeople.service.PartyService;
 import com.lion.pinepeople.service.ReportService;
@@ -19,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -43,36 +43,23 @@ public class ProfilMvcController {
         MyInfoResponse myInfo = userService.getMyInfo(authentication.getName());
         model.addAttribute("myInfo", myInfo);
 
-        //내 파티 조회
-//        Page<PartyInfoResponse> myHostPartys = partyService.getMyParty(pageable, "HOST", authentication.getName());
-//        model.addAttribute("myHostPartys", myHostPartys);
-
-        Page<PartyInfoResponse> myGuestPartys = partyService.getMyParty(pageable, "GUEST", authentication.getName());
-        model.addAttribute("myGuestPartys", myGuestPartys);
-
-        /**페이징 처리**/
-        int nowPage = myGuestPartys.getPageable().getPageNumber() + 1;
-        int startPage =  Math.max(nowPage - 4, 1);
-        int endPage = Math.min(nowPage+9, myGuestPartys.getTotalPages());
-
-        /**페이지 최신순 플래그🔽**/
-        model.addAttribute("nowPage",nowPage);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-
-        return "profil/myPage";
+        return "profile/myPage";
     }
 
+    @GetMapping("/main")
+    public String mainPage(){
+        return "main/mainPage";
+    }
 
-
-//    @GetMapping("/profile/profilePage/{userId}")
-//    public String getProfil(@PathVariable Long userId, Authentication authentication){
-//        Double brix = brixService.getBrix(authentication.getName(), userId);
-//        return "profil/profilePage";
-//    }
+    @GetMapping("/profile/profilePage/{userId}")
+    public String getProfil(@PathVariable Long userId, Model model, Authentication authentication){
+        UserInfoResponse userInfo = userService.getUserInfo(userId);
+        model.addAttribute("userInfo", userInfo);
+        return "profile/profilePage";
+    }
 
     @GetMapping("/profile/adminPage")
     public String getAdminPage(){
-        return "profil/adminPage";
+        return "profile/adminPage";
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -28,13 +29,14 @@ import java.util.List;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("pinepeople/party")
 public class PartyCommentMvcController {
 
     private final PartyCommentService partyCommentService;
     private final PartyService partyService;
 
     /**댓글 작성**/
-    @PostMapping("/users/party/write-comment")
+    @PostMapping("/write-comment")
     public String doPartyComment(Authentication authentication, PartyMvcCommentResponse response, Model model) {
       log.info("파티 댓글 뷰단 :{}",authentication.getName());
       log.info("파티 댓글 뷰단 유저번호 :{}",response.getId());
@@ -47,7 +49,7 @@ public class PartyCommentMvcController {
     }
 
     /**party 댓글 작성 후 보여주기**/
-    @GetMapping("/users/party/show-comment/{partyId}")
+    @GetMapping("/show-comment/{partyId}")
     public String showPartyComment(@PathVariable Long partyId,Model model) {
         List<PartyComment> comments = partyCommentService.getCommentList(partyId);
         PartyInfoResponse party = partyService.getParty(partyId);
@@ -58,7 +60,7 @@ public class PartyCommentMvcController {
     }
 
     /**파티 comment 삭제**/
-    @GetMapping("/users/party/delete/{partyId}/{commentId}/{userId}")
+    @GetMapping("/delete/{partyId}/{commentId}/{userId}")
     public String showPartyComment(Authentication authentication,@PathVariable Long partyId, @PathVariable Long commentId,@PathVariable Long userId, Model model, HttpServletResponse response) throws Exception{
         checkDeleteUser(authentication, userId, response);
         partyCommentService.deleteComment(partyId, commentId, authentication.getName());
@@ -67,7 +69,7 @@ public class PartyCommentMvcController {
         model.addAttribute("party", party);
         model.addAttribute(new PartyComment());
         model.addAttribute("comments", comments);
-        return "redirect:/users/party/detail/"+partyId;
+        return "redirect:/pinepeople/party/detail/"+partyId;
     }
 
 
