@@ -120,7 +120,7 @@ public class PaymentController {
             log.info("amount={}", amount);
             paymentService.paymentCancel(token, orderCancelVo.getImp_uid(), amount, "결제 에러");
         }
-        OrderCancelResponse orderCancelResponse = orderService.cancelMveOrder(authentication.getName(), orderCancelVo.getOrderId(), orderCancelVo.getPartyId());
+        OrderCancelResponse orderCancelResponse = orderService.cancelOrder(authentication.getName(), orderCancelVo.getOrderId(), orderCancelVo.getPartyId());
         return ResponseEntity.ok().body(Response.success(orderCancelResponse));
     }
 }

@@ -209,10 +209,6 @@ public class OrderService {
      **/
     public Integer plusPoint(User findUser, Order findOrder) {
         int point = findUser.getPoint() + findOrder.getDiscountPoint() - findOrder.getAccumulatePoint();
-        // 주문 시 받은 적립금을 다른 파티에 전부 사용 후, 주문 취소 시 회원의 포인트는 마이너스가 된다. 0으로 초기화
-//        if (point < 0) {
-//            return 0;
-//        }
         return point;
     }
 
@@ -264,34 +260,5 @@ public class OrderService {
             Order saveOrder = orderRepository.save(createOrder);
             return OrderResponse.of(saveOrder);
         }
-    }
-
-
-    /**
-     * 주문을 취소한다. 취소 시 적립금과 회원의 포인트 정보 및 파티 인원수를 업데이트한다.
-     *
-     * @param userId  취소하는 유저 아이디
-     * @param orderId 주문 아이디
-     * @param partyId 참가한 파티 아이디
-     * @return 주문 취소 완료
-     */
-    @Transactional
-    public OrderCancelResponse cancelMveOrder(String userId, Long orderId, Long partyId) {
-        User findUser = getUser(userId);
-        getParty(partyId);
-        Order findOrder = getOrder(orderId);
-        validateUser(findUser, findOrder);
-
-        // 주문 시 회원 포인트 정보 수정
-        findUser.updatePoint(plusPoint(findUser, findOrder));
-
-        // 주문 상태 취소로 변경
-        findOrder.orderStatusChange(findOrder.getOrderStatus());
-
-        // 업데이트한 유저 저장
-        userRepository.save(findUser);
-        // 주문 저장
-        orderRepository.save(findOrder);
-        return OrderCancelResponse.of(findOrder);
     }
 }
