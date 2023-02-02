@@ -23,10 +23,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @Api(tags = "User API")
 public class UserController {
@@ -87,8 +88,9 @@ public class UserController {
 
     /**
      * 로그인 메서드
+     *
      * @param userLoginRequest 로그인 dto
-     * @param response 쿠키 설정을 하기 위해 response를 서비스로 넘긴다.
+     * @param response         쿠키 설정을 하기 위해 response를 서비스로 넘긴다.
      * @return jwt 토큰을 반환
      */
     @PostMapping("/login")
@@ -100,13 +102,14 @@ public class UserController {
 
     /**
      * 로그아웃 메서드
+     *
      * @param response 쿠키를 설정하기 위해 response를 서비스로 넘긴다.
      * @return 로그인 성공여부에 대한 메세지 반환
      */
     @PostMapping("/logout")
     @ApiOperation(value = "로그아웃")
-    public Response<UserLogoutResponse> logout(HttpServletResponse response){
-        UserLogoutResponse userLogoutResponse = userService.logout(response);
+    public Response<UserLogoutResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+        UserLogoutResponse userLogoutResponse = userService.logout(request, response);
         return Response.success(userLogoutResponse);
     }
 

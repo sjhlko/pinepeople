@@ -1,8 +1,10 @@
 package com.lion.pinepeople.config.security;
 
+import com.lion.pinepeople.config.security.OAuth.OAuth2SuccessHandler;
 import com.lion.pinepeople.config.security.exception.AuthenticationManager;
 import com.lion.pinepeople.config.security.exception.CustomAccessDeniedHandler;
 import com.lion.pinepeople.config.security.filter.JwtFilter;
+import com.lion.pinepeople.service.OAuthUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,44 +21,51 @@ public class SecurityConfig {
     private final AuthenticationManager authenticationManager;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final JwtFilter jwtFilter;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     private final String[] PERMMIT = {
             "/swagger-ui/**",
-            "/api/users/join",
-            "/api/users/login",
+            "/api/join",
+            "/api/login",
+            "/api/logout",
             "/pinepeople/login",
-            "/api/users/logout",
             "/pinepeople/logout",
             "/pinepeople/join"
     };
 
     private final String[] GET_AUTHENTICATED = {
-            "/api/users/my"
+            "/api/my",
+            "/pinepeople"
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .httpBasic().disable()
+        httpSecurity.httpBasic().disable()
                 .csrf().disable()
-                .cors().and()
-                .authorizeRequests()
+                .cors().and();
+
+        httpSecurity.authorizeRequests()
                 .antMatchers(PERMMIT).permitAll()
                 .antMatchers(HttpMethod.GET, GET_AUTHENTICATED).authenticated()
                 .antMatchers(HttpMethod.POST).authenticated()
                 .antMatchers(HttpMethod.PUT).authenticated()
                 .antMatchers(HttpMethod.PATCH).authenticated()
-                .antMatchers(HttpMethod.DELETE).authenticated()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .exceptionHandling()
+                .antMatchers(HttpMethod.DELETE).authenticated();
+
+        httpSecurity.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        httpSecurity.exceptionHandling()
                 .authenticationEntryPoint(authenticationManager)
-                .accessDeniedHandler(accessDeniedHandler)
-                .and()
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .accessDeniedHandler(accessDeniedHandler);
+
+        httpSecurity.oauth2Login().userInfoEndpoint().userService(new OAuthUserService());
+
+        httpSecurity.oauth2Login().successHandler(oAuth2SuccessHandler);
+
+        httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
     }
 
 }
