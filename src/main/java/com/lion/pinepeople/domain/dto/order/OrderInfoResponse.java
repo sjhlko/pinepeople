@@ -2,8 +2,8 @@ package com.lion.pinepeople.domain.dto.order;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lion.pinepeople.domain.entity.Order;
-import com.lion.pinepeople.domain.entity.OrderStatus;
-import com.lion.pinepeople.domain.entity.PaymentType;
+import com.lion.pinepeople.enums.OrderStatus;
+import com.lion.pinepeople.enums.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -52,7 +52,6 @@ public class OrderInfoResponse {
                 .build());
         return orderDtoList;
     }
-
 
 
 }
