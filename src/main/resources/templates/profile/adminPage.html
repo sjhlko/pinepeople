@@ -1,17 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Shop Homepage - Start Bootstrap Template</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="../../../../../../../pinepeople/front/assets/favicon.ico" />
-        <!-- Bootstrap icons-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link   rel="stylesheet"  th:href="@{/static/assets/css/styles.css}"/>
+        <div th:replace="base :: base-head"></div>
 
         <style>
             table.type06 {
@@ -41,43 +31,18 @@
     </head>
     <body>
         <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="#!">pine people</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#!">All Products</a></li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" href="#!">Popular Items</a></li>
-                                <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <form class="d-flex">
-                        <button class="btn btn-outline-dark" type="submit">
-                            <i class="bi-cart-fill me-1"></i>
-                            Cart
-                            <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </nav>
+        <div th:insert="~{base :: pinepeople-nav}"></div>
+
         <!-- Header-->
-        <header class="bg-dark py-5">
+        <header class="bg-yellow py-5">
             <div class="container px-4 px-lg-5 my-5">
                 <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">Shop in style</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+                    <h1 class="display-4 fw-bolder">Pine People</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">관리자페이지</p>
                 </div>
             </div>
         </header>
+
         <!-- Section-->
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5">
@@ -132,7 +97,7 @@
 
                     <!-- party list start -->
                     <div class="col h-100">
-                        나의 파티 확인
+                        블랙 리스트 관리
                         <ul class="nav nav-tabs">
                             <li class="nav-item">
                               <a class="nav-link active" aria-current="page" href="#">대기중</a>
@@ -186,13 +151,42 @@
                 </div>
             </div>
         </section>
+
         <!-- Footer-->
-        <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2022</p></div>
-        </footer>
+        <div th:insert="~{base :: pinepeople-footer}"></div>
+
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="../../../../../../../pinepeople/front/js/scripts.js"></script>
+
+        <script>
+            $('.my-party').on("click", function(){
+                let urls = [
+                    `http://localhost:8787/pinepeople/api/partys/my-waitings`,
+                    `http://localhost:8787/pinepeople/api/partys/my?role=GUEST`,
+                    `http://localhost:8787/pinepeople/api/partys/my?role=HOST`
+                ]
+                let idx = $(".my-party").index($(this))
+
+                $.ajax({
+                    url: urls[idx],
+                    dataType:'json',
+                    type:'GET',
+                    success:function(data){
+                        $('#party-body').empty()
+                        for(var i=0; i<data.result.content.length; i++){
+                            var tableId = '<tr>';
+                            tableId += '<td>' + data.result.content[i].partyId + '</td>';
+                            tableId += '<td>' + data.result.content[i].categoryName + '</td>';
+                            tableId += '<td>' + data.result.content[i].partyTitle + '</td>';
+                            tableId += '<td>' + data.result.content[i].hostName + '</td>';
+                            tableId += '</tr>';
+                            $('#party-body').append(tableId)
+                        }
+                    }
+                })
+            })
+
+        </script>
+
     </body>
 </html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head th:fragment="base-head">
+    <meta charset="utf-8">
+    <title>Pine People</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--favicon-->
+    <link rel="icon" type="img/logo" th:href="@{/static/image/icon.png}">
+
+    <!--css-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!--Theme custom css -->
+    <link   rel="stylesheet"  th:href="@{/static/assets/css/styles.css}"/>
+    <link rel="stylesheet" th:href="@{/static/assets/css/main/mainStyle.css}"/>
+
+    <!--bootstrap-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <!--noto sans 폰트 적용-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        h1, h2, h3, h4, h5, h6, p, .navbar-brand, .nav-link {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .regular {
+            font-weight: 400;
+        }
+
+        .medium {
+            font-weight: 500;
+        }
+
+        .bold {
+            font-weight: 700;
+        }
+
+    </style>
+</head>
+
+<body data-spy="scroll" data-target=".navbar-collapse" data-offset="100">
+
+    <nav th:fragment="pinepeople-nav" class="navbar navbar-expand-lg navbar-light bg-white" style="margin-bottom: 0px;">
+        <div class="container-fluid">
+            <img th:src="@{/static/image/logo.png}" alt="" width="50" height="60" class="d-inline-block align-text-center">
+            <a class="navbar-brand bold mt-3 pt-3" th:href="@{/pinepeople/main}">Pine People</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse mt-3" id="navbarNavDropdown">
+                <ul class="navbar-nav text-center">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            파티
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="#">꾸준히</a></li>
+                            <li><a class="dropdown-item" href="#">당장히</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">커뮤니티</a>
+                    </li>
+                    <li class="nav-item dropdown">
+
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img th:src="@{/static/image/user.png}" alt="" width="30" height="30">
+                            xxx님
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" th:href="@{/pinepeople/profile/myPage}">마이페이지</a></li>
+                            <li><a class="dropdown-item" href="#">알림 확인하기</a></li>
+                            <li><a class="dropdown-item" href="#">결제내역</a></li>
+                            <li><a class="dropdown-item" href="#">로그아웃</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <footer th:fragment="pinepeople-footer" id="contact" class="footer action-lage bg-black p-top-80">
+        <!--<div class="action-lage"></div>-->
+
+        <div class="main_footer fix bg-mega text-center p-top-40 p-bottom-30 m-top-80">
+            <div class="col-md-12">
+                <p class="wow fadeInRight text-white" data-wow-duration="1s">
+                    Made with
+                    by
+                    <a target="_blank" href="https://gitlab.com/GunLABS/pine-people">Like Lion</a>
+                    7 Team. 김건우, 이아진, 박수진, 서정희, 김지수, 김진아
+                </p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
