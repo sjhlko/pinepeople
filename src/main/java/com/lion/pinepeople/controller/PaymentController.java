@@ -113,7 +113,7 @@ public class PaymentController {
         System.out.println("imp_uid = " + imp_uid);
 
         // ** 주문 취소 **
-        // Imp_uid가 null이면 만나서 결제라 아임포트 결제 취소할 필요 없음
+        // Imp_uid가 null이 아니면 아임포트 결제임 -> 아임포트 결제취소 api 호출해야 함
         if (orderCancelVo.getImp_uid() != null) {
             // 2. 토큰으로 결제 완료된 결제정보(결제 완료된 금액) 가져옴
             int amount = paymentService.paymentInfo(orderCancelVo.getImp_uid(), token);
