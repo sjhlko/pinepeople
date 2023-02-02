@@ -36,35 +36,29 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = CookieUtil.getCookieValue(request, "token");
 
-        if (token==null) {
+        if (token == null) {
             //log.info("쿠키가 존재하지 않습니다.");
             filterChain.doFilter(request, response);
             return;
         }
 
         log.info("token : {}", token);
-        try {
 
-            String validTokenCheck = JwtTokenUtil.isValid(token,key);
-            if(validTokenCheck.equals(ErrorCode.EXPIRE_TOKEN.name())){
-                request.setAttribute("exception",ErrorCode.EXPIRE_TOKEN);
-                filterChain.doFilter(request, response);
-                return;
-            } else if (validTokenCheck.equals(ErrorCode.INVALID_TOKEN.name())) {
-                request.setAttribute("exception",ErrorCode.INVALID_TOKEN);
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            User findUser = userRepository.findById(JwtTokenUtil.getUserId(token, key)).get();
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(JwtTokenUtil.getUserId(token, key), null, List.of(new SimpleGrantedAuthority("ROLE_" + findUser.getRole().name())));
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        String validTokenCheck = JwtTokenUtil.isValid(token, key);
+        if (validTokenCheck.equals(ErrorCode.EXPIRE_TOKEN.name())) {
+            request.setAttribute("exception", ErrorCode.EXPIRE_TOKEN);
             filterChain.doFilter(request, response);
-
-        } catch (Exception e) {
-            log.error("토큰 에러");
-            filterChain.doFilter(request,response);
+            return;
+        } else if (validTokenCheck.equals(ErrorCode.INVALID_TOKEN.name())) {
+            request.setAttribute("exception", ErrorCode.INVALID_TOKEN);
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        User findUser = userRepository.findById(JwtTokenUtil.getUserId(token, key)).get();
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(JwtTokenUtil.getUserId(token, key), null, List.of(new SimpleGrantedAuthority("ROLE_" + findUser.getRole().name())));
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        filterChain.doFilter(request, response);
     }
 }
