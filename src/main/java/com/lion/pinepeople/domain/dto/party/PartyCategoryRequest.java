@@ -3,16 +3,14 @@ package com.lion.pinepeople.domain.dto.party;
 import com.lion.pinepeople.domain.entity.Category;
 import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class PartyCategoryRequest {
 
     private String partyTitle;
@@ -38,6 +36,21 @@ public class PartyCategoryRequest {
                 .endDate(this.endDate)
                 .category(category)
                 .user(user)
+                .build();
+    }
+
+    public static PartyCategoryRequest of(PartyCategoryRequest partyCategoryRequest, String branch, String code){
+        return PartyCategoryRequest.builder()
+                .partyContent(partyCategoryRequest.partyContent)
+                .address(partyCategoryRequest.address)
+                .partySize(partyCategoryRequest.partySize)
+                .partyCost(partyCategoryRequest.partyCost)
+                .partyTitle(partyCategoryRequest.partyTitle)
+                .announcement(partyCategoryRequest.announcement)
+                .startDate(partyCategoryRequest.startDate)
+                .endDate(partyCategoryRequest.endDate)
+                .branch(branch)
+                .code(code)
                 .build();
     }
 

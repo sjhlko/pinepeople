@@ -77,7 +77,7 @@
 
             <br>
             <div class="order_info_box">
-                <input type="radio" name="radio" value="CREDIT_CART" id="cart">카드 결제
+                <input type="radio" name="radio" value="CREDIT_CARD" id="cart">카드 결제
                 <input type="radio" name="radio" value="CONTACT_PAYMENT" id="contact">만나서 결제
             </div>
 
@@ -121,7 +121,7 @@
 
     function cancel() {
         alert("주문이 취소되었습니다.");
-        location.replace("/pinepeople/users/party/6/order"); // 파티 리스트 창으로 이동
+        location.replace("/pinepeople/party/6/order"); // 파티 리스트 창으로 이동
     }
 
     function payment() {
@@ -140,6 +140,7 @@
             email: [[${user.email}]],
             totalCost: Number(document.getElementById('cost').innerText) + Number(document.getElementById('commission').innerText) - Number($('input[name=discountPoint]').val()),
         }
+        console.log([[${party.partyId}]]);
         console.log([[${user.email}]]);
         console.log(data.email);
 
@@ -152,7 +153,7 @@
         if (!$('input[name=discountPoint]').val()) {
             data.discountPoint = 0;
         }
-        if (data.paymentType == "CONTACT_PAYMENT") {
+        if (data.paymentType == 'CONTACT_PAYMENT') {
             paymentContact(data);
             return;
         }
@@ -173,7 +174,7 @@
                 text: '주문이 완료되었습니다.',
                 closeOnClickOutside: false
             }).then(function () {
-                location.replace("/pinepeople/users/party/6/order");
+                location.replace("/pinepeople/party/"+ [[${party.partyId}]] + "/order");
             })
         }).fail(function (result) {
             var responseText = result.responseText;
@@ -181,7 +182,7 @@
             console.log(message);
 
             alert(message);
-            location.replace("/pinepeople/users/party/"+ [[${party.partyId}]] +"/order");
+            location.replace("/pinepeople/party/"+ [[${party.partyId}]] +"/order");
         })
     }
 
@@ -233,7 +234,7 @@
                 closeOnClickOutside: false
             }) // 에러 메세지 창 닫으면 실행될 함수
                 .then(function () {
-                    location.replace("/pinepeople/users/party/6/order"); // 주문 내역으로 이동하기
+                    location.replace("/pinepeople/party/"+ [[${party.partyId}]] + "/order"); // 주문 내역으로 이동하기
                 })
         }).fail(function (result) { // 실패 응답 메세지 담아서 view로 보내줌
             // var json = JSON.stringify(result); // 쌍따옴표로 출력
@@ -243,22 +244,7 @@
             var message = responseText.split('\"')[13];
             console.log(message);
             alert(message);
-            location.replace("/pinepeople/users/party/"+ [[${party.partyId}]] + "/order") // 현재 창 유지
-        });
-    }
-
-    function cancelPay(data) {
-        $.ajax({
-            url: "/order/payment/cancel",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({
-                "merchant_uid": data.merchant_uid, // 주문번호
-                "imp_uid": data.imp_uid, // 주문번호
-                "cancel_request_amount": data.amount, // 환불금액
-                "reason": "테스트 결제 환불" // 환불사유
-            }),
-            dataType: "json"
+            location.replace("/pinepeople/party/"+ [[${party.partyId}]] + "/order") // 현재 창 유지
         });
     }
 
