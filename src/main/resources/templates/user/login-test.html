@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:replace="/user/template/layout :: common_header"></th:block>
+    <th:block th:replace="user/template/layout :: common_header"></th:block>
 </head>
 <body>
 <div th:object="${myInfo}">
@@ -10,6 +10,6 @@
         <button type="submit" class="btn btn-primary">Logout</button>
     </form>
 </div>
-<th:block th:replace="/user/template/layout :: common_footer"></th:block>
+<th:block th:replace="user/template/layout :: common_footer"></th:block>
 </body>
 </html>
