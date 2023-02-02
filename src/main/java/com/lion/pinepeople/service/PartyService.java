@@ -20,6 +20,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PartyService {
     private final PartyRepository partyRepository;
     private final UserRepository userRepository;
