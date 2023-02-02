@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +18,10 @@ import java.util.Map;
 @Slf4j
 public class PaymentService {
 
-    @Value("${IMP_KEY}")
+    @Value("${IMP.KEY}")
     private String imp_key;
 
-    @Value("${IMP_SECRET}")
+    @Value("${IMP.SECRET}")
     private String imp_secret;
 
     @Getter
@@ -45,13 +46,16 @@ public class PaymentService {
         conn.setRequestProperty("Content-type", "application/json");
         conn.setRequestProperty("Accept", "application/json");
         conn.setDoOutput(true);
-        JsonObject json = new JsonObject();
-
-        json.addProperty("imp_key", imp_key);
-        json.addProperty("imp_secret", imp_secret);
+        JsonObject json2 = new JsonObject();
+        JSONObject json = new JSONObject();
+        json.put("imp_key", imp_key);
+        json.put("imp_secret", imp_secret);
+//        json.addProperty("imp_key", imp_key);
+//        json.addProperty("imp_secret", imp_secret);
 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
 
+//        bw.write(json.toString());
         bw.write(json.toString());
         bw.flush();
         bw.close();
