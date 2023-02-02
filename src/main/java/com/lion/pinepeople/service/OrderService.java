@@ -47,7 +47,7 @@ public class OrderService {
         Integer totalCost = 0;
         if (!orderRequest.getPaymentType().equals(PaymentType.CONTACT_PAYMENT)) {
             totalCost = totalCost(findUser, orderRequest.getDiscountPoint(), userOneCost);
-            Integer accumulatePoint = getAccumulatePoint(orderRequest.getDiscountPoint(), totalCost);
+            Integer accumulatePoint = getAccumulatePoint(orderRequest.getDiscountPoint(), userOneCost);
 
             // 주문 생성
             Order createOrder = Order.createOrder(findUser, findParty, null, userOneCost, accumulatePoint, totalCost, orderRequest.getDiscountPoint(), orderRequest.getPaymentType());
@@ -187,7 +187,7 @@ public class OrderService {
         if (findUser.getPoint() < discount) {
             throw new AppException(ErrorCode.INVALID_ORDER_POINT, "현재 사용할 수 있는 포인트는 총 " + findUser.getPoint() + "포인트 입니다.");
         }
-        System.out.println("수수료 = " + (int) (userOneCost * 0.1));
+        log.info("수수료 = {}", (int) (userOneCost * 0.1));
 
         int totalCost = (int) (userOneCost + (userOneCost * 0.1)) - discount;
         if (totalCost < 0) {
@@ -200,8 +200,8 @@ public class OrderService {
     /**
      * 적립금 계산하는 메서드 -> (총 결제 비용 * 5% )
      **/
-    private Integer getAccumulatePoint(Integer discountPoint, Integer totalCost) {
-        return (int) ((totalCost - discountPoint) * 0.05);
+    private Integer getAccumulatePoint(Integer discountPoint, Integer cost) {
+        return (int) ((cost - discountPoint) * 0.05);
     }
 
     /**
@@ -238,18 +238,18 @@ public class OrderService {
 
             // 총 결제 금액
             totalCost = totalCost(findUser, orderVo.getDiscountPoint(), userOneCost);
-            log.info("totalCost ={} ", totalCost);
+            log.info("총 결제 금액 ={} ", totalCost);
 
             // 적립금
-            Integer accumulatePoint = getAccumulatePoint(orderVo.getDiscountPoint(), totalCost);
-            log.info("accumulatePoint ={} ", accumulatePoint);
+            Integer accumulatePoint = getAccumulatePoint(orderVo.getDiscountPoint(), userOneCost);
+            log.info("적립금 ={} ", accumulatePoint);
 
             // 주문 생성
             Order createOrder = Order.createOrder(findUser, findParty, orderVo.getImp_uid(), userOneCost, accumulatePoint, totalCost, orderVo.getDiscountPoint(), PaymentType.valueOf(orderVo.getPaymentType()));
 
             // 주문 시 회원 포인트 정보 수정
             Integer minusPoint = minusPoint(orderVo.getDiscountPoint(), findUser, accumulatePoint);
-            log.info("minusPoint={}", minusPoint);
+            log.info("주문 후 회원 포인트={}", minusPoint);
 
             // 업데이트한 유저 저장
             findUser.updatePoint(minusPoint);
