@@ -61,7 +61,7 @@
             </button>
                     <div class="dropdown-content" >
                       <tr th:each="rightNow: ${rightNows}">
-                        <a th:href="@{/party/category/{name}(name=${rightNow.name})}" th:text="${rightNow.name}" >profile</a>
+                        <a th:href="@{/pinepeople/party/category/{name}(name=${rightNow.name})}" th:text="${rightNow.name}" >profile</a>
                       </tr>
                     </div>
                     <div class="dropdown" >
@@ -71,7 +71,7 @@
                         </button>
                         <div class="dropdown-content">
                             <tr th:each="steadily: ${steadilys}">
-                                <a th:href="@{/party/category/{name}(name=${steadily.name})}" th:text="${steadily.name}" >profile</a>
+                                <a th:href="@{/pinepeople/party/category/{name}(name=${steadily.name})}" th:text="${steadily.name}" >profile</a>
                             </tr>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
 
         <nav class="navbar bg-light">
             <div class="container-fluid">
-                <form class="d-flex" th:action="@{/party/list}"  method="get" >
+                <form class="d-flex" th:action="@{/pinepeople/party/list}"  method="get" >
                     <input class="form-control me-2" type="text" name="address" th:value="${address}" placeholder="지역" >
                     <input class="form-control me-2" type="text" name="partyTitle" th:value="${partyTitle}" placeholder="파티 제목" >
                     <button type="submit" class="btn btn-outline-success" >Search</button>
@@ -104,7 +104,7 @@
                             <span th:text="'/ 인원 : ' + ${party.partySize}"></span>
                         </div>
                         <p class="card-text" th:text="${party.partyContent}">With supporting text below as a natural lead-in to additional content.</p>
-                        <a href="#" class="btn btn-primary" th:href="@{/users/party/detail/{id}(id=${party.partyId})}" >Go somewhere</a>
+                        <a href="#" class="btn btn-primary" th:href="@{/pinepeople/party/detail/{id}(id=${party.partyId})}" >Go somewhere</a>
                     </div>
                     <div  style="background-color: lightyellow;" class="card-footer text-muted" th:text="'마감일 : ' +${party.endDate}">
                         2 days ago
@@ -113,7 +113,7 @@
                 </div>
                 <div>
                     <th:block  th:each="page:${#numbers.sequence(startPage,endPage)}">
-                    <a class="page-item" th:if="${page != nowPage}" th:href="@{/party/list(page=${page-1},title=${param.title})}" th:text ="${page}" style="font-size:25px"></a>
+                    <a class="page-item" th:if="${page != nowPage}" th:href="@{list(page=${page-1},title=${param.title})}" th:text ="${page}" style="font-size:25px"></a>
                     <strong th:if="${page==nowPage}" th:text ="${page}" style="color:lightskyblue; font-size:25px"></strong>
                     </th:block>
                 </div>

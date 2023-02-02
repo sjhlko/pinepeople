@@ -65,11 +65,11 @@ public class PaymentController {
         try {
             // 현재 회원 포인트
             int point = user.getPoint();
-            System.out.println("현재 회원 포인트 = " + point);
+            log.info("현재 회원 포인트 = " + point);
 
             // 주문 시 사용한 포인트
             int usePoint = orderVo.getDiscountPoint();
-            System.out.println("주문 시 사용 포인트 = " + usePoint);
+            log.info("주문 시 사용 포인트 = " + usePoint);
 
             // 4. 현재 포인트보다 사용포인트가 많을 경우 결제 취소
             if (point < usePoint) {
@@ -79,7 +79,7 @@ public class PaymentController {
 
             // 5. DB에서 실제 계산되어야 할 가격 가져오기(실제 계산 금액 가져오기)
             long orderPriceCheck = orderService.totalCost(user, orderVo.getDiscountPoint(), orderVo.getCost());
-            System.out.println("DB상 실제 계산 금액 = " + orderPriceCheck);
+            log.info("DB상 실제 계산 금액 = " + orderPriceCheck);
 
             // 6. 결제 완료된 금액과 DB상 계산되어야 할 금액이 다를경우 결제 취소
             if (orderPriceCheck != amount) {
@@ -113,14 +113,14 @@ public class PaymentController {
         System.out.println("imp_uid = " + imp_uid);
 
         // ** 주문 취소 **
-        // Imp_uid가 null이면 만나서 결제라 아임포트 결제 취소할 필요 없음
+        // Imp_uid가 null이 아니면 아임포트 결제임 -> 아임포트 결제취소 api 호출해야 함
         if (orderCancelVo.getImp_uid() != null) {
             // 2. 토큰으로 결제 완료된 결제정보(결제 완료된 금액) 가져옴
             int amount = paymentService.paymentInfo(orderCancelVo.getImp_uid(), token);
             log.info("amount={}", amount);
             paymentService.paymentCancel(token, orderCancelVo.getImp_uid(), amount, "결제 에러");
         }
-        OrderCancelResponse orderCancelResponse = orderService.cancelMveOrder(authentication.getName(), orderCancelVo.getOrderId(), orderCancelVo.getPartyId());
+        OrderCancelResponse orderCancelResponse = orderService.cancelOrder(authentication.getName(), orderCancelVo.getOrderId(), orderCancelVo.getPartyId());
         return ResponseEntity.ok().body(Response.success(orderCancelResponse));
     }
 }
