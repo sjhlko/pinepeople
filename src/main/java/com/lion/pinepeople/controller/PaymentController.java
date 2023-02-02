@@ -65,11 +65,11 @@ public class PaymentController {
         try {
             // 현재 회원 포인트
             int point = user.getPoint();
-            System.out.println("현재 회원 포인트 = " + point);
+            log.info("현재 회원 포인트 = " + point);
 
             // 주문 시 사용한 포인트
             int usePoint = orderVo.getDiscountPoint();
-            System.out.println("주문 시 사용 포인트 = " + usePoint);
+            log.info("주문 시 사용 포인트 = " + usePoint);
 
             // 4. 현재 포인트보다 사용포인트가 많을 경우 결제 취소
             if (point < usePoint) {
@@ -79,7 +79,7 @@ public class PaymentController {
 
             // 5. DB에서 실제 계산되어야 할 가격 가져오기(실제 계산 금액 가져오기)
             long orderPriceCheck = orderService.totalCost(user, orderVo.getDiscountPoint(), orderVo.getCost());
-            System.out.println("DB상 실제 계산 금액 = " + orderPriceCheck);
+            log.info("DB상 실제 계산 금액 = " + orderPriceCheck);
 
             // 6. 결제 완료된 금액과 DB상 계산되어야 할 금액이 다를경우 결제 취소
             if (orderPriceCheck != amount) {
