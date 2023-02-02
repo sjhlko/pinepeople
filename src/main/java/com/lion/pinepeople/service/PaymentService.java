@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -46,12 +45,12 @@ public class PaymentService {
         conn.setRequestProperty("Content-type", "application/json");
         conn.setRequestProperty("Accept", "application/json");
         conn.setDoOutput(true);
-        JsonObject json2 = new JsonObject();
-        JSONObject json = new JSONObject();
-        json.put("imp_key", imp_key);
-        json.put("imp_secret", imp_secret);
-//        json.addProperty("imp_key", imp_key);
-//        json.addProperty("imp_secret", imp_secret);
+        JsonObject json = new JsonObject();
+//        JSONObject json = new JSONObject();
+//        json.put("imp_key", imp_key);
+//        json.put("imp_secret", imp_secret);
+        json.addProperty("imp_key", imp_key);
+        json.addProperty("imp_secret", imp_secret);
 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
 
