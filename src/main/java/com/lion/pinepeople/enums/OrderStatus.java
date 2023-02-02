@@ -1,4 +1,4 @@
-package com.lion.pinepeople.domain.entity;
+package com.lion.pinepeople.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
