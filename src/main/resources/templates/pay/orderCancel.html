@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <!--    <link rel="stylesheet" href="css/orderDetailStyles.css"/>-->
-    <link rel="stylesheet" th:href="@{/static/assets/css/orderDetailStyles.css}"/>
+    <link rel="stylesheet" th:href="@{/static/assets/css/orderCancelStyles.css}"/>
 </head>
 <body>
 <!-- jQuery -->
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
 <!-- swal 적용 -->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
@@ -16,10 +15,10 @@
 <order>
     <main>
         <div class="container" role="main">
-            <h3>주문 상세</h3>
+            <h3>주문 취소 상세</h3>
             <div class="container2">
-                <div class="orderDate">주문 시간 <span id="formatDate"
-                                                   th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span>
+                <div class="orderDate">주문 취소 <span id="formatDate"
+                                                   th:text="${#dates.format(order.updatedAt, 'yyyy-MM-dd HH:mm')}"></span>
                 </div>
 
                 <table class="orderDetailTable">
@@ -31,7 +30,7 @@
                 <br>
                 <div>
                     <table class="paymentInfo">
-                        <caption>결제 정보</caption>
+                        <caption>결제 취소 정보</caption>
                         <br>
                         <tr>
                             <th>ㆍ 상품 금액</th>
@@ -60,22 +59,33 @@
                             <th>ㆍ 총 결제 금액</th>
                             <td><span id="sum" th:text="${order.totalCost}"></span>원</td>
                         </tr>
-
-                    </table>
-                </div>
-
-                <br>
-                <div>
-                    <table class="accumulatePoint">
                         <tr>
-                            <th>ㆍ 적립 포인트(5%)</th>
-                            <td><span id="total" th:text="${order.accumulatePoint}"></span>p</td>
+                            <th>ㆍ 적립 포인트 (5%)</th>
+                            <td><span id="accumulatePoint" th:text="${order.accumulatePoint}"></span>p</td>
+                        </tr>
+                    </table>
+                    <br>
+                    <table class="refundTable">
+                        <tr>
+                            <th>ㆍ 환불 포인트</th>
+                            <td><span id="refundPoint"
+                                      th:text="${order.discountPoint}"></span>p
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ㆍ 보유 포인트 - 적립 포인트</th>
+                            <td><span id="refundAcp"
+                                      th:text="${user.point}-${order.accumulatePoint}"></span>p
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ㆍ 환불 금액</th>
+                            <td><span id="refundTotal" th:text="${order.totalCost}"></span>p</td>
                         </tr>
                     </table>
                 </div>
-                <div class="frame">
-                    <button class="button_2" onclick="cancel()">주문 취소하기</button>
-                </div>
+                <br>
+                <br>
             </div>
             <br>
             <div class="backdrop-ux">
@@ -88,47 +98,3 @@
 
 </body>
 </html>
-
-<script th:inline="javascript">
-    /*<![CDATA[*/
-
-    function cancel() {
-        if (confirm("정말 취소히시겠습니까?") == true) {
-            const data = {
-                imp_uid: [[${order.impUid}]],
-                totalCost: document.getElementById('sum').innerText,
-                partyId: [[${order.party.id}]],
-                orderId: [[${order.Id}]],
-            }
-            cancelPayment(data);
-        } else {
-            return;
-        }
-    }
-
-    function cancelPayment(data) {
-        $.ajax({
-            url: "/pinepeople/order/payment/cancel",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(data),
-            dataType: "json"
-        }).done(function () {
-            swal({
-                text: '주문이 취소되었습니다.',
-                closeOnClickOutside: false
-            })
-                .then(function () {
-                    location.replace("/")
-                })
-        }).fail(function (result) {
-            var responseText = result.responseText;
-            var message = responseText.split('\"')[13];
-            console.log(message);
-            alert(message);
-            location.replace("/pinepeople/party/order-detail/" + [[${order.id}]])
-        });
-    }
-
-    /*]]>*/
-</script>

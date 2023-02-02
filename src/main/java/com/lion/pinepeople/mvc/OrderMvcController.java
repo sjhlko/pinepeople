@@ -5,6 +5,7 @@ import com.lion.pinepeople.domain.dto.order.OrderVo;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
 import com.lion.pinepeople.domain.entity.Order;
 import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.enums.OrderStatus;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.UserRepository;
@@ -57,11 +58,14 @@ public class OrderMvcController {
         User user = getUser(authentication);
         Order order = orderService.getOrder(orderId);
         OrderInfoResponse orderDetail = orderService.getOrderDetail(String.valueOf(user.getId()), orderId);
-
         model.addAttribute("order", order);
         model.addAttribute("user", user);
         model.addAttribute("orderDetail", orderDetail);
-        return "pay/orderDetail";
+        if (order.getOrderStatus().equals(OrderStatus.ORDER_COMPLETE)) {
+            return "pay/orderDetail";
+        } else {
+            return "pay/orderCancel";
+        }
     }
 
 
