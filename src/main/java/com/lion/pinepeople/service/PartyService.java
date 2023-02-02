@@ -92,7 +92,10 @@ public class PartyService {
         User user = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
         //카테고리 생성
+        System.out.println(request.getBranch());
+        System.out.println(request.getCode());
         Category category = categoryRepository.findByBranchAndCode(request.getBranch(), request.getCode()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        System.out.println(category.getBranch());
         Party party = partyRepository.save(request.toEntity(category,user));
         Participant participant = participantService.createHostParticipant(user,party);
         return PartyCreateResponse.of(party,participant);
