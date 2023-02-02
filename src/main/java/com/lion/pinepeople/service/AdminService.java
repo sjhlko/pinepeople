@@ -99,7 +99,6 @@ public class AdminService {
         }
         blackListRepository.deleteById(blackListId);
         return "반려하였습니다.";
-
     }
 
     /**
