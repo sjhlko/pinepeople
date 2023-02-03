@@ -93,6 +93,7 @@ public class PartyInfoResponse {
                 .partySize(m.getPartySize())
                 .partyCost(m.getPartyCost())
                 .announcement(m.getAnnouncement())
+                .address(m.getAddress())
                 .createdAt(m.getCreatedAt())
                 .updatedAt(m.getUpdatedAt())
                 .startDate(m.getStartDate())
