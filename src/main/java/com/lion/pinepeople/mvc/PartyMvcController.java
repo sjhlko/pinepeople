@@ -56,7 +56,9 @@ public class PartyMvcController {
             model.addAttribute("partys", partys);
         }
         //카테고리 검색🔽
-        categoryService.doCategory(model);
+        //categoryService.doCategory(model);
+        model.addAttribute("rightNows", categoryService.getCategorySteadily("Right now!",1));
+        model.addAttribute("steadilys", categoryService.getCategorySteadily("Steadily!",1));
         doPage(model, partys);
         return "party/partyList";
     }
@@ -114,7 +116,8 @@ public class PartyMvcController {
     }
 
     @GetMapping("/create-new")
-    public String getCreateParty(Model model) {
+    public String getCreateParty(Model model, Authentication authentication) {
+        System.out.println(authentication.getName());
         model.addAttribute("partyCreateRequest", new PartyCategoryRequest());
         model.addAttribute("rightNowCategory", categoryService.getCategorySteadily("Right now!",1));
         model.addAttribute("steadilyCategory", categoryService.getCategorySteadily("Steadily!",1));
@@ -123,6 +126,7 @@ public class PartyMvcController {
     @PostMapping("/create-new")
     public String createParty(Authentication authentication, @Validated @ModelAttribute PartyCategoryRequest partyCategoryRequest,
                               @RequestParam String branch, @RequestParam String code) {
+        System.out.println(authentication.getName());
         try {
             PartyCategoryRequest request = PartyCategoryRequest.of(partyCategoryRequest,branch,code.split(",")[0]);
             if(branch.equals("Steadily!")){
