@@ -2,7 +2,7 @@ package com.lion.pinepeople.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lion.pinepeople.domain.entity.Alarm;
-import com.lion.pinepeople.domain.entity.AlarmType;
+import com.lion.pinepeople.enums.AlarmType;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;

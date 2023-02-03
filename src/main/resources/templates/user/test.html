@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:replace="/user/template/layout :: common_header"></th:block>
+    <th:block th:replace="user/template/layout :: common_header"></th:block>
 </head>
 <body>
 <h1>여기는 Pine People</h1>
 <button type="button" onclick="location.href ='/pinepeople/login'" class="btn btn-primary">Login</button>
-<th:block th:replace="/user/template/layout :: common_footer"></th:block>
+<th:block th:replace="user/template/layout :: common_footer"></th:block>
 </body>
 </html>

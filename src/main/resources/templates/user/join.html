@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:replace="/user/template/layout :: common_header"></th:block>
+    <th:block th:replace="user/template/layout :: common_header"></th:block>
     <style>
         form {
             width: 100%;
@@ -34,7 +34,7 @@
     </style>
 </head>
 <body>
-<th:block th:replace="/user/template/layout :: common_content(~{::section})">
+<th:block th:replace="user/template/layout :: common_content(~{::section})">
     <section>
         <form th:action="@{/pinepeople/join}" th:object="${userJoinRequest}" method="post">
             <div th:if="${#fields.hasGlobalErrors()}">
@@ -94,6 +94,6 @@
         </form>
     </section>
 </th:block>
-<th:block th:replace="/user/template/layout :: common_footer"></th:block>
+<th:block th:replace="user/template/layout :: common_footer"></th:block>
 </body>
 </html>
