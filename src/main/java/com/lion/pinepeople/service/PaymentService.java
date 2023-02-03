@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -46,7 +47,6 @@ public class PaymentService {
         conn.setRequestProperty("Accept", "application/json");
         conn.setDoOutput(true);
         JsonObject json = new JsonObject();
-
         json.addProperty("imp_key", imp_key);
         json.addProperty("imp_secret", imp_secret);
 
@@ -69,6 +69,7 @@ public class PaymentService {
     }
 
     // 결제 완료된 금액 반환(amount)
+    @Transactional
     public int paymentInfo(String imp_uid, String access_token) throws IOException {
         HttpsURLConnection conn = null;
         URL url = new URL("https://api.iamport.kr/payments/" + imp_uid);
@@ -92,6 +93,7 @@ public class PaymentService {
     }
 
     // 결제 취소
+    @Transactional
     public void paymentCancel(String access_token, String imp_uid, int returnAmount, String reason) throws IOException {
         System.out.println("결제 취소");
         System.out.println(access_token);
