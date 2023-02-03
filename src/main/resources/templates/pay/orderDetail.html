@@ -8,6 +8,7 @@
 <body>
 <!-- jQuery -->
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
 <!-- swal 적용 -->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
@@ -23,7 +24,7 @@
 
                 <table class="orderDetailTable">
                     <tr>
-                        <th><span id="partyTitle" class="partyTitle" th:text="${order.party.partyTitle}"></span></th>
+                        <th><span id="partyTitle" class="partyTitle" th:text="${order.partyTitle}"></span></th>
                         <td><span id="totalCost" class="cost" th:text="${order.totalCost}"></span>원</td>
                     </tr>
                 </table>
@@ -49,14 +50,14 @@
                         <tr>
                             <th>ㆍ 결제 수단</th>
                             <td>
-                                <div th:switch="${order.paymentType}">
-                                    <span th:case="${T(com.lion.pinepeople.domain.entity.PaymentType).CONTACT_PAYMENT}">만나서 결제</span>
-                                    <span th:case="${T(com.lion.pinepeople.domain.entity.PaymentType).CREDIT_CARD}">카드</span>
+                                <div th:switch="${#strings.toString(order.paymentType)}">
+                                    <span th:case="CONTACT_PAYMENT" th:text="'만나서 결제'"></span>
+                                    <span th:case="CREDIT_CARD" th:text='카드'></span>
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <th>ㆍ 합계</th>
+                            <th>ㆍ 총 결제 금액</th>
                             <td><span id="sum" th:text="${order.totalCost}"></span>원</td>
                         </tr>
 
@@ -78,7 +79,7 @@
             </div>
             <br>
             <div class="backdrop-ux">
-                <a href="http://localhost:8787/pinepeople/party/order-list"> < 주문 목록으로 가기</a>
+                <a href="http://localhost:8787/pinepeople/party/order-list" + [[${oder.id]]> < 주문 목록으로 가기</a>
             </div>
         </div>
     </main>
@@ -92,40 +93,49 @@
     /*<![CDATA[*/
 
     function cancel() {
-        console.log([[${order.paymentType}]])
-        const data = {
-            imp_uid: [[${order.impUid}]],
-            totalCost: document.getElementById('sum').innerText,
-            partyId: [[${order.party.id}]],
-            orderId: [[${order.Id}]],
+        if ([[${order.orderStatus}]] == 'ORDER_CANCEL') {
+            alert('이미 취소된 주문입니다.');
+            return false;
         }
-        console.log(data.imp_uid);
-        console.log(data.totalCost);
-        cancelPayment(data);
-    }
+        if (confirm("정말 취소하시겠습니까?") == true) {
+            const data = {
+                imp_uid: [[${order.impUid}]],
+                totalCost: document.getElementById('sum').innerText,
+                partyId: [[${order.partyId}]],
+                orderId: [[${order.orderId}]],
+            };
+            console.log([[${order.partyId}]]);
 
-    function cancelPayment(data) {
-        $.ajax({
-            url: "/pinepeople/order/payment/cancel",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(data),
-            dataType: "json"
-        }).done(function () {
-            swal({
-                text: '주문이 취소되었습니다.',
-                closeOnClickOutside: false
-            })
-                .then(function () {
-                    location.replace("/")
-                })
-        }).fail(function (result) {
-            var responseText = result.responseText;
-            var message = responseText.split('\"')[13];
-            console.log(message);
-            alert(message);
-            location.replace("/pinepeople/party/order-detail/" + [[${order.id}]])
-        });
+            cancelPayment(data);
+
+            function cancelPayment(data) {
+                $.ajax({
+                    url: "/pinepeople/order/payment/cancel",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    dataType: "json"
+                }).done(function () {
+                    swal({
+                        text: '주문 취소가 완료되었습니다.',
+                        closeOnClickOutside: false
+                    })
+                        .then(function () {
+                            location.replace("/")
+                        })
+                }).fail(function (result) {
+                    console.log(result);
+                    var responseText = result.responseText;
+                    console.log(responseText);
+                    var message = responseText.split('\"')[13];
+                    console.log(message);
+                    alert(message);
+                    location.replace("/pinepeople/party/order-detail/" + [[${order.orderId}]])
+                });
+            }
+        } else {
+            return;
+        }
     }
 
     /*]]>*/

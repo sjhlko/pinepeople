@@ -2,6 +2,8 @@ package com.lion.pinepeople.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lion.pinepeople.enums.OrderStatus;
+import com.lion.pinepeople.enums.PaymentType;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import lombok.AllArgsConstructor;

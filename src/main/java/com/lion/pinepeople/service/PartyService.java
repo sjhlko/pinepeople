@@ -198,4 +198,9 @@ public class PartyService {
         Page<Participant> participants = participantService.getMyWaitingParty(pageable,user);
         return participants.map(PartyInfoResponse::of);
     }
+
+    public Page<PartyInfoResponse> getPartyByCategory(Pageable pageable, String categoryName){
+        Page<Party> parties = partyRepository.findByCategory_Name(pageable,categoryName);
+        return parties.map(PartyInfoResponse::of);
+    }
 }

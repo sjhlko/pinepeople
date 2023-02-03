@@ -2,8 +2,8 @@ package com.lion.pinepeople.domain.dto.order;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lion.pinepeople.domain.entity.Order;
-import com.lion.pinepeople.domain.entity.OrderStatus;
-import com.lion.pinepeople.domain.entity.PaymentType;
+import com.lion.pinepeople.enums.OrderStatus;
+import com.lion.pinepeople.enums.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +17,10 @@ import java.sql.Timestamp;
 @Builder
 public class OrderInfoResponse {
 
+    private Long orderId;
+    private Long partyId;
     private Integer cost;
+    private String partyTitle;
     private PaymentType paymentType;
     private Integer accumulatePoint;
     private Integer discountPoint;
@@ -25,24 +28,31 @@ public class OrderInfoResponse {
     private Timestamp orderDate;
     private OrderStatus orderStatus;
     private Integer totalCost;
+    private String impUid;
 
     /* Entity -> Dto 변환 */
     public static OrderInfoResponse toDto(Order order) {
         return OrderInfoResponse.builder()
+                .orderId(order.getId())
+                .partyId(order.getParty().getId())
                 .orderDate(order.getOrderDate())
+                .partyTitle(order.getParty().getPartyTitle())
                 .discountPoint(order.getDiscountPoint())
                 .accumulatePoint(order.getAccumulatePoint())
                 .cost(order.getCost())
                 .paymentType(order.getPaymentType())
                 .orderStatus(order.getOrderStatus())
                 .totalCost(order.getTotalCost())
+                .impUid(order.getImpUid())
                 .build();
     }
 
     /* Page<Entity> -> Page<Dto> 변환 */
     public static Page<OrderInfoResponse> toDtoList(Page<Order> orderList) {
         Page<OrderInfoResponse> orderDtoList = orderList.map(o -> OrderInfoResponse.builder()
+                .orderId(o.getId())
                 .orderDate(o.getOrderDate())
+                .partyTitle(o.getParty().getPartyTitle())
                 .discountPoint(o.getDiscountPoint())
                 .accumulatePoint(o.getAccumulatePoint())
                 .cost(o.getCost())
@@ -52,7 +62,6 @@ public class OrderInfoResponse {
                 .build());
         return orderDtoList;
     }
-
 
 
 }

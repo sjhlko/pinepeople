@@ -20,7 +20,7 @@ import java.util.List;
 
 @Api(tags = "Party API")
 @RestController
-@RequestMapping("/pinepeople/api/partys")
+@RequestMapping("/api/partys")
 @RequiredArgsConstructor
 @Slf4j
 public class PartyController {

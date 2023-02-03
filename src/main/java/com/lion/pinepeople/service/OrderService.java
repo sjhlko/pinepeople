@@ -4,8 +4,8 @@ package com.lion.pinepeople.service;
 import com.lion.pinepeople.domain.dto.order.*;
 import com.lion.pinepeople.domain.entity.Order;
 import com.lion.pinepeople.domain.entity.Party;
-import com.lion.pinepeople.domain.entity.PaymentType;
 import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.enums.PaymentType;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.OrderRepository;
@@ -47,7 +47,7 @@ public class OrderService {
         Integer totalCost = 0;
         if (!orderRequest.getPaymentType().equals(PaymentType.CONTACT_PAYMENT)) {
             totalCost = totalCost(findUser, orderRequest.getDiscountPoint(), userOneCost);
-            Integer accumulatePoint = getAccumulatePoint(orderRequest.getDiscountPoint(), totalCost);
+            Integer accumulatePoint = getAccumulatePoint(orderRequest.getDiscountPoint(), userOneCost);
 
             // 주문 생성
             Order createOrder = Order.createOrder(findUser, findParty, null, userOneCost, accumulatePoint, totalCost, orderRequest.getDiscountPoint(), orderRequest.getPaymentType());
@@ -187,7 +187,7 @@ public class OrderService {
         if (findUser.getPoint() < discount) {
             throw new AppException(ErrorCode.INVALID_ORDER_POINT, "현재 사용할 수 있는 포인트는 총 " + findUser.getPoint() + "포인트 입니다.");
         }
-        System.out.println("수수료 = " + (int) (userOneCost * 0.1));
+        log.info("수수료 = {}", (int) (userOneCost * 0.1));
 
         int totalCost = (int) (userOneCost + (userOneCost * 0.1)) - discount;
         if (totalCost < 0) {
@@ -200,8 +200,8 @@ public class OrderService {
     /**
      * 적립금 계산하는 메서드 -> (총 결제 비용 * 5% )
      **/
-    private Integer getAccumulatePoint(Integer discountPoint, Integer totalCost) {
-        return (int) ((totalCost - discountPoint) * 0.05);
+    private Integer getAccumulatePoint(Integer discountPoint, Integer cost) {
+        return (int) ((cost - discountPoint) * 0.05);
     }
 
     /**
@@ -209,10 +209,6 @@ public class OrderService {
      **/
     public Integer plusPoint(User findUser, Order findOrder) {
         int point = findUser.getPoint() + findOrder.getDiscountPoint() - findOrder.getAccumulatePoint();
-        // 주문 시 받은 적립금을 다른 파티에 전부 사용 후, 주문 취소 시 회원의 포인트는 마이너스가 된다. 0으로 초기화
-//        if (point < 0) {
-//            return 0;
-//        }
         return point;
     }
 
@@ -238,18 +234,18 @@ public class OrderService {
 
             // 총 결제 금액
             totalCost = totalCost(findUser, orderVo.getDiscountPoint(), userOneCost);
-            log.info("totalCost ={} ", totalCost);
+            log.info("총 결제 금액 ={} ", totalCost);
 
             // 적립금
-            Integer accumulatePoint = getAccumulatePoint(orderVo.getDiscountPoint(), totalCost);
-            log.info("accumulatePoint ={} ", accumulatePoint);
+            Integer accumulatePoint = getAccumulatePoint(orderVo.getDiscountPoint(), userOneCost);
+            log.info("적립금 ={} ", accumulatePoint);
 
             // 주문 생성
             Order createOrder = Order.createOrder(findUser, findParty, orderVo.getImp_uid(), userOneCost, accumulatePoint, totalCost, orderVo.getDiscountPoint(), PaymentType.valueOf(orderVo.getPaymentType()));
 
             // 주문 시 회원 포인트 정보 수정
             Integer minusPoint = minusPoint(orderVo.getDiscountPoint(), findUser, accumulatePoint);
-            log.info("minusPoint={}", minusPoint);
+            log.info("주문 후 회원 포인트={}", minusPoint);
 
             // 업데이트한 유저 저장
             findUser.updatePoint(minusPoint);
@@ -264,34 +260,5 @@ public class OrderService {
             Order saveOrder = orderRepository.save(createOrder);
             return OrderResponse.of(saveOrder);
         }
-    }
-
-
-    /**
-     * 주문을 취소한다. 취소 시 적립금과 회원의 포인트 정보 및 파티 인원수를 업데이트한다.
-     *
-     * @param userId  취소하는 유저 아이디
-     * @param orderId 주문 아이디
-     * @param partyId 참가한 파티 아이디
-     * @return 주문 취소 완료
-     */
-    @Transactional
-    public OrderCancelResponse cancelMveOrder(String userId, Long orderId, Long partyId) {
-        User findUser = getUser(userId);
-        getParty(partyId);
-        Order findOrder = getOrder(orderId);
-        validateUser(findUser, findOrder);
-
-        // 주문 시 회원 포인트 정보 수정
-        findUser.updatePoint(plusPoint(findUser, findOrder));
-
-        // 주문 상태 취소로 변경
-        findOrder.orderStatusChange(findOrder.getOrderStatus());
-
-        // 업데이트한 유저 저장
-        userRepository.save(findUser);
-        // 주문 저장
-        orderRepository.save(findOrder);
-        return OrderCancelResponse.of(findOrder);
     }
 }
