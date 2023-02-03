@@ -36,7 +36,8 @@ public class Party extends BaseEntity{
     @JoinColumn (name ="user_id")
     private User user;
     @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    List<Participant> participants = new ArrayList<>();
+    private List<Participant> participants = new ArrayList<>();
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cagegory_id")
     private Category category;
