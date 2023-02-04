@@ -1,5 +1,5 @@
 server:
-  port: 8989
+  port: 8787
   servlet:
     encoding:
       force-response: true
