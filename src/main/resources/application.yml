@@ -7,7 +7,6 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-    static-path-pattern: /static/**
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/pinepeople
