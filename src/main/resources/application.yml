@@ -1,5 +1,5 @@
 server:
-  port: 8787
+  port: 8989
   servlet:
     encoding:
       force-response: true
@@ -7,6 +7,7 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+    static-path-pattern: /static/**
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/pinepeople
@@ -39,9 +40,12 @@ spring:
     host: ${REDIS_HOST}
     port: 6379
 
-jwt:
+
   token:
     secret: hello
 
 imp_key: ${IMP_KEY}
 imp_secret: ${IMP_SECRET}
+
+
+
