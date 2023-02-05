@@ -57,6 +57,7 @@ public class OrderInfoResponse {
         Page<OrderInfoResponse> orderDtoList = orderList.map(o -> OrderInfoResponse.builder()
                 .orderId(o.getId())
                 .orderDate(o.getOrderDate())
+                .partyId(o.getParty().getId())
                 .partyTitle(o.getParty().getPartyTitle())
                 .discountPoint(o.getDiscountPoint())
                 .accumulatePoint(o.getAccumulatePoint())
