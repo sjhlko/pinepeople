@@ -39,11 +39,14 @@
                         </div>
                         <p class="lead" th:text="${party.partyContent}">파티 내용</p>
                         <div class="d-flex">
-                     <!--       <input class="form-control text-center me-3" id="inputQuantity" type="num" th:value="" style="max-width: 3rem" />-->
-                            <button class="btn btn-outline-dark flex-shrink-0" type="button">
+<!--                            <input class="form-control text-center me-3" id="inputQuantity" type="num" th:value="" style="max-width: 3rem" />-->
+                            <form style="display: inline;"onclick="main.joinParty(this)" >
+                                <input type="hidden" name="partyId" th:value="${party.partyId}" >
+                                <button class="btn btn-outline-dark flex-shrink-0" type="button" >
                                 <i class="bi-cart-fill me-1"></i>
                                 파티 참여하기
-                            </button>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -107,8 +110,6 @@
     </body>
     <script>
         let main = {
-
-
             commentDelete: function (form) {
                 const con_check = confirm("삭제하시겠습니까?");
                 if (con_check === true) {
@@ -117,7 +118,7 @@
                     let userId = form.userId.value.trim();
                     window.location.href = '/pinepeople/party/delete/' + partyId + '/' + commentId+'/'+userId;
                 }
-            }
+            },
                /* console.log("commentId:");
                 let commentId = form.commentId.value.trim();
                 let partyId = form.partyId.value.trim();
@@ -134,6 +135,14 @@
                     window.location.href = '/users/party/show-comment/' + commentId;
                 })
             }*/
+
+            joinParty: function (form) {
+                const con_check = confirm("파티에 참여하시겠습니까?");
+                if (con_check === true) {
+                    let id = form.partyId.value;
+                    window.location.href = '/pinepeople/party/join/' + id ;
+                }
+            }
 
         };
 
