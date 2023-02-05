@@ -47,6 +47,22 @@ public class UserMvcController {
 //        }
 //        return "user/test";
 //    }
+//    @GetMapping
+//    public String mainPage(Model model, Authentication authentication){
+//        if(!Objects.isNull(authentication)){
+//            MyInfoResponse myInfoResponse = userService.getMyInfo(authentication.getName());
+//            model.addAttribute("myInfo", myInfoResponse);
+//        }else{
+//            log.info("non login");
+//            model.addAttribute("myInfo", null);
+//        }
+//        return "main/mainPage";
+//    }
+
+    @GetMapping
+    public String mainPage(){
+        return "main/mainPage";
+    }
 
     /**
      * 로그인 페이지 불러오는 메서드
@@ -85,7 +101,7 @@ public class UserMvcController {
             return "user/login";
         }
 
-        return "redirect:/pinepeople/main";
+        return "redirect:/pinepeople";
     }
 
     /**

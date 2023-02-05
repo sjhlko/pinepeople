@@ -62,19 +62,42 @@
 
         <div class="collapse navbar-collapse mt-3" id="navbarNavDropdown">
             <ul class="navbar-nav text-center">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        파티
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li><a class="dropdown-item" href="#">꾸준히</a></li>
-                        <li><a class="dropdown-item" href="#">당장히</a></li>
-                    </ul>
+<!--                <li class="nav-item dropdown">-->
+<!--                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"-->
+<!--                       data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                        파티-->
+<!--                    </a>-->
+<!--                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">-->
+<!--                        <li><a class="dropdown-item" href="#">꾸준히</a></li>-->
+<!--                        <li><a class="dropdown-item" href="#">당장히</a></li>-->
+<!--                    </ul>-->
+<!--                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/pinepeople/party/list}">파티 참여하기</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/pinepeople/party/create-new}">파티 만들기</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">커뮤니티</a>
                 </li>
+<!--                <li th:if="${myInfo != 'null'}" class="nav-item dropdown">-->
+
+<!--                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"-->
+<!--                       data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                        <img th:src="@{/static/image/user.png}" alt="" width="30" height="30">-->
+<!--                        <div th:text = "${myInfo.userName} + '님'"></div>-->
+<!--                    </a>-->
+<!--                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">-->
+<!--                        <li><a class="dropdown-item" th:href="@{/pinepeople/profile/myPage}">마이페이지</a></li>-->
+<!--                        <li><a class="dropdown-item" href="#">알림 확인하기</a></li>-->
+<!--                        <li><a class="dropdown-item" th:href="@{/pinepeople/party/order-list}">결제내역</a></li>-->
+<!--                        <li><a class="dropdown-item" href="#">로그아웃</a></li>-->
+<!--                    </ul>-->
+<!--                </li>-->
+<!--                <li th:if="${myInfo == 'null'}" class="nav-item">-->
+<!--                    <a class="nav-link" th:href="@{/pinepeople/login}" >로그인</a>-->
+<!--                </li>-->
                 <li class="nav-item dropdown">
 
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
@@ -89,6 +112,7 @@
                         <li><a class="dropdown-item" href="#">로그아웃</a></li>
                     </ul>
                 </li>
+
 
             </ul>
         </div>
