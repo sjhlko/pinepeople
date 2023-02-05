@@ -79,7 +79,7 @@
                     <li class="list-group-item">
                 <span>
                     <span style="font-size: small" th:text="${comment.user.name}"></span>
-                    <span style="font-size: xx-small"th:text="${comment.createdAt}"></span>
+                    <span style="font-size: xx-small" th:text="${comment.createdAt}"></span>
 
                  <form style="display: inline;" onclick="main.commentDelete(this)" >
                     <input type="hidden"  name="commentId" th:value="${comment.id}">
