@@ -2,7 +2,7 @@
 <html lang="ko" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <!--    <link rel="stylesheet" href="css/orderDetailStyles.css"/>-->
+    <div th:replace="base.html :: base-head"></div>
     <link rel="stylesheet" th:href="@{/static/assets/css/orderCancelStyles.css}"/>
 </head>
 <body>
@@ -10,27 +10,30 @@
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <!-- swal 적용 -->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
+<!--    nav-bar-->
+<div th:insert="~{base :: pinepeople-nav}"></div>
 
 <order>
     <main>
         <div class="container" role="main">
-            <h3>주문 취소 상세</h3>
+            <div class="detailCancel">주문 취소 상세</div>
             <div class="container2">
-                <div class="orderDate">주문 취소 <span id="formatDate"
-                                                   th:text="${#dates.format(order.updatedAt, 'yyyy-MM-dd HH:mm')}"></span>
+                <div class="orderDate">주문 완료 <span id="formatDate"
+                                                   th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span>
+                    <br>주문 취소 <span id="formatDate2"
+                                    th:text="${#dates.format(order.updatedAt, 'yyyy-MM-dd HH:mm')}"></span>
                 </div>
 
                 <table class="orderDetailTable">
                     <tr>
-                        <th><span id="partyTitle" class="partyTitle" th:text="${order.party.partyTitle}"></span></th>
+                        <th><span id="partyTitle" class="partyTitle" th:text="${order.partyTitle}"></span></th>
                         <td><span id="totalCost" class="cost" th:text="${order.totalCost}"></span>원</td>
                     </tr>
                 </table>
                 <br>
                 <div>
                     <table class="paymentInfo">
-                        <caption>결제 취소 정보</caption>
+                        <div class="cancelInfo">결제 취소 정보</div>
                         <br>
                         <tr>
                             <th>ㆍ 상품 금액</th>
@@ -49,9 +52,9 @@
                         <tr>
                             <th>ㆍ 결제 수단</th>
                             <td>
-                                <div th:switch="${order.paymentType}">
-                                    <span th:case="${T(com.lion.pinepeople.enums.PaymentType).CONTACT_PAYMENT}">만나서 결제</span>
-                                    <span th:case="${T(com.lion.pinepeople.enums.PaymentType).CREDIT_CARD}">카드</span>
+                                <div th:switch="${#strings.toString(order.paymentType)}">
+                                    <span th:case="CONTACT_PAYMENT" th:text="'만나서 결제'"></span>
+                                    <span th:case="CREDIT_CARD" th:text='카드'></span>
                                 </div>
                             </td>
                         </tr>
@@ -88,13 +91,17 @@
                 <br>
             </div>
             <br>
-            <div class="backdrop-ux">
-                <a href="http://localhost:8787/pinepeople/party/order-list"> < 주문 목록으로 가기</a>
+            <div>
+                <button class="orderListBtn" type="button"
+                        th:onclick="|location.href= '@{/pinepeople/party/order-list}'|"> < 주문 목록으로 가기
+                </button>
             </div>
         </div>
     </main>
 </order>
 
+<!--footer-->
+<div th:insert="~{base :: pinepeople-footer}"></div>
 
 </body>
 </html>

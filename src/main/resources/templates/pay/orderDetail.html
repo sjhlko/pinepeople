@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <div th:replace="base.html :: base-head"></div>
     <meta charset="UTF-8">
-    <!--    <link rel="stylesheet" href="css/orderDetailStyles.css"/>-->
     <link rel="stylesheet" th:href="@{/static/assets/css/orderDetailStyles.css}"/>
 </head>
 <body>
@@ -12,11 +12,12 @@
 <!-- swal 적용 -->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-
+<!--    nav-bar-->
+<div th:insert="~{base :: pinepeople-nav}"></div>
 <order>
     <main>
         <div class="container" role="main">
-            <h3>주문 상세</h3>
+            <div class="detailOrder">주문 상세</div>
             <div class="container2">
                 <div class="orderDate">주문 시간 <span id="formatDate"
                                                    th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span>
@@ -30,8 +31,8 @@
                 </table>
                 <br>
                 <div>
+                    <div class="paymentInfoTitle">결제 정보</div>
                     <table class="paymentInfo">
-                        <caption>결제 정보</caption>
                         <br>
                         <tr>
                             <th>ㆍ 상품 금액</th>
@@ -68,8 +69,9 @@
                 <div>
                     <table class="accumulatePoint">
                         <tr>
-                            <th>ㆍ 적립 포인트(5%)</th>
-                            <td><span id="total" th:text="${order.accumulatePoint}"></span>p</td>
+                            <th class="plusPoint">ㆍ 적립 포인트(5%)</th>
+                            <td class="plusPointChild"><span id="total" th:text="${order.accumulatePoint}"></span>p
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -78,13 +80,14 @@
                 </div>
             </div>
             <br>
-            <div class="backdrop-ux">
-                <a href="http://localhost:8787/pinepeople/party/order-list" + [[${oder.id]]> < 주문 목록으로 가기</a>
-            </div>
+            <button class="orderListBtn" type="button"
+                    th:onclick="|location.href= '@{/pinepeople/party/order-list}'|"> < 주문 목록으로 가기
+            </button>
         </div>
     </main>
 </order>
-
+<!--footer-->
+<div th:insert="~{base :: pinepeople-footer}"></div>
 
 </body>
 </html>
@@ -121,7 +124,7 @@
                         closeOnClickOutside: false
                     })
                         .then(function () {
-                            location.replace("/")
+                            location.replace("/pinepeople/party/order-detail/" + [[${order.orderId}]])
                         })
                 }).fail(function (result) {
                     console.log(result);

@@ -7,6 +7,7 @@ import com.lion.pinepeople.enums.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
 import java.sql.Timestamp;
@@ -14,6 +15,7 @@ import java.sql.Timestamp;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class OrderInfoResponse {
 
@@ -29,6 +31,8 @@ public class OrderInfoResponse {
     private OrderStatus orderStatus;
     private Integer totalCost;
     private String impUid;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private Timestamp updatedAt;
 
     /* Entity -> Dto 변환 */
     public static OrderInfoResponse toDto(Order order) {
@@ -43,6 +47,7 @@ public class OrderInfoResponse {
                 .paymentType(order.getPaymentType())
                 .orderStatus(order.getOrderStatus())
                 .totalCost(order.getTotalCost())
+                .updatedAt(order.getUpdatedAt())
                 .impUid(order.getImpUid())
                 .build();
     }
@@ -59,6 +64,7 @@ public class OrderInfoResponse {
                 .paymentType(o.getPaymentType())
                 .orderStatus(o.getOrderStatus())
                 .totalCost(o.getTotalCost())
+                .updatedAt(o.getUpdatedAt())
                 .build());
         return orderDtoList;
     }
