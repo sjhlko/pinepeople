@@ -42,6 +42,7 @@ public class PartyCommentService {
      * @return PartyCommentResponse 응답
      */
     public PartyCommentResponse addPartyComment(Long partyId, String userId, String body) {
+        log.info("파티 댓글 들어옴");
         //회원
         User user = getUser(userId);
         //파티
@@ -53,6 +54,7 @@ public class PartyCommentService {
                 .party(party)
                 .build();
         //파티 댓글 저장
+        log.info(partyComment.toString());
         PartyComment savedPartyComment = partyCommentRepository.save(partyComment);
         return PartyCommentResponse.of(savedPartyComment);
     }
