@@ -59,10 +59,10 @@
                 <li class="list-group-item">
                     <div class="form-inline mb-2">
                         <label for="replyId"><i class="fa fa-user-circle-o fa-2x"></i></label>
-                        <input type="text" th:field="${party.partyId}" class="form-control ml-2" placeholder="Enter yourId" id="replyId">
+                        <input type="text" th:field="${party.partyId}" style="display: none" class="form-control ml-2" placeholder="Enter yourId" id="replyId">
                        <th:block th:if="${user != null}">
                         <label for="replyPassword" class="ml-4"><i class="fa fa-unlock-alt fa-2x"></i></label>
-                        <input type="text" th:field="${user.id}"  class="form-control ml-2" placeholder="Enter password" id="replyPassword">
+                        <input type="text" th:field="${user.id}"  class="form-control ml-2" style="display: none" placeholder="Enter password" id="replyPassword">
                        </th:block>
                     </div>
                     <textarea class="form-control" th:field="${partyComment.body}" id="exampleFormControlTextarea1" rows="3"></textarea>
