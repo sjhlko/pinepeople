@@ -19,6 +19,16 @@ a {
     background-color: #c1e2b3;
 }
 
+.form-control {
+    font-size: 0.9rem;
+    padding: 2px 5px;
+}
+
+
+.btn-btn-primary {
+    border: whitesmoke solid 1px;
+}
+
 /*img {*/
 /*    display: block;*/
 /*    width: 80%;*/
