@@ -1,0 +1,186 @@
+/*body {*/
+/*    margin: 0;*/
+/*}*/
+
+* {
+    box-sizing: border-box;
+}
+
+p,
+span {
+    margin: 0;
+}
+
+a {
+    color: black;
+}
+
+.orderTable {
+    background-color: #c1e2b3;
+}
+
+.form-control {
+    font-size: 0.9rem;
+    padding: 2px 5px;
+}
+
+
+.btn-btn-primary {
+    border: whitesmoke solid 1px;
+}
+
+/*img {*/
+/*    display: block;*/
+/*    width: 80%;*/
+/*    height: 80px;*/
+/*    margin: auto;*/
+/*}*/
+
+.order {
+    width: 90%;
+    margin: auto;
+    padding: 30px;
+}
+
+.order ul {
+    background-color: whitesmoke;
+    padding: 30px;
+    margin-bottom: 50px;
+    border: whitesmoke solid 1px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 300;
+}
+
+.order ul :first-child {
+    /*color: limegreen;*/
+}
+
+table {
+    border-top: solid 1.5px black;
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px;
+}
+
+thead {
+    text-align: center;
+    font-weight: bold;
+}
+
+tbody {
+    font-size: 12px;
+}
+
+td {
+    padding: 15px 10px 0px;
+    border-bottom: 1px solid lightgrey;
+}
+
+.order__list__detail :nth-child(3) {
+    vertical-align: top;
+}
+
+.order__list__detail :nth-child(3) a {
+    font-size: 20px;
+}
+
+.order__list__detail :nth-child(3) p {
+    margin-top: 6px;
+    font-weight: bold;
+}
+
+.order__list__title {
+    font-size: 20px;
+    color: gray;
+}
+
+.order__list__option {
+    vertical-align: top;
+    font-size: 15px;
+    padding: 20px;
+}
+
+.order__list__option p::after {
+    content: "";
+    width: 90%;
+    height: 1px;
+    background-color: lightgrey;
+    left: 0px;
+    top: 25px;
+    position: absolute;
+}
+
+.order__list__optionBtn {
+    background-color: #ffecb5;
+    font-size: 11px;
+    border: lightgrey solid 1px;
+    padding: 6px;
+}
+
+.order__list__optionBtn2 {
+    background-color: #909090;
+    font-size: 7px;
+    border: lightgrey solid 1px;
+    padding: 5px;
+}
+
+.order__list__detail :nth-child(4),
+.order__list__detail :nth-child(5),
+.order__list__detail :nth-child(6) {
+    border-left: 2px solid whitesmoke;
+}
+
+.order__list__detail :nth-child(5),
+.order__list__detail :nth-child(6) {
+    text-align: center;
+}
+
+.order__list__detail :nth-child(5) button {
+    background-color: limegreen;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.price {
+    font-weight: bold;
+    font-size: 18px;
+    padding: 0 0px 0 0px;
+}
+
+.order__mainbtns {
+    width: 420px;
+    height: 200px;
+    padding-top: 40px;
+    display: block;
+    margin-right: auto;
+}
+
+.order__bigorderbtn {
+    width: 200px;
+    height: 50px;
+    font-size: 16px;
+
+    margin: auto;
+    border-radius: 5px;
+}
+
+.order__bigorderbtn.left {
+    background-color: white;
+    background-color: #86b7fe;
+    border: 1px lightgray solid;
+}
+
+.status {
+    font-size: 14px;
+}
+
+.pagingNum {
+    margin-top: 15px;
+    font-size: 17px;
+    text-align: center;
+}

@@ -77,7 +77,7 @@ public class PaymentController {
                 return ResponseEntity.badRequest().body(Response.error(new ErrorResponse(ErrorCode.INVALID_ORDER_POINT, "결제 취소. 현재 사용할 수 있는 최대 포인트는  " + point + "포인트 입니다")));
             }
 
-            // 5. DB에서 실제 계산되어야 할 가격 가져오기(실제 계산 금액 가져오기)
+            // 5. 결제 누르기 전 계산되어야 할 가격 가져오기(실제 계산 금액 가져오기)
             long orderPriceCheck = orderService.totalCost(user, orderVo.getDiscountPoint(), orderVo.getCost());
             log.info("DB상 실제 계산 금액 = " + orderPriceCheck);
 

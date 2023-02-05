@@ -45,7 +45,7 @@ public class PartyCommentMvcController {
 
       PartyCommentResponse comment = partyCommentService.addPartyComment(response.getPartyId(), String.valueOf(response.getId()), response.getBody());
 
-      return "redirect:/users/party/show-comment/"+response.getPartyId();
+      return "redirect:/pinepeople/party/detail/"+response.getPartyId();
     }
 
     /**party 댓글 작성 후 보여주기**/
