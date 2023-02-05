@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="user/template/layout :: common_header"></th:block>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        .find-email-form {
+            width: 100%;
+        }
+
+        .form-control {
+            width: 100%;
+            height: 50px;
+        }
+
+        .phone-form {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
+        #to {
+            width: 70%;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        #sendBtn {
+            width: 30%;
+            height: 50px;
+        }
+
+        .plain {
+            text-align: center;
+        }
+
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        button {
+            width: 100%;
+            height: 50px;
+        }
+
+    </style>
+</head>
+<body>
+<th:block th:replace="user/template/layout :: common_content(~{::section})">
+    <section>
+        <div class="plain mb-3">가입시 입력하신 전화번호를 통해 아이디를 찾을 수 있습니다.</div>
+        <div class="find-email-form">
+            <!-- 인증번호 발급 -->
+            <div class="mb-3">
+                <div class="phone-form">
+                    <input type="email" class="form-control" id="to" placeholder="Phone">
+                    <button type="button" id="sendBtn" class="btn btn-secondary certificationBtn">인증번호 발급
+                    </button>
+                </div>
+            </div>
+            <!-- 인증번호 확인 -->
+            <div class="mb-3">
+                <input type="text" class="form-control" id="number" placeholder="Number">
+            </div>
+            <button type="button" id="checkBtn" class="btn btn-warning certificationBtn">인증하기</button>
+        </div>
+    </section>
+</th:block>
+<th:block th:replace="user/template/layout :: common_footer"></th:block>
+<script type="text/javascript">
+    $('#sendBtn').on("click", (function () {
+        console.log("클릭");
+        const to = $('#to').val();
+        if (to == '' || to.length != 11) {
+            alert("전화번호를 입력해주세요.");
+            return;
+        }
+        $.ajax({
+            url: '/pinepeople/sendSMS',
+            dataType:'json',
+            type: 'GET',
+            data: {
+                "to": to
+            },
+            success: function (data) {
+                $('#sendBtn').attr("disabled",true);
+                $('#checkBtn').on("click", (function () {
+                    console.log("인증 확인 버튼 클릭")
+                    const number = $('#number').val();
+                    console.log("data" + data);
+                    console.log("number" + number);
+                    if (number == '' || number != data) {
+                        alert("다시 인증해주세요.");
+                        window.location.href = "/pinepeople/find-email-form";
+                        return;
+                    } else {
+                        $.ajax({
+                            url: '/pinepeople/find-email',
+                            type: 'GET',
+                            data: {
+                                "phone": to
+                            },
+                            success: function (data) {
+                                alert(data);
+                                if(data == "이메일을 찾을 수 없습니다."){
+                                    window.location.href = "/pinepeople/find-email-form";
+                                    return;
+                                }
+                                window.location.href = "/pinepeople/login";
+                                return;
+                            },
+                            error: function () {
+                                alert("다시 인증해주세요.");
+                                window.location.href = "/pinepeople/find-email-form";
+                                return;
+                            }
+                        })
+                    }
+                }))
+
+            }
+        })
+    }))
+</script>
+</body>
+</html>

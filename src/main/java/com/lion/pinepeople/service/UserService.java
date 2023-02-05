@@ -1,5 +1,6 @@
 package com.lion.pinepeople.service;
 
+import com.lion.pinepeople.domain.dto.user.ChangePasswordRequest;
 import com.lion.pinepeople.domain.dto.user.delete.UserDeleteResponse;
 import com.lion.pinepeople.domain.dto.user.join.UserJoinRequest;
 import com.lion.pinepeople.domain.dto.user.join.UserJoinResponse;
@@ -26,9 +27,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -139,8 +140,14 @@ public class UserService {
         String accessToken = CookieUtil.getCookieValue(request, "token");
         //redis에서 refreshToken 가져오기 및 refresh 유효성 체크
         String refreshToken = redisService.getData(accessToken);
-        if (refreshToken == null) return false;
-        if (!JwtTokenUtil.isValid(refreshToken, key).equals("OK")) return false;
+        if (refreshToken == null) {
+            log.error("refresh 토큰이 없습니다.");
+            return false;
+        }
+        if (!JwtTokenUtil.isValid(refreshToken, key).equals("OK")){
+            log.error("refresh 토큰이 유효하지 않습니다.");
+            return false;
+        }
         Long userId = JwtTokenUtil.getUserId(refreshToken, key);
         //redis에서 기존 refresh 데이터 삭제
         redisService.deleteData(accessToken);
@@ -243,5 +250,30 @@ public class UserService {
         });
         //MyInfoResponse 변환 후 리턴
         return MyInfoResponse.of(findUser);
+    }
+
+    public String findEmail(String phone){
+        Optional<User> findUser = userRepository.findByPhone(phone);
+        if(findUser.isEmpty()) {
+            return "이메일을 찾을 수 없습니다.";
+        }
+        return "가입하신 이메일은 " + findUser.get().getEmail()+"입니다.";
+    }
+
+    public String changePassword(ChangePasswordRequest changePasswordRequest){
+        //유저 존재확인
+        User findUser = userRepository.findByEmail(changePasswordRequest.getEmail()).orElseThrow(() -> {
+            throw new AppException(ErrorCode.USER_NOT_FOUND,"해당 email로 가입된 유저가 존재하지 않습니다.");
+        });
+        //번호 비교
+        if(!findUser.getPhone().equals(changePasswordRequest.getPhone())){
+            throw new AppException(ErrorCode.INVALID_PERMISSION,"패스워드를 변경할 권한이 없습니다.");
+        }
+        log.info("패스워드 : {}",changePasswordRequest.getPassword());
+        //패스워드 변경
+        findUser.updatePassword(encoder.encode(changePasswordRequest.getPassword()));
+        userRepository.saveAndFlush(findUser);
+        log.info("패스워드 변경 완료");
+        return "패스워드가 변경되었습니다.";
     }
 }

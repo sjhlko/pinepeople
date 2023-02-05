@@ -19,6 +19,7 @@
         button {
             display: flex;
             width: 100%;
+            height: 50px;
             margin-bottom: 20px;
         }
 
@@ -36,9 +37,14 @@
 <body>
 <th:block th:replace="user/template/layout :: common_content(~{::section})">
     <section>
-        <form th:action th:object="${userLoginRequest}" method="post">
+        <form th:action="@{/pinepeople/login}" th:object="${userLoginRequest}" method="post">
             <div th:if="${#fields.hasGlobalErrors()}">
                 <div class="alert alert-danger" role="alert" th:each="err : ${#fields.globalErrors()}" th:text="${err}">
+                    A simple danger alert—check it out!
+                </div>
+            </div>
+            <div th:if="${changePasswordSuccess}">
+                <div class="alert alert-danger" role="alert"  th:text="${changePasswordSuccess}">
                     A simple danger alert—check it out!
                 </div>
             </div>
@@ -56,11 +62,11 @@
             </div>
             <button type="submit" class="btn btn-warning">Login</button>
             <button type="button" onclick="location.href='/oauth2/authorization/google'" class="btn btn-secondary"><img class="google-img" src="../../static/image/google.png"
-                                                                 th:src="@{/static/image/google.png?ver=1.1}">Google Login
+                                                                                                                        th:src="@{/static/image/google.png}">Google Login
             </button>
         </form>
         <div class="link">
-            <a href="/pinepeople/join">회원가입</a> / <a href="#">아이디 찾기</a> / <a href="#">비밀번호 찾기</a>
+            <a href="/pinepeople/join">회원가입</a> / <a th:href="@{/pinepeople/find-email-form}">아이디 찾기</a> / <a th:href="@{/pinepeople/change-password-form}">비밀번호 찾기</a>
         </div>
     </section>
 </th:block>
