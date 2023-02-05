@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <div th:replace="base :: base-head"></div>
+        <link   rel="stylesheet"  th:href="@{/assets/css/stars.css}"/>
     </head>
 
     <body>
@@ -57,11 +58,21 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            당도 평가하기
+                                            <h3>파티는 어떠셨나요?</h3>
+                                            <div th:text="${userInfo.userName}+'님의 당도를 평가해주세요!'"></div>
+                                            <form name="myform" id="myform" method="post" action="./save">
+                                                <fieldset>
+                                                    <input type="radio" name="rating" value="5" id="rate1"><label for="rate1">⭐</label>
+                                                    <input type="radio" name="rating" value="4" id="rate2"><label for="rate2">⭐</label>
+                                                    <input type="radio" name="rating" value="3" id="rate3"><label for="rate3">⭐</label>
+                                                    <input type="radio" name="rating" value="2" id="rate4"><label for="rate4">⭐</label>
+                                                    <input type="radio" name="rating" value="1" id="rate5"><label for="rate5">⭐</label>
+                                                </fieldset>
+                                            </form>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary">Save changes</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                            <button type="button" class="btn btn-primary">확인</button>
                                         </div>
                                     </div>
                                 </div>
@@ -76,11 +87,15 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            신고하기
+                                            <h3 th:text="${userInfo.userName}+'님을 신고하시겠습니까?'"></h3>
+                                            <div class="mb-3">
+                                                <label for="reportContent" class="form-label">신고 사유를 작성해주세요</label>
+                                                <textarea class="form-control" id="reportContent" rows="5"></textarea>
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary">Save changes</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                            <button type="button" class="btn btn-primary reportButton">신고</button>
                                         </div>
                                     </div>
                                 </div>
@@ -151,6 +166,31 @@
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+        <script>
+            $('.reportButton').on("click", function(){
+                /*<![CDATA[*/
+                var userId = [[${userInfo.userId}]];
+                /*]]>*/
+
+                let url = `/pinepeople/api/users/`+userId+`/reports`;
+                console.log(url)
+                let sendData = {
+                    "reportContent": $('#reportContent').val()
+                }
+                $.ajax({
+                    url: url,
+                    data: sendData,
+                    dataType:'json',
+                    type:'POST',
+                    success:function(data){
+                        console.log(data)
+                        alert("당도 측정 완료!")
+                    }
+                })
+            })
+
+        </script>
 
     </body>
 </html>

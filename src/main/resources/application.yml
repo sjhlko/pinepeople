@@ -39,9 +39,12 @@ spring:
     host: ${REDIS_HOST}
     port: 6379
 
-jwt:
+
   token:
     secret: hello
 
 imp_key: ${IMP_KEY}
 imp_secret: ${IMP_SECRET}
+
+
+
