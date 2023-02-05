@@ -45,3 +45,9 @@ jwt:
 
 imp_key: ${IMP_KEY}
 imp_secret: ${IMP_SECRET}
+
+
+sms:
+  key: key
+  secret: secret
+  phone: phone

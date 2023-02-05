@@ -1,8 +1,12 @@
 package com.lion.pinepeople.mvc;
 
+import com.lion.pinepeople.domain.dto.participant.ParticipantCreateResponse;
 import com.lion.pinepeople.domain.dto.party.PartyCategoryRequest;
 import com.lion.pinepeople.domain.dto.party.PartyCreateRequest;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
+import com.lion.pinepeople.domain.dto.party.PartyUpdateRequest;
+import com.lion.pinepeople.domain.dto.partyComment.PartyCommentResponse;
+import com.lion.pinepeople.domain.dto.partyComment.PartyMvcCommentResponse;
 import com.lion.pinepeople.domain.entity.Category;
 import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.PartyComment;
@@ -11,10 +15,7 @@ import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.PartyRepository;
 import com.lion.pinepeople.repository.UserRepository;
-import com.lion.pinepeople.service.CategoryService;
-import com.lion.pinepeople.service.PartyCommentService;
-import com.lion.pinepeople.service.PartyService;
-import com.lion.pinepeople.service.UserService;
+import com.lion.pinepeople.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 @Controller
@@ -38,6 +42,7 @@ public class PartyMvcController {
 
     private final CategoryService categoryService;
     private final PartyService partyService;
+    private final ParticipantService participantService;
     private final PartyCommentService partyCommentService;
     private final PartyRepository partyRepository;
     private final UserRepository userRepository;
@@ -56,7 +61,9 @@ public class PartyMvcController {
             model.addAttribute("partys", partys);
         }
         //카테고리 검색🔽
-        categoryService.doCategory(model);
+        //categoryService.doCategory(model);
+        model.addAttribute("rightNows", categoryService.getCategorySteadily("Right now!",1));
+        model.addAttribute("steadilys", categoryService.getCategorySteadily("Steadily!",1));
         doPage(model, partys);
         return "party/partyList";
     }
@@ -84,6 +91,17 @@ public class PartyMvcController {
         return "party/partyDetail";
     }
 
+    /**파티 참가**/
+    @GetMapping("/join/{id}")
+    public String doPartyComment(Authentication authentication, @PathVariable Long id, HttpServletResponse response) throws IOException {
+        try {
+            participantService.createGuestParticipant(id,authentication.getName());
+            printMessage("가입 신청 되었습니다.",response);
+        } catch (AppException e){
+            printMessage(e.getMessage(),response);
+        }
+        return "redirect:/pinepeople/party/detail/"+id;
+    }
 
 
     /**카테고리별 파티 조회**/
@@ -113,13 +131,21 @@ public class PartyMvcController {
         model.addAttribute("endPage", endPage);
     }
 
+    /**
+     * 글 작성 페이지 접근 메소드
+     * */
     @GetMapping("/create-new")
-    public String getCreateParty(Model model) {
+    public String getCreateParty(Model model, Authentication authentication) {
+        System.out.println(authentication.getName());
         model.addAttribute("partyCreateRequest", new PartyCategoryRequest());
         model.addAttribute("rightNowCategory", categoryService.getCategorySteadily("Right now!",1));
         model.addAttribute("steadilyCategory", categoryService.getCategorySteadily("Steadily!",1));
         return "party/partyCreate";
     }
+
+    /**
+     * 글 작성 메소드
+     * */
     @PostMapping("/create-new")
     public String createParty(Authentication authentication, @Validated @ModelAttribute PartyCategoryRequest partyCategoryRequest,
                               @RequestParam String branch, @RequestParam String code) {
@@ -135,9 +161,31 @@ public class PartyMvcController {
         return "redirect:/pinepeople/party/list";
     }
 
+    /**
+     * 글 수정 메소드
+     * */
+//    @PatchMapping("/update/{id}")
+//    public String updateParty(Authentication authentication, @Validated @ModelAttribute PartyUpdateRequest partyUpdateRequest,
+//                              @PathVariable Long id, Model model){
+//        try {
+//            partyService.createPartyWithCategory(request,authentication.getName());
+//        } catch (AppException e) {
+//            log.info("파티 생성 실패 : {}", e.getErrorCode());
+//        }
+//        return "redirect:/pinepeople/party/list";
+//
+//    }
+
     private User getUser(Authentication authentication) {
         long userId = Long.parseLong(authentication.getName());
         return userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private void printMessage(String message, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println("<script>alert('"+message+"');history.go(-1);</script>");
+        out.flush();
     }
 
 
