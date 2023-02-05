@@ -30,12 +30,15 @@ public class SecurityConfig {
             "/api/logout",
             "/pinepeople/login",
             "/pinepeople/logout",
-            "/pinepeople/join"
+            "/pinepeople/join",
+            "/pinepeople/change-password"
     };
 
     private final String[] GET_AUTHENTICATED = {
             "/api/my",
-            "/pinepeople"
+            "/pinepeople",
+            "/pinepeople/myPage/update",
+            "/pinepeople/myInfo"
     };
 
     @Bean

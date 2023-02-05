@@ -1,9 +1,6 @@
 package com.lion.pinepeople.controller;
 
-import com.lion.pinepeople.domain.dto.order.OrderCancelResponse;
-import com.lion.pinepeople.domain.dto.order.OrderInfoResponse;
-import com.lion.pinepeople.domain.dto.order.OrderRequest;
-import com.lion.pinepeople.domain.dto.order.OrderResponse;
+import com.lion.pinepeople.domain.dto.order.*;
 import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.service.OrderService;
 import io.swagger.annotations.Api;
@@ -12,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -67,9 +63,8 @@ public class OrderController {
      */
     @ApiOperation(value = "나의 주문 내역")
     @GetMapping("/users/order-lists/my")
-    public Response<Page<OrderInfoResponse>> myOrders(@PageableDefault(size = 10, sort = "orderDate", direction = Sort.Direction.DESC) Pageable pageable, @ApiIgnore Authentication authentication) {
-        String userName = authentication.getName();
-        Page<OrderInfoResponse> orderList = orderservice.getMyOrder(userName, pageable);
+    public Response<Page<OrderInfoResponse>> myOrders(@PageableDefault(size = 5) Pageable pageable, OrderSearch orderSearch, @ApiIgnore Authentication authentication) {
+        Page<OrderInfoResponse> orderList = orderservice.findMyOrder(authentication.getName(), orderSearch, pageable);
         return Response.success(orderList);
     }
 

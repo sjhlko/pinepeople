@@ -39,11 +39,14 @@
                         </div>
                         <p class="lead" th:text="${party.partyContent}">파티 내용</p>
                         <div class="d-flex">
-                     <!--       <input class="form-control text-center me-3" id="inputQuantity" type="num" th:value="" style="max-width: 3rem" />-->
-                            <button class="btn btn-outline-dark flex-shrink-0" type="button">
+<!--                            <input class="form-control text-center me-3" id="inputQuantity" type="num" th:value="" style="max-width: 3rem" />-->
+                            <form style="display: inline;"onclick="main.joinParty(this)" >
+                                <input type="hidden" name="partyId" th:value="${party.partyId}" >
+                                <button class="btn btn-outline-dark flex-shrink-0" type="button" >
                                 <i class="bi-cart-fill me-1"></i>
                                 파티 참여하기
-                            </button>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -59,10 +62,10 @@
                 <li class="list-group-item">
                     <div class="form-inline mb-2">
                         <label for="replyId"><i class="fa fa-user-circle-o fa-2x"></i></label>
-                        <input type="text" th:field="${party.partyId}" class="form-control ml-2" placeholder="Enter yourId" id="replyId">
+                        <input type="text" th:field="${party.partyId}" style="display: none" class="form-control ml-2" placeholder="Enter yourId" id="replyId">
                        <th:block th:if="${user != null}">
                         <label for="replyPassword" class="ml-4"><i class="fa fa-unlock-alt fa-2x"></i></label>
-                        <input type="text" th:field="${user.id}"  class="form-control ml-2" placeholder="Enter password" id="replyPassword">
+                        <input type="text" th:field="${user.id}"  class="form-control ml-2" style="display: none" placeholder="Enter password" id="replyPassword">
                        </th:block>
                     </div>
                     <textarea class="form-control" th:field="${partyComment.body}" id="exampleFormControlTextarea1" rows="3"></textarea>
@@ -76,7 +79,7 @@
                     <li class="list-group-item">
                 <span>
                     <span style="font-size: small" th:text="${comment.user.name}"></span>
-                    <span style="font-size: xx-small"th:text="${comment.createdAt}"></span>
+                    <span style="font-size: xx-small" th:text="${comment.createdAt}"></span>
 
                  <form style="display: inline;" onclick="main.commentDelete(this)" >
                     <input type="hidden"  name="commentId" th:value="${comment.id}">
@@ -107,8 +110,6 @@
     </body>
     <script>
         let main = {
-
-
             commentDelete: function (form) {
                 const con_check = confirm("삭제하시겠습니까?");
                 if (con_check === true) {
@@ -117,7 +118,7 @@
                     let userId = form.userId.value.trim();
                     window.location.href = '/pinepeople/party/delete/' + partyId + '/' + commentId+'/'+userId;
                 }
-            }
+            },
                /* console.log("commentId:");
                 let commentId = form.commentId.value.trim();
                 let partyId = form.partyId.value.trim();
@@ -134,6 +135,14 @@
                     window.location.href = '/users/party/show-comment/' + commentId;
                 })
             }*/
+
+            joinParty: function (form) {
+                const con_check = confirm("파티에 참여하시겠습니까?");
+                if (con_check === true) {
+                    let id = form.partyId.value;
+                    window.location.href = '/pinepeople/party/join/' + id ;
+                }
+            }
 
         };
 

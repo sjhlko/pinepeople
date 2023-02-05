@@ -1,6 +1,7 @@
 package com.lion.pinepeople.mvc;
 
 import com.lion.pinepeople.domain.dto.order.OrderInfoResponse;
+import com.lion.pinepeople.domain.dto.order.OrderSearch;
 import com.lion.pinepeople.domain.dto.order.OrderVo;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
 import com.lion.pinepeople.domain.dto.user.myInfo.MyInfoResponse;
@@ -12,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -89,16 +89,17 @@ public class OrderMvcController {
      * @return 주문 내역 페이지로 이동
      */
     @GetMapping("/party/order-list")
-    public String orderList(Model model, Authentication authentication, @PageableDefault(page = 0, size = 5, sort = "orderDate",
-            direction = Sort.Direction.DESC) Pageable pageable) {
+    public String orderList(@ModelAttribute("orderSearch") OrderSearch orderSearch, Model model, Authentication authentication,
+                            @PageableDefault(size = 5) Pageable pageable) {
 
-        Page<OrderInfoResponse> orderList = orderService.getMyOrder(authentication.getName(), pageable);
+        Page<OrderInfoResponse> orderList = orderService.findMyOrder(authentication.getName(), orderSearch, pageable);
 
         /**페이징 처리**/
         int nowPage = orderList.getPageable().getPageNumber() + 1;
         int startPage = Math.max(nowPage - 4, 1);
-        int endPage = Math.min(nowPage + 9, orderList.getTotalPages());
+        int endPage = Math.min(nowPage + 5, orderList.getTotalPages());
 
+        model.addAttribute("orderSearch", orderSearch);
         model.addAttribute("orderList", orderList);
         model.addAttribute("nowPage", nowPage);
         model.addAttribute("startPage", startPage);

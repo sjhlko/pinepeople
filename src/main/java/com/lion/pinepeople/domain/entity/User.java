@@ -74,4 +74,8 @@ public class User extends BaseEntity {
     public void updatePoint(int point) {
         this.point = point;
     }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }

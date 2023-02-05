@@ -1,12 +1,16 @@
 package com.lion.pinepeople.mvc;
 
+import com.lion.pinepeople.domain.dto.user.ChangePasswordRequest;
 import com.lion.pinepeople.domain.dto.user.join.UserJoinRequest;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginRequest;
 import com.lion.pinepeople.domain.dto.user.myInfo.MyInfoResponse;
+import com.lion.pinepeople.domain.dto.user.update.UserUpdateRequest;
 import com.lion.pinepeople.exception.customException.AppException;
+import com.lion.pinepeople.service.SmsService;
 import com.lion.pinepeople.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,23 +29,24 @@ import java.util.Objects;
 public class UserMvcController {
 
     private final UserService userService;
+    private final SmsService smsService;
 
-    /**
-     * 쿠키가 잘 들어왔는지 확인하기 위한 메서드
-     *
-     * @param model          userservice의 getMyInfo메서드에서 반환받은 response를 login-test페이지로 넘긴다.
-     * @param authentication 로그인 성공시 사용자 정보가 담겨있다.
-     * @return authentication이 null이면 test페이지 반환 아니면 login-test 페이지를 반환
-     */
-    @GetMapping
-    public String test(Model model, Authentication authentication) {
-        if (!Objects.isNull(authentication)) {
-            MyInfoResponse myInfoResponse = userService.getMyInfo(authentication.getName());
-            model.addAttribute("myInfo", myInfoResponse);
-            return "user/login-test";
-        }
-        return "user/test";
-    }
+//    /**
+//     * 쿠키가 잘 들어왔는지 확인하기 위한 메서드
+//     *
+//     * @param model          userservice의 getMyInfo메서드에서 반환받은 response를 login-test페이지로 넘긴다.
+//     * @param authentication 로그인 성공시 사용자 정보가 담겨있다.
+//     * @return authentication이 null이면 test페이지 반환 아니면 login-test 페이지를 반환
+//     */
+//    @GetMapping
+//    public String test(Model model, Authentication authentication) {
+//        if (!Objects.isNull(authentication)) {
+//            MyInfoResponse myInfoResponse = userService.getMyInfo(authentication.getName());
+//            model.addAttribute("myInfo", myInfoResponse);
+//            return "user/login-test";
+//        }
+//        return "user/test";
+//    }
 
     /**
      * 로그인 페이지 불러오는 메서드
@@ -80,7 +85,7 @@ public class UserMvcController {
             return "user/login";
         }
 
-        return "redirect:/pinepeople";
+        return "redirect:/pinepeople/main";
     }
 
     /**
@@ -139,5 +144,82 @@ public class UserMvcController {
         return "redirect:/pinepeople/login";
     }
 
+    @GetMapping("/find-email-form")
+    public String FindEmail() {
+        return "user/findEmail";
+    }
+
+    @GetMapping("/change-password-form")
+    public String ChangePassword(Model model) {
+        model.addAttribute("changePasswordRequest", new ChangePasswordRequest());
+        return "user/changePassword";
+    }
+
+    @GetMapping("/sendSMS")
+    public @ResponseBody String sendSMS(@RequestParam(value = "to") String to) {
+        String random = smsService.randNum();
+        SingleMessageSentResponse singleMessageSentResponse = smsService.sendOne(to, random);
+        return random;
+    }
+
+    @GetMapping(value = "/find-email", produces = "application/text; charset=utf8")
+    public @ResponseBody String doFindEmail(@RequestParam(value = "phone") String phone, HttpServletResponse response) {
+        response.setCharacterEncoding("UTF-8");
+        return userService.findEmail(phone);
+    }
+
+    @PostMapping("/change-password")
+    public String changePassword(@Validated @ModelAttribute ChangePasswordRequest changePasswordRequest, BindingResult bindingResult, Model model) {
+
+        log.info("change-password api");
+        if (bindingResult.hasErrors()) {
+            return "user/changePassword";
+        }
+
+        try {
+            model.addAttribute("changePasswordSuccess", userService.changePassword(changePasswordRequest));
+            model.addAttribute("userLoginRequest", new UserLoginRequest());
+        } catch (AppException e) {
+            bindingResult.reject("changePasswordFail", e.getMessage());
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "user/changePassword";
+        }
+
+        return "user/login";
+    }
+
+    @GetMapping("/profile/myPage/update")
+    public String updateMyPageForm(Authentication authentication, Model model) {
+        model.addAttribute("userUpdateRequest", new UserUpdateRequest());
+        return "profile/updateMyPage";
+    }
+
+    @GetMapping("/myInfo")
+    public @ResponseBody MyInfoResponse getMyInfo(Authentication authentication) {
+        MyInfoResponse myInfoResponse = userService.getMyInfo(authentication.getName());
+        return myInfoResponse;
+    }
+
+    @PostMapping("/profile/myPage/update")
+    public String updateMyInfo(@Validated @ModelAttribute UserUpdateRequest userUpdateRequest, BindingResult bindingResult, Authentication authentication) {
+
+        if (bindingResult.hasErrors()) {
+            return "profile/updateMyPage";
+        }
+
+        try {
+            userService.modify(authentication.getName(),userUpdateRequest);
+        } catch (AppException e) {
+            bindingResult.reject("userUpdateFail", e.getMessage());
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "profile/updateMyPage";
+        }
+
+        return "redirect:/pinepeople/profile/myPage";
+    }
 
 }
