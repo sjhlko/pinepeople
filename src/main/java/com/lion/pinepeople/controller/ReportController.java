@@ -4,12 +4,14 @@ import com.lion.pinepeople.domain.dto.report.ReportRequest;
 import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.service.ReportService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/pinepeople/api")
 @RequiredArgsConstructor
+@Slf4j
 public class ReportController {
 
     private final ReportService reportService;
@@ -23,6 +25,7 @@ public class ReportController {
     @PostMapping("/users/{userId}/reports")
     public Response<Void> reported(@PathVariable Long userId, Authentication authentication, @RequestBody ReportRequest request){
         String loginUserId = authentication.getName();
+        log.info("reports init");
         String result = reportService.addReport(loginUserId, userId, request);
         return Response.success(result);
     }

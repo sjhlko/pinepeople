@@ -1,5 +1,6 @@
 package com.lion.pinepeople.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class Brix extends BaseEntity{
     private String brixName;
 
     @OneToOne
+    @JsonBackReference
     @JoinColumn(name = "user_id")
     private User user;
 
