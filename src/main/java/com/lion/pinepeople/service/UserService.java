@@ -8,6 +8,7 @@ import com.lion.pinepeople.domain.dto.user.login.UserLoginRequest;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginResponse;
 import com.lion.pinepeople.domain.dto.user.logout.UserLogoutResponse;
 import com.lion.pinepeople.domain.dto.user.myInfo.MyInfoResponse;
+import com.lion.pinepeople.domain.dto.user.search.UserSearchResponse;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateRequest;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateResponse;
 import com.lion.pinepeople.domain.dto.user.userInfo.UserInfoResponse;
@@ -275,5 +276,11 @@ public class UserService {
         userRepository.saveAndFlush(findUser);
         log.info("패스워드 변경 완료");
         return "패스워드가 변경되었습니다.";
+    }
+
+    public Page<UserSearchResponse> searchUser(String keyword, Pageable pageable){
+        Page<User> users = userRepository.findDistinctByNameContainsOrEmailContains(pageable,keyword,keyword);
+        Page<UserSearchResponse> userSearchResponses = UserSearchResponse.ofList(users);
+        return userSearchResponses;
     }
 }
