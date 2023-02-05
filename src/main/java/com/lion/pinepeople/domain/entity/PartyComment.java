@@ -1,5 +1,6 @@
 package com.lion.pinepeople.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,10 +33,12 @@ public class PartyComment extends BaseEntity  {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "party_id")
+    @JsonIgnore
     private Party party;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
 
