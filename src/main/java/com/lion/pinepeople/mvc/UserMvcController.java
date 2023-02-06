@@ -31,21 +31,37 @@ public class UserMvcController {
     private final UserService userService;
     private final SmsService smsService;
 
-    /**
-     * 쿠키가 잘 들어왔는지 확인하기 위한 메서드
-     *
-     * @param model          userservice의 getMyInfo메서드에서 반환받은 response를 login-test페이지로 넘긴다.
-     * @param authentication 로그인 성공시 사용자 정보가 담겨있다.
-     * @return authentication이 null이면 test페이지 반환 아니면 login-test 페이지를 반환
-     */
+//    /**
+//     * 쿠키가 잘 들어왔는지 확인하기 위한 메서드
+//     *
+//     * @param model          userservice의 getMyInfo메서드에서 반환받은 response를 login-test페이지로 넘긴다.
+//     * @param authentication 로그인 성공시 사용자 정보가 담겨있다.
+//     * @return authentication이 null이면 test페이지 반환 아니면 login-test 페이지를 반환
+//     */
+//    @GetMapping
+//    public String test(Model model, Authentication authentication) {
+//        if (!Objects.isNull(authentication)) {
+//            MyInfoResponse myInfoResponse = userService.getMyInfo(authentication.getName());
+//            model.addAttribute("myInfo", myInfoResponse);
+//            return "user/login-test";
+//        }
+//        return "user/test";
+//    }
+//    @GetMapping
+//    public String mainPage(Model model, Authentication authentication){
+//        if(!Objects.isNull(authentication)){
+//            MyInfoResponse myInfoResponse = userService.getMyInfo(authentication.getName());
+//            model.addAttribute("myInfo", myInfoResponse);
+//        }else{
+//            log.info("non login");
+//            model.addAttribute("myInfo", null);
+//        }
+//        return "main/mainPage";
+//    }
+
     @GetMapping
-    public String test(Model model, Authentication authentication) {
-        if (!Objects.isNull(authentication)) {
-            MyInfoResponse myInfoResponse = userService.getMyInfo(authentication.getName());
-            model.addAttribute("myInfo", myInfoResponse);
-            return "user/login-test";
-        }
-        return "user/test";
+    public String mainPage(){
+        return "main/mainPage";
     }
 
     /**
