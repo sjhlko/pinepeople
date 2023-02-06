@@ -19,6 +19,18 @@
             <p class="orderList_list" style="color: black; font-size: 20px;"  >주문 내역</p>
             <br>
         </div>
+        <form th:object="${orderSearch}" class="form-inline">
+            <div class="form-group mb2">
+                <select th:field="*{orderStatus}" class="form-control" >
+                    <option value="">=== 주문 상태 ===</option>
+                    <option th:each=" status: ${T(com.lion.pinepeople.enums.OrderStatus).values()}"
+                            th:value="${status}"
+                            th:text="${status.description}">
+                    </option>
+                </select>
+                <button type="submit" class="btn-btn-primary">검색</button>
+            </div>
+        </form>
         <table class="order__list">
             <form>
                 <thead>
@@ -32,11 +44,11 @@
                 <tbody>
                 <tr class="order__list__detail" th:each="orderLists : ${orderList}">
                     <td>
-                                                <img src="image/keyboard.jpg" alt="magic keyboard">
+<!--                       <img src="image/keyboard.jpg" alt="magic keyboard">&ndash;&gt;-->
                     </td>
                     <td><a href="#"></a><span class="order__list__title" th:text="${orderLists.partyTitle}"></span>
-                        <div><sapn class="price" th:text="${orderLists.totalCost}"></sapn>원</div>
-                        <span style="text-decoration: line-through; color: lightgray;"
+                        <div><sapn class="price" th:text="${orderLists.cost}"></sapn>원</div>
+                        <span style=" color: lightgray;"
                               th:text="${orderLists.cost} + ${#numbers.formatInteger(orderLists.cost * 0.1 ,1,'COMMA')}"></span>(수수료 포함 금액)
                     </td>
                     <td class="order__list__option">
@@ -68,11 +80,10 @@
             </form>
         </table>
         <div class="pagingNum" >
-        <th:block th:each="page:${#numbers.sequence(startPage,endPage)}">
-            <a th:if="${page != nowPage}" th:href="@{/pinepeople/party/order-list(page=${page-1})}"
-               th:text="${page}"></a>
+            <th:block th:each="page:${#numbers.sequence(startPage,endPage)}">
+            <a lass="page-item" th:if="${page != nowPage}" th:href="@{/pinepeople/party/order-list(page=${page-1})}" th:text="${page}"></a>
             <strong th:if="${page==nowPage}" th:text="${page}" style="color:black"></strong>
-        </th:block>
+            </th:block>
         </div>
         <div class="order__mainbtns">
             <button onclick="replace()" class="order__bigorderbtn left"> < 메인 페이지로 돌아가기</button>

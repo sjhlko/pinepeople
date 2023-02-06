@@ -219,6 +219,7 @@
             },
             function (rsp) { // callback
                 if (rsp.success) {
+                    console.log(rsp.imp_uid);
                     // 계산 완료
                     // 결제 요청에 controller로 반환되는 응답 정보
                     data.imp_uid = rsp.imp_uid; // 고유 ID
