@@ -211,4 +211,9 @@ public class PartyService {
         Page<Party> parties = partyRepository.findByCategory_Name(pageable,categoryName);
         return parties.map(PartyInfoResponse::of);
     }
+
+    public Page<PartyInfoResponse> getPartyByCategoryBranch(Pageable pageable, String branch){
+        Page<Party> parties = partyRepository.findByCategory_Branch(pageable,branch);
+        return parties.map(PartyInfoResponse::of);
+    }
 }

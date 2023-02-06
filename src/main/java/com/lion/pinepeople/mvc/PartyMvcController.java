@@ -104,13 +104,22 @@ public class PartyMvcController {
     }
 
 
-    /**카테고리별 파티 조회**/
-    @GetMapping("/category/{name}")
-    public String getCategoryParties(@PathVariable String name,Model model,@PageableDefault(page = 0, size = 5, sort = "createdAt",
+    /**상세 카테고리별 파티 조회**/
+    @GetMapping("/category/{categoryName}")
+    public String getCategoryParties(@PathVariable String categoryName,Model model,@PageableDefault(page = 0, size = 5, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PartyInfoResponse> partys = partyService.getPartyByCategory(pageable,categoryName);
+        model.addAttribute("partys", partys);
+        categoryService.doCategory(model);
+        doPage(model, partys);
+        return "party/partyList";
 
-        Page<Party> parties = partyRepository.findByCategory_Name(pageable, name);
-        Page<PartyInfoResponse> partys = PartyInfoResponse.toPage(parties);
+    }
+
+    @GetMapping("/category")
+    public String getBranchParties(@RequestParam String branch,Model model,@PageableDefault(page = 0, size = 5, sort = "createdAt",
+            direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PartyInfoResponse> partys = partyService.getPartyByCategoryBranch(pageable,branch);
         model.addAttribute("partys", partys);
         categoryService.doCategory(model);
         doPage(model, partys);

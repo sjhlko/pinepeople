@@ -35,6 +35,7 @@ public class Party extends BaseEntity{
     private Date endDate;
     private String address;
     private String announcement;
+
     @Enumerated(STRING)
     private PartyStatus partyStatus;
     @ManyToOne (fetch = FetchType.LAZY)
