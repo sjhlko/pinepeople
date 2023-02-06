@@ -3,6 +3,7 @@ package com.lion.pinepeople.domain.dto.party;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lion.pinepeople.domain.entity.Participant;
 import com.lion.pinepeople.domain.entity.Party;
+import com.lion.pinepeople.enums.PartyStatus;
 import lombok.*;
 import org.springframework.data.domain.Page;
 
@@ -32,6 +33,7 @@ public class PartyInfoResponse {
     private String announcement;
     private String categoryName;
     private String hostName;
+    private PartyStatus partyStatus;
 
     //파티 생성, 조회에 쓰이는 메소드
     public static PartyInfoResponse of(Party party){
@@ -53,6 +55,7 @@ public class PartyInfoResponse {
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())
+                .partyStatus(party.getPartyStatus())
                 .categoryName(party.getCategory().getName())
                 .build();
     }
@@ -78,6 +81,7 @@ public class PartyInfoResponse {
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())
+                .partyStatus(party.getPartyStatus())
                 .categoryName(party.getCategory().getName())
                 .build();
     }
@@ -97,6 +101,7 @@ public class PartyInfoResponse {
                 .createdAt(m.getCreatedAt())
                 .updatedAt(m.getUpdatedAt())
                 .startDate(m.getStartDate())
+                .partyStatus(m.getPartyStatus())
                 .endDate(m.getEndDate())
                 .build());
 
