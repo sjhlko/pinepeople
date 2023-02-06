@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "Participant API")
 @RestController
-@RequestMapping("/api/partys/{partyId}/participants")
+@RequestMapping("pinepeople/api/partys/{partyId}/participants")
 @RequiredArgsConstructor
 public class ParticipantController {
     private final ParticipantService participantService;

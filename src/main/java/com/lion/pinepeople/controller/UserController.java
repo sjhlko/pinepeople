@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("pinepeople/api")
 @RequiredArgsConstructor
 @Api(tags = "User API")
 public class UserController {

@@ -14,6 +14,14 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link rel="stylesheet" href="css/PartyListStyles.css"  />
         <link rel="stylesheet"  th:href="@{/static/assets/css/PartyListStyles.css}"/>
+        <style>
+            .partyStatus {
+                height: 50px; /* 높이 설정 */
+                display: flex;
+                align-items: center; /* 수직 정렬 */
+                justify-content: center; /* 수평 정렬 */
+            }
+        </style>
     </head>
     <body>
         <!-- Navigation-->
@@ -61,6 +69,9 @@
                     <div class="card-body" style="background-color: lightyellow;">
                         <h5 class="card-title" th:text="${party.categoryName}" >Special title treatment</h5>
                         <h3 class="card-title" th:text="${party.partyTitle}" >Special title treatment</h3>
+                        <div class="partyStatus">
+                            <span style="font-weight: bold;" th:text="${party.partyStatus.status}"></span>
+                        </div>
                        <div>
                         <span th:text="'지역 : ' + ${party.address}"></span>
                        </div>

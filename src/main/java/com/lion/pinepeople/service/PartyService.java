@@ -3,6 +3,7 @@ package com.lion.pinepeople.service;
 import com.lion.pinepeople.domain.dto.party.*;
 import com.lion.pinepeople.domain.entity.*;
 import com.lion.pinepeople.enums.ParticipantRole;
+import com.lion.pinepeople.enums.PartyStatus;
 import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
@@ -97,7 +98,14 @@ public class PartyService {
         System.out.println(request.getCode());
         Category category = categoryRepository.findByBranchAndCode(request.getBranch(), request.getCode()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         System.out.println(category.getBranch());
-        Party party = partyRepository.save(request.toEntity(category,user));
+
+        Party party;
+        if(request.getPartySize()==1){
+            party = partyRepository.save(request.toEntity(category,user, PartyStatus.CLOSED));
+        }
+        else {
+            party = partyRepository.save(request.toEntity(category,user));
+        }
         Participant participant = participantService.createHostParticipant(user,party);
         return PartyCreateResponse.of(party,participant);
     }
@@ -201,6 +209,11 @@ public class PartyService {
 
     public Page<PartyInfoResponse> getPartyByCategory(Pageable pageable, String categoryName){
         Page<Party> parties = partyRepository.findByCategory_Name(pageable,categoryName);
+        return parties.map(PartyInfoResponse::of);
+    }
+
+    public Page<PartyInfoResponse> getPartyByCategoryBranch(Pageable pageable, String branch){
+        Page<Party> parties = partyRepository.findByCategory_Branch(pageable,branch);
         return parties.map(PartyInfoResponse::of);
     }
 }
