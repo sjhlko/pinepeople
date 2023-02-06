@@ -7,6 +7,7 @@ import com.lion.pinepeople.domain.dto.user.login.UserLoginRequest;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginResponse;
 import com.lion.pinepeople.domain.dto.user.logout.UserLogoutResponse;
 import com.lion.pinepeople.domain.dto.user.myInfo.MyInfoResponse;
+import com.lion.pinepeople.domain.dto.user.search.UserSearchResponse;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateRequest;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateResponse;
 import com.lion.pinepeople.domain.dto.user.userInfo.UserInfoResponse;
@@ -18,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +57,7 @@ public class UserController {
      */
     @GetMapping
     @ApiOperation(value = "유저 리스트 조회")
-    public Response<Page<UserInfoListResponse>> getUserInfoList(@PageableDefault(size = 20) @ApiIgnore Pageable pageable) {
+    public Response<Page<UserInfoListResponse>> getUserInfoList(@ApiIgnore @PageableDefault (size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<UserInfoListResponse> userInfoListResponses = userService.getUserInfoList(pageable);
         return Response.success(userInfoListResponses);
     }
@@ -139,5 +141,9 @@ public class UserController {
     public Response<UserDeleteResponse> delete(@ApiIgnore Authentication authentication, @PathVariable Long id) {
         UserDeleteResponse userDeleteResponse = userService.delete(authentication.getName(), id);
         return Response.success(userDeleteResponse);
+    }
+    @GetMapping("/search")
+    public Response<Page<UserSearchResponse>> searchUser(@RequestParam String keyword,@ApiIgnore @PageableDefault (size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+        return Response.success(userService.searchUser(keyword,pageable));
     }
 }

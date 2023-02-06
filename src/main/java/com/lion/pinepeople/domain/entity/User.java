@@ -1,5 +1,6 @@
 package com.lion.pinepeople.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lion.pinepeople.domain.dto.user.join.UserJoinRequest;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateRequest;
 import com.lion.pinepeople.enums.UserRole;
@@ -38,6 +39,7 @@ public class User extends BaseEntity {
     private UserRole role;
 
     @OneToOne(mappedBy = "user")
+    @JsonManagedReference
     private Brix brix;
 
     public static User of(UserJoinRequest userJoinRequest, String password) {
@@ -71,5 +73,9 @@ public class User extends BaseEntity {
 
     public void updatePoint(int point) {
         this.point = point;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
     }
 }

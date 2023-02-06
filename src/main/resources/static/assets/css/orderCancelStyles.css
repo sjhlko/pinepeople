@@ -18,7 +18,7 @@ main {
 
 .orderDetailTable {
     width: 90%;
-    height: 600%;
+    /*height: 50%;*/
     border-collapse: collapse;
     border: 1px solid #444444;
     text-align: center;
@@ -31,13 +31,13 @@ main {
     line-height: 3rem;
     margin-left: 40px;
     /*text-align: right;*/
-    padding: 0 50px 0 0px;
+    padding: 0 20px 0 0px;
 }
 
 .orderDetailTable th {
-    background: #bcbebf;
+    background: #c1e2b3;
     /*text-align: left;*/
-    margin-left: 40px;
+    margin-left: 10px;
 }
 
 .paymentInfo {
@@ -62,11 +62,21 @@ main {
     padding: 0 0 0 10px;
 }
 
+.detailCancel {
+    font-size: 25px;
+}
+
+.cancelInfo {
+    text-align: center;
+    font-weight: bold;
+
+}
+
 .refundTable {
     width: 80%;
     border-collapse: collapse;
     border: 1px solid #444444;
-    margin-left: 80px;
+    margin-left: 73px;
     /*margin-left: auto;*/
     background: #c5d7f2;
 }
@@ -96,5 +106,12 @@ main {
 
 a {
     text-decoration-line: none;
+}
+
+.orderListBtn {
+    background-color: #ffecb5;
+    font-size: 15px;
+    border: lightgrey solid 2px;
+    padding: 6px;
 }
 

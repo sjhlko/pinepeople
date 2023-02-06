@@ -11,6 +11,7 @@ import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.OrderRepository;
 import com.lion.pinepeople.repository.PartyRepository;
 import com.lion.pinepeople.repository.UserRepository;
+import com.lion.pinepeople.repository.customRepository.OrderCustomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final PartyRepository partyRepository;
+    private final OrderCustomRepository orderCustomRepository;
 
     /**
      * 주문을 진행한다. 주문 시 사용한 포인트, 쌓인 적립금, 파티 인원수에 대한 정보를 업데이트한다.
@@ -93,11 +95,10 @@ public class OrderService {
      * @return 조회 완료
      */
     @Transactional(readOnly = true)
-    public Page<OrderInfoResponse> getMyOrder(String userId, Pageable pageable) {
+    public Page<OrderInfoResponse> findMyOrder(String userId, OrderSearch orderSearch, Pageable pageable) {
         User findUser = getUser(userId);
-        Page<Order> findAll = orderRepository.findOrdersByUser(findUser, pageable);
-        Page<OrderInfoResponse> findOrderAll = OrderInfoResponse.toDtoList(findAll);
-        return findOrderAll;
+        Page<Order> findOrderCon = orderCustomRepository.findAllByOrderStatus(orderSearch, findUser.getName(), pageable);
+        return OrderInfoResponse.toDtoList(findOrderCon);
     }
 
     /**

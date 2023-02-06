@@ -2,7 +2,7 @@
 <html lang="ko" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-<!--    <link rel="stylesheet" href="css/orderStyles.css"  />-->
+    <div th:replace="base.html :: base-head"></div>
     <link rel="stylesheet" th:href="@{/static/assets/css/orderStyles.css}"/>
 </head>
 <body>
@@ -13,6 +13,8 @@
 <!-- swal 적용 -->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
+<!--    nav-bar-->
+<div th:insert="~{base :: pinepeople-nav}"></div>
 
 <order>
     <main>
@@ -92,6 +94,8 @@
     </main>
 </order>
 
+<!--footer-->
+<div th:insert="~{base :: pinepeople-footer}"></div>
 
 </body>
 </html>
@@ -123,7 +127,7 @@
 
     function cancel() {
         alert("주문이 취소되었습니다.");
-        location.replace("/pinepeople/party/6/order"); // 파티 리스트 창으로 이동
+        location.replace("/pinepeople/party/detail/"+[[${party.partyId}]]); // 파티 리스트 창으로 이동
     }
 
     function payment() {
@@ -183,7 +187,7 @@
                 text: '주문이 완료되었습니다.',
                 closeOnClickOutside: false
             }).then(function () {
-                location.replace("/pinepeople/party/"+ [[${party.partyId}]] + "/order");
+                location.replace("/pinepeople/party/order-list"); // 주문 상세 내역 가고싶은데..
             })
         }).fail(function (result) {
             var responseText = result.responseText;
@@ -215,6 +219,7 @@
             },
             function (rsp) { // callback
                 if (rsp.success) {
+                    console.log(rsp.imp_uid);
                     // 계산 완료
                     // 결제 요청에 controller로 반환되는 응답 정보
                     data.imp_uid = rsp.imp_uid; // 고유 ID
@@ -253,7 +258,7 @@
             var message = responseText.split('\"')[13];
             console.log(message);
             alert(message);
-            location.replace("/pinepeople/party/"+ [[${party.partyId}]] + "/order") // 현재 창 유지
+            location.replace("/pinepeople/party/"+ [[${party.partyId}]] + "/order")
         });
     }
 

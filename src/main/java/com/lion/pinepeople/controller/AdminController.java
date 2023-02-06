@@ -7,6 +7,7 @@ import com.lion.pinepeople.domain.dto.admin.BlackListRequest;
 import com.lion.pinepeople.domain.dto.admin.BlackListResponse;
 import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
 import com.lion.pinepeople.domain.response.Response;
+import com.lion.pinepeople.enums.BlackListStatus;
 import com.lion.pinepeople.service.AdminService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/pinepeople/api/admin")
 @RequiredArgsConstructor
 @Slf4j
 public class AdminController {
@@ -100,10 +101,10 @@ public class AdminController {
      * @return 블랙리스트 전체 조회, 페이징포함(블랙리스트 아이디, 정지 시작 시간)
      */
     @GetMapping("/black-lists")
-    public Response<Page<AllBlackListResponse>> getAllBlackList(Authentication authentication){
+    public Response<Page<AllBlackListResponse>> getAllBlackList(Authentication authentication, @RequestParam(name = "status")BlackListStatus status){
         String loginUserId = authentication.getName();
         PageRequest pageable = PageRequest.of(0,10, Sort.by("blackListId").descending());
-        Page<AllBlackListResponse> response = adminService.getAllBlackList(loginUserId, pageable);
+        Page<AllBlackListResponse> response = adminService.getAllBlackList(loginUserId, pageable, status);
         return Response.success(response);
     }
 }

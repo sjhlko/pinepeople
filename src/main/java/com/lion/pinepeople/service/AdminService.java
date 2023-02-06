@@ -162,11 +162,11 @@ public class AdminService {
      * @param pageable 페이징
      * @return 블랙리스트 아이디, 정지 시작시간
      */
-    public Page<AllBlackListResponse> getAllBlackList(String loginUserId, PageRequest pageable) {
+    public Page<AllBlackListResponse> getAllBlackList(String loginUserId, PageRequest pageable, BlackListStatus status) {
         isAdmin(loginUserId);
 
         //블랙리스트 전체 조회
-        Page<AllBlackListResponse> allBlackList = blackListRepository.findAll(pageable)
+        Page<AllBlackListResponse> allBlackList = blackListRepository.findAllByStatus(pageable, status)
                 .map(blackList -> AllBlackListResponse.fromEntity(blackList));
         return allBlackList;
     }

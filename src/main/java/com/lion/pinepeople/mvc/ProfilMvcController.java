@@ -46,10 +46,7 @@ public class ProfilMvcController {
         return "profile/myPage";
     }
 
-    @GetMapping("/main")
-    public String mainPage(){
-        return "main/mainPage";
-    }
+
 
     @GetMapping("/profile/profilePage/{userId}")
     public String getProfil(@PathVariable Long userId, Model model, Authentication authentication){
