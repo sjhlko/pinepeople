@@ -28,13 +28,15 @@
                         <h1 class="display-3 fw-bolder" th:text="${party.partyTitle}">파티 제목</h1>
                         <div class="fs-5 mb-5">
                             <div>
-                            <span th:text="'가격 : ' + ${party.partyCost}+ '원'">$40.00</span>
-                            <br>
-                            <span th:text="'인원 : '+${party.partySize}">$40.00</span>
-                            <br>
-                            <span th:text="'시작일 : '+${party.startDate}">$40.00</span>
-                            <br>
-                            <span th:text="'마감일 : '+${party.endDate}">$40.00</span>
+                                <span style="font-weight: bold;" th:text="'상태 : ' + ${party.partyStatus.status}">$40.00</span>
+                                <br>
+                                <span th:text="'가격 : ' + ${party.partyCost}+ '원'">$40.00</span>
+                                <br>
+                                <span th:text="'인원 : '+${party.partySize}">$40.00</span>
+                                <br>
+                                <span th:text="'시작일 : '+${party.startDate}">$40.00</span>
+                                <br>
+                                <span th:text="'마감일 : '+${party.endDate}">$40.00</span>
                             </div>
                         </div>
                         <p class="lead" th:text="${party.partyContent}">파티 내용</p>

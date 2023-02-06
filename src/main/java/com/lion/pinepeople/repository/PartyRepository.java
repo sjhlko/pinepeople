@@ -15,4 +15,7 @@ public interface PartyRepository extends JpaRepository<Party, Long>, PartyReposi
 
     @Transactional(readOnly = true)
     Page<Party> findByCategory_Name(Pageable pageable, String name);
+
+    @Transactional(readOnly = true)
+    Page<Party> findByCategory_Branch(Pageable pageable, String name);
 }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "PartyComment API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/partys/{partyId}/party-comments")
+@RequestMapping("pinepeople/api/partys/{partyId}/party-comments")
 public class PartyCommentController {
 
     private final PartyCommentService partyCommentService;
