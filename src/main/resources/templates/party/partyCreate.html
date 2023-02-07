@@ -29,8 +29,8 @@
         <label for="title">카테고리</label>
         <select class="form-select" aria-label="Default select example" id="branch" th:name="branch" required="required"
                 th:field="*{branch}" th:errorclass="field-error">
-          <option value="Right now!">지금 당장✨</option>
-          <option value="Steadily!">꾸준히⌛</option>
+          <option value="RightNow">지금 당장✨</option>
+          <option value="Steadily">꾸준히⌛</option>
         </select>
         <div class="field-error" th:errors="*{branch}">branch 오류</div>
       </div>
@@ -111,7 +111,7 @@
   $(document).ready(function() {
     $('#branch').change(function() {
       var result = $('#branch option:selected').val();
-      if (result === 'Right now!') {
+      if (result === 'RightNow') {
         $('#rightNowCategory').show();
         $('#steadilyCategory').hide();
       } else {
