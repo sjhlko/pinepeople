@@ -4,10 +4,7 @@ import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginRequest;
 import com.lion.pinepeople.domain.dto.user.myInfo.MyInfoResponse;
 import com.lion.pinepeople.domain.dto.user.userInfo.UserInfoResponse;
-import com.lion.pinepeople.service.BrixService;
-import com.lion.pinepeople.service.PartyService;
-import com.lion.pinepeople.service.ReportService;
-import com.lion.pinepeople.service.UserService;
+import com.lion.pinepeople.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,10 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @RequestMapping("/pinepeople")
 public class ProfilMvcController {
-    private final BrixService brixService;
-    private final ReportService reportService;
+
     private final UserService userService;
-    private final PartyService partyService;
+    private final AdminService adminService;
 
     @GetMapping("/profile/myPage")
     public String getmyPage(@PageableDefault(page = 0 ,size = 10, sort ="createdAt", direction = Sort.Direction.DESC) Pageable pageable, Model model, Authentication authentication){
@@ -56,7 +52,8 @@ public class ProfilMvcController {
     }
 
     @GetMapping("/profile/adminPage")
-    public String getAdminPage(){
+    public String getAdminPage(Authentication authentication){
+        adminService.isAdmin(authentication.getName());
         return "profile/adminPage";
     }
 }
