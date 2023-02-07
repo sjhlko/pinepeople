@@ -50,11 +50,12 @@ public class PartyService {
 
     /**
      * 특정 캬테고리가 존재하는지를 확인함
-     * @param categoryName 존재하는 파티인지 확인하고픈 카테고리의 이름
+     * @param branch 존재하는 파티인지 확인하고픈 카테고리의 branch
+     * @param code 존재하는 파티인지 확인하고픈 카테고리의 code
      * @return 존재할 경우 해당 카테고리 이름에 맞는 category 리턴, 존재하지 않을 경우 CATEGORY_NOT_FOUND 에러 발생
      */
-    public Category validateCategory(String categoryName){
-        return categoryRepository.findByName(categoryName)
+    public Category validateCategory(String branch, String code){
+        return categoryRepository.findByBranchAndCode(branch, code)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, ErrorCode.CATEGORY_NOT_FOUND.getMessage()));
     }
 
