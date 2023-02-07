@@ -159,8 +159,6 @@
 <!-- Footer-->
 <div th:insert="~{base :: pinepeople-footer}"></div>
 
-<!-- Bootstrap core JS-->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Core theme JS-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -303,25 +301,6 @@
             }
         })
     })
-
-    // $('#blackList-approval').on("click", function(){
-    //     var blackListId = $('#blackListNumber').text();
-    //     let url = `/pinepeople/api/admin/black-lists/`+ blackListId;
-    //
-    //     $.ajax({
-    //         url: url,
-    //         dataType:'json',
-    //         type:'PATCH',
-    //         success:function(data){
-    //             console.log(data)
-    //             alert("블랙리스트에서 삭제되었습니다.")
-    //         },
-    //         error:function(data){
-    //             alert("해당 권한이 없습니다")
-    //         }
-    //     })
-    // })
-
 
 </script>
 

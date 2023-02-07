@@ -43,9 +43,11 @@ public class UserService {
     private final RedisService redisService;
     private final long accessTokenExpireTimeMs = 1000 * 60 * 15L;
     private final long refreshTokenExpireTimeMs = 1000 * 60 * 60 * 24L;
+
     @Value("${jwt.token.secret}")
     private String key;
 
+    private String DEFAULT_PROFILE_URL = "https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/profile/774a9913-cb42-4b24-a7fb-93156054152c-04-2.png";
     /**
      * 회원가입 메서드
      *
@@ -58,7 +60,7 @@ public class UserService {
             throw new AppException(ErrorCode.DUPLICATED_USER_NAME, ErrorCode.DUPLICATED_USER_NAME.getMessage());
         });
         //UserJoinRequest -> User
-        User user = User.of(userJoinRequest, encoder.encode(userJoinRequest.getPassword()));
+        User user = User.of(userJoinRequest, encoder.encode(userJoinRequest.getPassword()), DEFAULT_PROFILE_URL);
         //User 저장
         user = userRepository.save(user);
         brixService.setBrix(user);
@@ -250,7 +252,7 @@ public class UserService {
             throw new AppException(ErrorCode.USER_NOT_FOUND, "유저를 찾을 수 없습니다.");
         });
         //MyInfoResponse 변환 후 리턴
-        return MyInfoResponse.of(findUser);
+        return MyInfoResponse.of(findUser, DEFAULT_PROFILE_URL);
     }
 
     public String findEmail(String phone){
