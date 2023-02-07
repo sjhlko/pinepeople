@@ -72,6 +72,18 @@ public class PartyService {
     }
 
     /**
+     * 특정 유저가 특정 파티의 host인지 확인
+     * 유저가 해당 파티의 host 가 아닐 경우 INVALID_PERMISSION 에러 발생
+     * controller 에서 사용하기 용이하다.
+     */
+    public void validateHost(String userId, Long partyId){
+        User user = validateUser(userId);
+        Party party = validateParty(partyId);
+        validateHost(party,user);
+    }
+
+
+    /**
      * 특정 유저가 특정 파티의 host 이거나 관리자인지 확인
      * @param currentUser 현재 로그인된 회원
      * @param party 현재 로그인된 회원이 host 인지 확인할 파티
@@ -142,7 +154,7 @@ public class PartyService {
         User user = validateUser(userId);
         Party party = validateParty(partyId);
         validateHost(party,user);
-        Category category = validateCategory(partyUpdateRequest.getCategory());
+        Category category = validateCategory(partyUpdateRequest.getBranch(), partyUpdateRequest.getCode());
         Timestamp createdAt = party.getCreatedAt();
         Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party,category));
         return PartyUpdateResponse.of(createdAt,updatedParty);
