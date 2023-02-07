@@ -2,10 +2,7 @@ package com.lion.pinepeople.domain.dto.party;
 
 import com.lion.pinepeople.domain.entity.Category;
 import com.lion.pinepeople.domain.entity.Party;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 
@@ -13,6 +10,7 @@ import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class PartyUpdateRequest {
     private String partyTitle;
     private String partyContent;
@@ -22,7 +20,8 @@ public class PartyUpdateRequest {
     private Date endDate;
     private String address;
     private String announcement;
-    private String category;
+    private String branch; // 카테고리 대분류
+    private String code; // 카테고리 소분류
 
     public Party toEntity(Party party, Category category){
         return Party.builder()
@@ -37,7 +36,23 @@ public class PartyUpdateRequest {
                 .endDate(this.endDate)
                 .participants(party.getParticipants())
                 .category(category)
+                .partyStatus(party.getPartyStatus())
                 .user(party.getUser())
+                .build();
+    }
+
+    public static PartyUpdateRequest of(PartyUpdateRequest partyUpdateRequest, String branch, String code){
+        return PartyUpdateRequest.builder()
+                .partyContent(partyUpdateRequest.getPartyContent())
+                .address(partyUpdateRequest.getAddress())
+                .partySize(partyUpdateRequest.getPartySize())
+                .partyCost(partyUpdateRequest.getPartyCost())
+                .partyTitle(partyUpdateRequest.getPartyTitle())
+                .announcement(partyUpdateRequest.getAnnouncement())
+                .startDate(partyUpdateRequest.getStartDate())
+                .endDate(partyUpdateRequest.getEndDate())
+                .branch(branch)
+                .code(code)
                 .build();
     }
 }
