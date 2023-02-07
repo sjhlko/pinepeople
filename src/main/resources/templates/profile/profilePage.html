@@ -35,7 +35,7 @@
                     <div class="h-40 p-2">
                         <div class="row">
                             <div class="col-3 p-1 h-100">
-                                <img class="border p-1 rounded h-100 w-100" th:src="@{/static/image/profile.png}" alt="profileImg" />
+                                <img class="border p-1 rounded h-100 w-100" th:src="${userInfo.profileImg}" alt="profileImg" />
                             </div>
                             <div class="col-9 brix-bar p-1">
                                 <div th:text="${userInfo.userName}"></div>
