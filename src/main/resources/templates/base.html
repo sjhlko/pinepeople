@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.w3.org/1999/html" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="base-head">
     <meta charset="utf-8">
     <title>Pine People</title>
@@ -21,6 +21,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
+    <!-- Core theme JS-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <!--noto sans 폰트 적용-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -53,7 +55,7 @@
 <nav th:fragment="pinepeople-nav" class="navbar navbar-expand-lg navbar-light bg-white" style="margin-bottom: 0px;">
     <div class="container-fluid">
         <img th:src="@{/static/image/logo.png}" alt="" width="50" height="60" class="d-inline-block align-text-center">
-        <a class="navbar-brand bold mt-3 pt-3" th:href="@{/pinepeople/main}">Pine People</a>
+        <a class="navbar-brand bold mt-3 pt-3" th:href="@{/pinepeople}">Pine People</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,18 +64,15 @@
 
         <div class="collapse navbar-collapse mt-3" id="navbarNavDropdown">
             <ul class="navbar-nav text-center">
-<!--                <li class="nav-item dropdown">-->
-<!--                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"-->
-<!--                       data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                        파티-->
-<!--                    </a>-->
-<!--                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">-->
-<!--                        <li><a class="dropdown-item" href="#">꾸준히</a></li>-->
-<!--                        <li><a class="dropdown-item" href="#">당장히</a></li>-->
-<!--                    </ul>-->
-<!--                </li>-->
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/pinepeople/party/list}">파티 참여하기</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        파티
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" th:href="@{/pinepeople/party/category?branch=Steadily!}">꾸준히</a></li>
+                        <li><a class="dropdown-item" th:href="@{/pinepeople/party/category?branch=Right now!}">당장히</a></li>
+                    </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/pinepeople/party/create-new}">파티 만들기</a>
@@ -81,39 +80,36 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">커뮤니티</a>
                 </li>
-<!--                <li th:if="${myInfo != 'null'}" class="nav-item dropdown">-->
-
-<!--                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"-->
-<!--                       data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                        <img th:src="@{/static/image/user.png}" alt="" width="30" height="30">-->
-<!--                        <div th:text = "${myInfo.userName} + '님'"></div>-->
-<!--                    </a>-->
-<!--                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">-->
-<!--                        <li><a class="dropdown-item" th:href="@{/pinepeople/profile/myPage}">마이페이지</a></li>-->
-<!--                        <li><a class="dropdown-item" href="#">알림 확인하기</a></li>-->
-<!--                        <li><a class="dropdown-item" th:href="@{/pinepeople/party/order-list}">결제내역</a></li>-->
-<!--                        <li><a class="dropdown-item" href="#">로그아웃</a></li>-->
-<!--                    </ul>-->
-<!--                </li>-->
-<!--                <li th:if="${myInfo == 'null'}" class="nav-item">-->
-<!--                    <a class="nav-link" th:href="@{/pinepeople/login}" >로그인</a>-->
-<!--                </li>-->
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
 
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
+                       data-bs-toggle="dropdown" aria-expanded="false" sec:authentication="name">
                         <img th:src="@{/static/image/user.png}" alt="" width="30" height="30">
-                        xxx님
+                        사용자
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li><a class="dropdown-item" th:href="@{/pinepeople/profile/myPage}">마이페이지</a></li>
                         <li><a class="dropdown-item" href="#">알림 확인하기</a></li>
                         <li><a class="dropdown-item" th:href="@{/pinepeople/party/order-list}">결제내역</a></li>
-                        <li><a class="dropdown-item" href="#">로그아웃</a></li>
+                        <li>
+                            <form th:action="@{/pinepeople/logout}" method="post" sec:authorize="isAuthenticated()">
+                                <button class="dropdown-item" type="submit" href="#">
+                                    로그아웃
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                 </li>
-
-
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <h5><a th:href="@{/pinepeople/profile/adminPage}"><span class="nav-link badge bg-secondary text-white mt-2">관리자</span></a></h5>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" th:href="@{/pinepeople/login}" >로그인</a>
+                </li>
+<!--                <li>-->
+<!--                    <b>Authenticated DTO:</b>-->
+<!--                    <div sec:authentication="principal"></div>-->
+<!--                </li>-->
             </ul>
         </div>
     </div>
@@ -133,5 +129,6 @@
         </div>
     </div>
 </footer>
+
 </body>
 </html>
