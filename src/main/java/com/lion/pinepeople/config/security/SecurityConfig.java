@@ -33,7 +33,8 @@ public class SecurityConfig {
             "/pinepeople/login",
             "/pinepeople/logout",
             "/pinepeople/join",
-            "/pinepeople/change-password"
+            "/pinepeople/change-password",
+            "/pinepeople/upload"
     };
 
     private final String[] GET_AUTHENTICATED = {
