@@ -23,11 +23,13 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
-    private final String[] PERMMIT = {
-            "/swagger-ui/**",
-            "/api/join",
-            "/api/login",
-            "/api/logout",
+    private final String[] SWAGGER = {
+            "/swagger-ui/**"
+    };
+    private final String[] POST_PERMIT = {
+            "/pinepeople/api/join",
+            "/pinepeople/api/login",
+            "/pinepeople/api/logout",
             "/pinepeople/login",
             "/pinepeople/logout",
             "/pinepeople/join",
@@ -35,9 +37,39 @@ public class SecurityConfig {
     };
 
     private final String[] GET_AUTHENTICATED = {
-            "/api/my",
-            "/pinepeople",
-            "/pinepeople/myPage/update",
+            /* AdminController */
+            "/pinepeople/api/admin/black-lists/*",
+            "/pinepeople/api/admin/black-lists",
+            /* AlarmController */
+            "/pinepeople/api/alarms/my",
+            /*BrixContoroler*/
+            "/pinepeople/api/users/*/brix",
+            /* CommentController */
+            "/pinepeople/api/posts/*/comments/my",
+            /* OrderController */
+            "/pinepeople/api/users/order-lists/*",
+            "/pinepeople/api/users/order-lists/my",
+            /* ParticipantController */
+            "/pinepeople/api/partys/*/participants/waits",
+            /* PartyController */
+            "/pinepeople/api/partys/my",
+            "/pinepeople/api/partys/my-waitings",
+            /* PostController */
+            "/pinepeople/api/posts/my",
+            /* UserController */
+            "/pinepeople/api/my",
+            /* OrderMvcController */
+            "/pinepeople/party/*/order",
+            "/pinepeople/party/order-detail/*",
+            "/pinepeople/party/order-list",
+            /* PartyMvcController */
+            "/pinepeople/party/join/*",
+            "/pinepeople/party/create-new",
+            /* ProfileMvcContorller */
+            "/pinepeople/profile/myPage",
+            "/pinepeople/profile/profilePage/*",
+            /* UserMvcContorller */
+            "/pinepeople/profile/myPage/update",
             "/pinepeople/myInfo"
     };
 
@@ -48,12 +80,14 @@ public class SecurityConfig {
                 .cors().and();
 
         httpSecurity.authorizeRequests()
-                .antMatchers(PERMMIT).permitAll()
+                .antMatchers(SWAGGER).permitAll()
+                .antMatchers(POST_PERMIT).permitAll()
                 .antMatchers(HttpMethod.GET, GET_AUTHENTICATED).authenticated()
                 .antMatchers(HttpMethod.POST).authenticated()
                 .antMatchers(HttpMethod.PUT).authenticated()
                 .antMatchers(HttpMethod.PATCH).authenticated()
-                .antMatchers(HttpMethod.DELETE).authenticated();
+                .antMatchers(HttpMethod.DELETE).authenticated()
+                .antMatchers("/pinepeople/profile/adminPage").access("hasRole('ADMIN')");
 
         httpSecurity.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
