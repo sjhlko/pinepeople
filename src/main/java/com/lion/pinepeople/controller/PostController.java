@@ -1,8 +1,6 @@
 package com.lion.pinepeople.controller;
 
-import com.lion.pinepeople.domain.dto.post.PostReadResponse;
-import com.lion.pinepeople.domain.dto.post.PostRequest;
-import com.lion.pinepeople.domain.dto.post.PostResponse;
+import com.lion.pinepeople.domain.dto.post.*;
 import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.service.PostService;
 import io.swagger.annotations.Api;
@@ -15,94 +13,91 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/pinepeople/posts")
 @Api(tags = "게시물")
 @Slf4j
 @RequiredArgsConstructor
 
 public class PostController {
 
+
     private final PostService postService;
+
 
 
     @ApiOperation(value = "게시물 등록")
     @PostMapping
-    public Response<PostResponse> create (@RequestBody PostRequest postRequest, @ApiIgnore Authentication authentication) {
-        log.info("postRequest: {}", postRequest);
-        log.info("authentication.getName(): {}", authentication.getName());
-        String userId = authentication.getName(); // getName() String userId를 가져옴
+    public Response<PostCreateResponse> create (@RequestBody PostCreateRequest postCreateRequest, @ApiIgnore Authentication authentication) {
+        log.info("postRequest: {}", postCreateRequest);
+        log.info("authentication: {}", authentication.getName());
 
-        // DTO -> 서비스에서 처리 후 entity 변환 후 db 저장
-        PostResponse postResponse = postService.create(userId, postRequest.getTitle(), postRequest.getBody());
-
-        return Response.success(postResponse); // 객체
-
+        return Response.success(postService.create(postCreateRequest, authentication.getName()));
     }
 
 
     @ApiOperation(value = "게시물 상세 조회")
     @GetMapping("/{id}")
-    public Response<PostReadResponse> getPost(@PathVariable String id) {
+    public Response<PostReadResponse> getPost(@PathVariable Long id) {
 
-        PostReadResponse postReadResponse = postService.getPost(Long.parseLong(id));
-
-        return Response.success(postReadResponse);
+        return Response.success(postService.getPost(id));
 
     }
 
 
     @ApiOperation(value = "게시물 목록 조회")
     @GetMapping
-    public Response<Page<PostReadResponse>> getPostList(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable) {
+    public Response<Page<PostReadResponse>> getPostList (@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable) {
 
-        Page<PostReadResponse> postGetResponsePage = postService.getPostList(pageable);
-
-        return Response.success(postGetResponsePage);
+        return Response.success(postService.getPostList(pageable));
 
     }
 
 
-    @ApiOperation(value = "마이 피드") // 내가 작성한 게시물 조회
+    @ApiOperation(value = "내가 작성한 게시물 조회")
     @GetMapping("/my")
-    public Response<Page<PostReadResponse>> getMyPosts(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @ApiIgnore Authentication authentication) {
-        String id = authentication.getName(); // Authentication(인증): 보호된 리소스에 접근한 대상이 작업 수행 대상 주체인지 확인
-        Page<PostReadResponse> postGetResponsePage = postService.getMyPosts(pageable, Long.parseLong(id));
-        return Response.success(postGetResponsePage);
+    public Response<Page<PostReadResponse>> getMyPosts (@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @ApiIgnore Authentication authentication) {
+        return Response.success(postService.getMyPosts(pageable, authentication.getName())); // 인증(Authentication) : 보호된 리소스에 접근한 주체가 애플리케이션의 작업을 수행해도 되는 유저인지 확인한다.
 
     }
 
 
     @ApiOperation(value = "게시물 수정")
     @PutMapping("/{id}")
-    public Response<PostResponse> update(@RequestBody PostRequest postRequest, @PathVariable Long id, @ApiIgnore Authentication authentication) {
-        log.info("수정 컨트롤러 postRequest: {}", postRequest);
+    public Response<PostUpdateResponse> update (@RequestBody PostUpdateRequest postUpdateRequest, @PathVariable Long id, @ApiIgnore Authentication authentication, MultipartFile file) {
 
-        // 회원 이름 가져오기
-        log.info("authentication.getName(): {}", authentication.getName());
-        String userId = authentication.getName(); // <- 원래 String userName이었음
+        return Response.success(postService.update(id, authentication.getName(), postUpdateRequest));
 
-        PostResponse postResponse = postService.update(id, userId, postRequest.getTitle(), postRequest.getBody());
-
-        return Response.success(PostResponse.convertToDto(postResponse.getMessage(), postResponse.getId()));
     }
 
 
 
     @ApiOperation(value = "게시물 삭제")
-    @DeleteMapping("/{id}")
-    public Response<PostResponse> delete(@PathVariable String id, @ApiIgnore Authentication authentication) {
+    @DeleteMapping("{id}")
+    public Response<PostDeleteResponse> delete (@PathVariable Long id, @ApiIgnore Authentication authentication) {
 
-        String userId = authentication.getName();
-        PostResponse postResponse = postService.delete(Long.parseLong(id), userId);
-
-        return Response.success(PostResponse.convertToDto(postResponse.getMessage(), postResponse.getId()));
+        return Response.success(postService.delete(id, authentication.getName()));
 
     }
 
+    @ApiOperation(value = "게시물 키워드로 검색")
+    @GetMapping("/keyword")
+    public Response<Page<PostReadResponse>> searchByKeyword (@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @RequestParam String keyword) {
 
+        return Response.success(postService.searchByKeyword(pageable, keyword));
+
+    }
+
+    @ApiOperation(value = "게시물 제목으로 검색")
+    @GetMapping("/title")
+    public Response<Page<PostReadResponse>> searchByTitle (@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @RequestParam String keyword) {
+
+        return Response.success(postService.searchByTitle(pageable, keyword));
+
+    }
 
 }
