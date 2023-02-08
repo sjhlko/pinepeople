@@ -3,6 +3,7 @@ package com.lion.pinepeople.domain.dto.party;
 import com.lion.pinepeople.domain.entity.Category;
 import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.enums.PartyStatus;
 import lombok.*;
 
 import java.sql.Date;
@@ -34,6 +35,23 @@ public class PartyCategoryRequest {
                 .announcement(this.announcement)
                 .startDate(this.startDate)
                 .endDate(this.endDate)
+                .partyStatus(PartyStatus.RECRUITING)
+                .category(category)
+                .user(user)
+                .build();
+    }
+
+    public Party toEntity(Category category, User user, PartyStatus partyStatus){
+        return Party.builder()
+                .partyContent(this.partyContent)
+                .address(this.address)
+                .partySize(this.partySize)
+                .partyCost(this.partyCost)
+                .partyTitle(this.partyTitle)
+                .announcement(this.announcement)
+                .startDate(this.startDate)
+                .endDate(this.endDate)
+                .partyStatus(partyStatus)
                 .category(category)
                 .user(user)
                 .build();
