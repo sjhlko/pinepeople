@@ -42,12 +42,15 @@
                         <p class="lead" th:text="${party.partyContent}">파티 내용</p>
                         <div class="d-flex">
 <!--                            <input class="form-control text-center me-3" id="inputQuantity" type="num" th:value="" style="max-width: 3rem" />-->
-                            <form style="display: inline;"onclick="main.joinParty(this)" >
+                            <form style="display: inline;" onclick="main.joinParty(this)">
                                 <input type="hidden" name="partyId" th:value="${party.partyId}" >
-                                <button class="btn btn-outline-dark flex-shrink-0" type="button" >
+                                <button class="btn btn-outline-dark flex-shrink-0" type="button"  >
                                 <i class="bi-cart-fill me-1"></i>
                                 파티 참여하기
                                 </button>
+                            </form>
+                            <form style="display: inline;">
+                                <a href="#" style="margin-left: 15px" class="btn btn-primary" th:href="@{/pinepeople/party/update/{id}(id=${party.partyId})}" >파티 수정하기</a>
                             </form>
                         </div>
                     </div>
@@ -105,8 +108,6 @@
         </form>
         <!-- Footer-->
         <div th:insert="~{base :: pinepeople-footer}"></div>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
         <script src="js/scripts.js"></script>
     </body>
@@ -147,7 +148,6 @@
             }
 
         };
-
         main.init();
     </script>
 

@@ -50,11 +50,12 @@ public class PartyService {
 
     /**
      * 특정 캬테고리가 존재하는지를 확인함
-     * @param categoryName 존재하는 파티인지 확인하고픈 카테고리의 이름
+     * @param branch 존재하는 파티인지 확인하고픈 카테고리의 branch
+     * @param code 존재하는 파티인지 확인하고픈 카테고리의 code
      * @return 존재할 경우 해당 카테고리 이름에 맞는 category 리턴, 존재하지 않을 경우 CATEGORY_NOT_FOUND 에러 발생
      */
-    public Category validateCategory(String categoryName){
-        return categoryRepository.findByName(categoryName)
+    public Category validateCategory(String branch, String code){
+        return categoryRepository.findByBranchAndCode(branch, code)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, ErrorCode.CATEGORY_NOT_FOUND.getMessage()));
     }
 
@@ -69,6 +70,18 @@ public class PartyService {
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
         }
     }
+
+    /**
+     * 특정 유저가 특정 파티의 host인지 확인
+     * 유저가 해당 파티의 host 가 아닐 경우 INVALID_PERMISSION 에러 발생
+     * controller 에서 사용하기 용이하다.
+     */
+    public void validateHost(String userId, Long partyId){
+        User user = validateUser(userId);
+        Party party = validateParty(partyId);
+        validateHost(party,user);
+    }
+
 
     /**
      * 특정 유저가 특정 파티의 host 이거나 관리자인지 확인
@@ -141,7 +154,7 @@ public class PartyService {
         User user = validateUser(userId);
         Party party = validateParty(partyId);
         validateHost(party,user);
-        Category category = validateCategory(partyUpdateRequest.getCategory());
+        Category category = validateCategory(partyUpdateRequest.getBranch(), partyUpdateRequest.getCode());
         Timestamp createdAt = party.getCreatedAt();
         Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party,category));
         return PartyUpdateResponse.of(createdAt,updatedParty);

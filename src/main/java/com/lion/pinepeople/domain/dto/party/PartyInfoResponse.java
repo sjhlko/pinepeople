@@ -32,6 +32,8 @@ public class PartyInfoResponse {
     private String address;
     private String announcement;
     private String categoryName;
+    private String branch;
+    private String code;
     private String hostName;
     private PartyStatus partyStatus;
 
@@ -55,6 +57,8 @@ public class PartyInfoResponse {
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())
+                .code(party.getCategory().getCode())
+                .branch(party.getCategory().getBranch())
                 .partyStatus(party.getPartyStatus())
                 .categoryName(party.getCategory().getName())
                 .build();
@@ -81,6 +85,8 @@ public class PartyInfoResponse {
                 .updatedAt(party.getUpdatedAt())
                 .startDate(party.getStartDate())
                 .endDate(party.getEndDate())
+                .code(party.getCategory().getCode())
+                .branch(party.getCategory().getBranch())
                 .partyStatus(party.getPartyStatus())
                 .categoryName(party.getCategory().getName())
                 .build();
@@ -101,6 +107,8 @@ public class PartyInfoResponse {
                 .createdAt(m.getCreatedAt())
                 .updatedAt(m.getUpdatedAt())
                 .startDate(m.getStartDate())
+                .code(m.getCategory().getCode())
+                .branch(m.getCategory().getBranch())
                 .partyStatus(m.getPartyStatus())
                 .endDate(m.getEndDate())
                 .build());

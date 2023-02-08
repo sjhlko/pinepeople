@@ -62,8 +62,8 @@ public class PartyMvcController {
         }
         //카테고리 검색🔽
         //categoryService.doCategory(model);
-        model.addAttribute("rightNows", categoryService.getCategorySteadily("Right now!",1));
-        model.addAttribute("steadilys", categoryService.getCategorySteadily("Steadily!",1));
+        model.addAttribute("rightNows", categoryService.getCategorySteadily("RightNow",1));
+        model.addAttribute("steadilys", categoryService.getCategorySteadily("Steadily",1));
         doPage(model, partys);
         return "party/partyList";
     }
@@ -141,49 +141,69 @@ public class PartyMvcController {
     }
 
     /**
-     * 글 작성 페이지 접근 메소드
+     * 파티글 작성 페이지 접근 메소드
      * */
     @GetMapping("/create-new")
     public String getCreateParty(Model model, Authentication authentication) {
         System.out.println(authentication.getName());
         model.addAttribute("partyCreateRequest", new PartyCategoryRequest());
-        model.addAttribute("rightNowCategory", categoryService.getCategorySteadily("Right now!",1));
-        model.addAttribute("steadilyCategory", categoryService.getCategorySteadily("Steadily!",1));
+        model.addAttribute("rightNowCategory", categoryService.getCategorySteadily("RightNow",1));
+        model.addAttribute("steadilyCategory", categoryService.getCategorySteadily("Steadily",1));
         return "party/partyCreate";
     }
 
     /**
-     * 글 작성 메소드
+     * 파티 글 작성 메소드
      * */
     @PostMapping("/create-new")
     public String createParty(Authentication authentication, @Validated @ModelAttribute PartyCategoryRequest partyCategoryRequest,
-                              @RequestParam String branch, @RequestParam String code) {
+                              @RequestParam String branch, @RequestParam String code, HttpServletResponse response) throws IOException {
         try {
             PartyCategoryRequest request = PartyCategoryRequest.of(partyCategoryRequest,branch,code.split(",")[0]);
-            if(branch.equals("Steadily!")){
+            if(branch.equals("Steadily")){
                 request = PartyCategoryRequest.of(partyCategoryRequest,branch,code.split(",")[1]);
             }
             partyService.createPartyWithCategory(request,authentication.getName());
-        } catch (AppException e) {
-            log.info("파티 생성 실패 : {}", e.getErrorCode());
+        } catch (AppException e){
+            printMessage(e.getMessage(),response);
         }
         return "redirect:/pinepeople/party/list";
     }
 
     /**
-     * 글 수정 메소드
+     * 파티 글 수정 페이지 접근 메소드
      * */
-//    @PatchMapping("/update/{id}")
-//    public String updateParty(Authentication authentication, @Validated @ModelAttribute PartyUpdateRequest partyUpdateRequest,
-//                              @PathVariable Long id, Model model){
-//        try {
-//            partyService.createPartyWithCategory(request,authentication.getName());
-//        } catch (AppException e) {
-//            log.info("파티 생성 실패 : {}", e.getErrorCode());
-//        }
-//        return "redirect:/pinepeople/party/list";
-//
-//    }
+    @GetMapping("/update/{id}")
+    public String getUpdateParty(Model model, Authentication authentication, @PathVariable Long id, HttpServletResponse response) throws IOException {
+        try {
+            model.addAttribute("partyUpdateRequest", new PartyUpdateRequest());
+            model.addAttribute("rightNowCategory", categoryService.getCategorySteadily("RightNow",1));
+            model.addAttribute("steadilyCategory", categoryService.getCategorySteadily("Steadily",1));
+            partyService.validateHost(authentication.getName(),id);
+        } catch (AppException e){
+            printMessage(e.getMessage(),response);
+        }
+        return "party/partyUpdate";
+    }
+
+    /**
+     * 파티 글 수정 메소드
+     * */
+    @PostMapping ("/update/{id}")
+    public String updateParty(Authentication authentication, @Validated @ModelAttribute PartyUpdateRequest partyUpdateRequest,
+                              @PathVariable Long id, @RequestParam String branch, @RequestParam String code, HttpServletResponse response) throws IOException {
+        try {
+            PartyUpdateRequest request = PartyUpdateRequest.of(partyUpdateRequest,branch,code.split(",")[0]);
+            if(branch.equals("Steadily")){
+                request = PartyUpdateRequest.of(partyUpdateRequest,branch,code.split(",")[1]);
+            }
+            System.out.println(request.getBranch());
+            partyService.updateParty(id,request,authentication.getName());
+        } catch (AppException e){
+            printMessage(e.getMessage(),response);
+        }
+        return "redirect:/pinepeople/party/detail/"+id;
+    }
 
     private User getUser(Authentication authentication) {
         long userId = Long.parseLong(authentication.getName());
