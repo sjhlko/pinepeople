@@ -165,8 +165,8 @@ public class CategoryService {
      * Steadily 검색
      * **/
     public void doCategory(Model model) {
-        List<Category> rightNows = getCategorySteadily("Right Now!", 1);
-        List<Category> steadilys = getCategorySteadily("Steadily!", 1);
+        List<Category> rightNows = getCategorySteadily("RightNow", 1);
+        List<Category> steadilys = getCategorySteadily("Steadily", 1);
         model.addAttribute("rightNows", rightNows);
         model.addAttribute("steadilys", steadilys);
     }

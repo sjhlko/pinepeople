@@ -33,7 +33,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
             setResponse(ErrorCode.INVALID_PERMISSION, response);
         }else {
             //로그인 이후 관리자 페이지로 리다이렉트 할 수 있는 방법을 알아볼 예정
-            response.sendRedirect("/pinepeople/login");
+            response.sendRedirect("/pinepeople");
         }
     }
 
