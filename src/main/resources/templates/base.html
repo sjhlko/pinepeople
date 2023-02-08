@@ -83,7 +83,7 @@
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
 
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false" sec:authentication="name">
+                       data-bs-toggle="dropdown" aria-expanded="false" sec:authentication="principal.nickName">
                         <img th:src="@{/static/image/user.png}" alt="" width="30" height="30">
                         사용자
                     </a>
