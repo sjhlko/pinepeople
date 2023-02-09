@@ -22,7 +22,7 @@
         <section class="py-5">
             <div class="container px-4 px-lg-5 my-5">
                 <div class="row gx-4 gx-lg-5 align-items-center">
-                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="https://media.istockphoto.com/id/1367498591/ko/%EB%B2%A1%ED%84%B0/%ED%94%8C%EB%9E%AB-%EC%8A%A4%ED%83%80%EC%9D%BC%EB%A1%9C-%EC%84%A4%EC%A0%95%EB%90%9C-%EB%A7%8C%ED%99%94-%ED%8C%8C%EC%9D%B8%EC%95%A0%ED%94%8C-%EC%BA%90%EB%A6%AD%ED%84%B0.jpg?b=1&s=170667a&w=0&k=20&c=HMBvxxqGDSM1-_OIcYmYpvZZdhfLaJ2hImBQplNGpGw=" alt="..." /></div>
+                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" th:src="${party.partyImg}" alt="partyImg" /></div>
                     <div class="col-md-6">
                         <h4 class="display-5" th:text="${party.categoryName}">파티 카테고리</h4>
                         <h1 class="display-3 fw-bolder" th:text="${party.partyTitle}">파티 제목</h1>

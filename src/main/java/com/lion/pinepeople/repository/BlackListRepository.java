@@ -7,10 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
 import java.util.stream.DoubleStream;
 
 public interface BlackListRepository extends JpaRepository<BlackList, Long> {
-    BlackList findByUser(User targetUser);
+    Optional<BlackList> findByUser(User targetUser);
 
     Page<BlackList> findAllByStatus(PageRequest pageable, BlackListStatus status);
 }

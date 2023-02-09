@@ -21,10 +21,10 @@
 <!-- Navigation-->
 <div th:insert="~{base :: pinepeople-nav}"></div>
 <article>
-  <form th:action th:object="${partyCreateRequest}" method="post">
+  <form th:action="@{/pinepeople/party/create-new/}" th:object="${partyCreateRequest}" method="post" enctype="multipart/form-data">
   <div class="container" role="main">
     <h2>파티 만들기🎉</h2>
-    <form name="form" id="form" role="form" method="post" action="${pageContext.request.contextPath}/board/saveBoard">
+<!--    <form name="form" id="form" role="form" method="post" action="${pageContext.request.contextPath}/board/saveBoard" enctype="multipart/form-data">-->
       <div class="mb-3">
         <label for="title">카테고리</label>
         <select class="form-select" aria-label="Default select example" id="branch" th:name="branch" required="required"
@@ -94,7 +94,12 @@
                   th:field="*{partyContent}" th:errorclass="field-error" ></textarea>
         <div class="field-error" th:errors="*{partyContent}">내용 오류</div>
       </div>
-    </form>
+      <div class="mb-3">
+        <label for="partyImg">파티이미지</label>
+        <input type="file" name="file" id="partyImg" />
+        <div class="field-error" th:errors="*{partyContent}">내용 오류</div>
+      </div>
+<!--    </form>-->
     <div >
       <button type="submit" class="btn btn-sm btn-primary" id="btnSave">파티 등록하기✨</button>
       <button type="button" class="btn btn-sm btn-primary" id="btnList" onclick="location.href='/pinepeople/party/list'"> 파티 목록으로 가기📜 </button>

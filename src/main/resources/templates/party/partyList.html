@@ -65,7 +65,8 @@
         <section class="py-5">
             <div style="width: 50% " class="container px-4 px-lg-5 mt-5">
                 <div  th:each="party:${partys}">
-                <div style="margin-bottom: 55px; " class="card text-center">
+                <div style="margin-bottom: 60px; " class="card text-center">
+                    <img th:src="${partys.partyImg}" class="card-img-top" alt="partyImg">
                     <div class="card-body" style="background-color: lightyellow;">
                         <h5 class="card-title" th:text="${party.categoryName}" >Special title treatment</h5>
                         <h3 class="card-title" th:text="${party.partyTitle}" >Special title treatment</h3>
