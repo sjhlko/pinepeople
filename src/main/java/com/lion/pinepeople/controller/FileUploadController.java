@@ -19,10 +19,11 @@ import java.io.IOException;
 public class FileUploadController {
     private final FileUploadService fileUploadService;
 
-    @PostMapping
-    public Response<Void> uploadFile(@RequestPart("file") MultipartFile file) throws IOException{
-        String url = fileUploadService.uploadFile(file);
-        log.info("fileUPload");
-        return Response.success(url);
-    }
+//    @PostMapping
+//    public Response<Void> uploadFile(@RequestPart(value = "file") MultipartFile file) throws IOException{
+//        log.info("fileUPloadstart");
+//        String url = fileUploadService.uploadFile(file);
+//        log.info("fileUPload");
+//        return Response.success(url);
+//    }
 }

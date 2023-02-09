@@ -122,12 +122,12 @@ public class UserController {
      * @param userUpdateRequest name, address, phone, birth
      * @return UserUpdateResponse message userId
      */
-    @PatchMapping("/my")
-    @ApiOperation(value = "유저 수정")
-    public Response<UserUpdateResponse> modify(@ApiIgnore Authentication authentication, @RequestBody UserUpdateRequest userUpdateRequest) {
-        UserUpdateResponse userModifyResponse = userService.modify(authentication.getName(), userUpdateRequest);
-        return Response.success(userModifyResponse);
-    }
+//    @PatchMapping("/my")
+//    @ApiOperation(value = "유저 수정")
+//    public Response<UserUpdateResponse> modify(@ApiIgnore Authentication authentication, @RequestBody UserUpdateRequest userUpdateRequest) {
+//        UserUpdateResponse userModifyResponse = userService.modify(authentication.getName(), userUpdateRequest);
+//        return Response.success(userModifyResponse);
+//    }
 
     /**
      * 유저 삭제 메서드

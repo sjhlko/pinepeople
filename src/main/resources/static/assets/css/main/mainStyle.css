@@ -895,7 +895,7 @@ Home Section style
 ==================*/
 
 .home{
-    background: url(../../../image/home-bg.jpg) no-repeat top center;
+    background: url(https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/static/home-bg.jpg) no-repeat top center;
     background-size: cover;
     position: relative;
     padding-top: 300px;

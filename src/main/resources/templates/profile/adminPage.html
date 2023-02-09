@@ -293,10 +293,57 @@
             dataType:'json',
             type:'DELETE',
             success:function(data){
-                console.log(data)
                 alert("블랙리스트에서 삭제되었습니다.")
             },
             error:function(data){
+                alert("해당 권한이 없습니다")
+            }
+        })
+    })
+
+    $('#blackList-approval').on("click", function(){
+        var blackListId = $('#blackListNumber').text();
+        let url = `/pinepeople/api/admin/black-lists/`+ blackListId;
+        let data = {
+            status : 1
+        }
+
+        $.ajax({
+            url: url,
+            data : data,
+            contentType:'application/json',
+            type:'PATCH',
+            success:function(data){
+                console.log(data)
+                // alert(".")
+            },
+            error:function(data){
+                console.log(data)
+                alert("해당 권한이 없습니다")
+            }
+        })
+    })
+
+    $('#blackList-reject').on("click", function(){
+        var blackListId = $('#blackListNumber').text();
+        let url = `/pinepeople/api/admin/black-lists/`+ blackListId;
+        let data = {
+            status : 2
+        }
+
+        $.ajax({
+            url: url,
+            data : data,
+            contentType:'application/json',
+            type:'PATCH',
+            processData: false,
+            dataType: 'json',
+            success:function(data){
+                console.log(data)
+                // alert(".")
+            },
+            error:function(data){
+                console.log(data)
                 alert("해당 권한이 없습니다")
             }
         })
