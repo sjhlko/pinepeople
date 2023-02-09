@@ -8,6 +8,7 @@ import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.enums.ApprovalStatus;
 import com.lion.pinepeople.enums.ParticipantRole;
+import com.lion.pinepeople.enums.PartyStatus;
 import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
@@ -191,6 +192,10 @@ public class ParticipantService {
         Timestamp createdAt = participant.getCreatedAt();
         validateHost(participant.getParty(),user);
         Participant updatedParticipant = participantRepository.save(participantUpdateRequest.toEntity(participant));
+
+        //파티 상태 변경(파티원 모집중인지, 마감되었는지)
+        party.updateStatus(checkPartyStatus(partyId));
+        partyRepository.save(party);
         return ParticipantUpdateResponse.of(createdAt,updatedParticipant);
     }
 
@@ -204,7 +209,25 @@ public class ParticipantService {
         Party party = validateParty(partyId);
         Participant participant = validateParticipant(party,user);
         participantRepository.delete(participant);
+
+        //파티 상태 변경(파티원 모집중인지, 마감되었는지)
+        party.updateStatus(checkPartyStatus(partyId));
+        partyRepository.save(party);
         return ParticipantDeleteResponse.of(participant);
 
+    }
+
+    /**
+     * 승인 완료된 파티원 인원수 조회
+     * @param partyId 조회하고자 하는 파티의 id
+     * @return approval status 가 approved인 파티원의 인원수 리턴
+     */
+    public PartyStatus checkPartyStatus(Long partyId){
+        Party party = validateParty(partyId);
+        Long count = participantRepository.countByApprovalStatus(ApprovalStatus.APPROVED,partyId);
+        if(count.intValue()<party.getPartySize()){
+            return PartyStatus.RECRUITING;
+        }
+        return PartyStatus.CLOSED;
     }
 }

@@ -29,7 +29,12 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         log.error("ADMIN 게정이 아닙니다.");
-        setResponse(ErrorCode.INVALID_PERMISSION, response);
+        if(request.getRequestURL().toString().contains("api")) {
+            setResponse(ErrorCode.INVALID_PERMISSION, response);
+        }else {
+            //로그인 이후 관리자 페이지로 리다이렉트 할 수 있는 방법을 알아볼 예정
+            response.sendRedirect("/pinepeople");
+        }
     }
 
     private void setResponse(ErrorCode errorCode, HttpServletResponse response) throws IOException {

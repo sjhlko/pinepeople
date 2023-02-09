@@ -206,11 +206,6 @@ public class UserMvcController {
         return "user/login";
     }
 
-    @GetMapping("/profile/myPage/update")
-    public String updateMyPageForm(Authentication authentication, Model model) {
-        model.addAttribute("userUpdateRequest", new UserUpdateRequest());
-        return "profile/updateMyPage";
-    }
 
     @GetMapping("/myInfo")
     public @ResponseBody MyInfoResponse getMyInfo(Authentication authentication) {
@@ -218,24 +213,6 @@ public class UserMvcController {
         return myInfoResponse;
     }
 
-    @PostMapping("/profile/myPage/update")
-    public String updateMyInfo(@Validated @ModelAttribute UserUpdateRequest userUpdateRequest, BindingResult bindingResult, Authentication authentication) {
 
-        if (bindingResult.hasErrors()) {
-            return "profile/updateMyPage";
-        }
-
-        try {
-            userService.modify(authentication.getName(),userUpdateRequest);
-        } catch (AppException e) {
-            bindingResult.reject("userUpdateFail", e.getMessage());
-        }
-
-        if (bindingResult.hasErrors()) {
-            return "profile/updateMyPage";
-        }
-
-        return "redirect:/pinepeople/profile/myPage";
-    }
 
 }

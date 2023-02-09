@@ -17,6 +17,8 @@ public class UserInfoResponse {
     private Double brixFiguer;
     private String brixName;
 
+    private String profileImg;
+
     public static UserInfoResponse of(User user) {
         return UserInfoResponse.builder()
                 .userId(user.getId())
@@ -24,6 +26,7 @@ public class UserInfoResponse {
                 .email(user.getEmail())
                 .brixFiguer(user.getBrix().getBrixFigure())
                 .brixName(user.getBrix().getBrixName())
+                .profileImg(user.getProfileImg())
                 .build();
     }
 }

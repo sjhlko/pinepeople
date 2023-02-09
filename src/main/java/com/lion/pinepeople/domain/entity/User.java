@@ -34,6 +34,7 @@ public class User extends BaseEntity {
     private LocalDateTime birth;
     private Integer warningCnt;
     private Integer point;
+    private String profileImg;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
@@ -42,7 +43,7 @@ public class User extends BaseEntity {
     @JsonManagedReference
     private Brix brix;
 
-    public static User of(UserJoinRequest userJoinRequest, String password) {
+    public static User of(UserJoinRequest userJoinRequest, String password, String profileImg) {
         return User.builder()
                 .name(userJoinRequest.getName())
                 .email(userJoinRequest.getEmail())
@@ -52,6 +53,7 @@ public class User extends BaseEntity {
                 .birth(userJoinRequest.getBirth().atStartOfDay())
                 .warningCnt(0)
                 .point(0)
+                .profileImg(profileImg)
                 .role(UserRole.USER)
                 .build();
     }
@@ -60,11 +62,12 @@ public class User extends BaseEntity {
         this.role = userRole;
     }
 
-    public void updateUser(UserUpdateRequest userUpdateRequest) {
+    public void updateUser(UserUpdateRequest userUpdateRequest, String profileImg) {
         this.name = userUpdateRequest.getName();
         this.address = userUpdateRequest.getAddress();
         this.phone = userUpdateRequest.getPhone();
         this.birth = userUpdateRequest.getBirth().atStartOfDay();
+        this.profileImg = profileImg;
     }
 
     public void updateWarningCnt() {
