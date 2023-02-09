@@ -3,15 +3,24 @@ server:
   servlet:
     encoding:
       force-response: true
+    #JSP to Modify Not Restart Server
+    jsp:
+      init-parameters:
+        development: true
 spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+#    #JSP, HTML ModelAndView Path Setting
+#    view:
+#      prefix: webapp/WEB-INF/jsp/
+#      suffix: .jsp
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/pinepeople
     username: root
     password: 1234
+
 
   jpa:
     show-sql: true

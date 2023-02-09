@@ -1,14 +1,8 @@
 package com.lion.pinepeople.mvc;
 
-import com.lion.pinepeople.domain.dto.participant.ParticipantCreateResponse;
 import com.lion.pinepeople.domain.dto.party.PartyCategoryRequest;
-import com.lion.pinepeople.domain.dto.party.PartyCreateRequest;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
 import com.lion.pinepeople.domain.dto.party.PartyUpdateRequest;
-import com.lion.pinepeople.domain.dto.partyComment.PartyCommentResponse;
-import com.lion.pinepeople.domain.dto.partyComment.PartyMvcCommentResponse;
-import com.lion.pinepeople.domain.entity.Category;
-import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.PartyComment;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.exception.ErrorCode;
@@ -22,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,6 +39,10 @@ public class PartyMvcController {
     private final PartyCommentService partyCommentService;
     private final PartyRepository partyRepository;
     private final UserRepository userRepository;
+//    @GetMapping("/chat")
+//    public String chat(){
+//        return "chatting/chatting";
+//    }
 
     /**파티 리스트 페이지**/
     @GetMapping("/list")
