@@ -1,6 +1,7 @@
 package com.lion.pinepeople.domain.dto.admin;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lion.pinepeople.domain.entity.BlackList;
 import com.lion.pinepeople.domain.entity.User;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,8 @@ import java.util.List;
 public class BlackListResponse {
     private Long blackListId;
     private User user;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime startDate;
     private List<String> fromUserEmail;
     private List<String> reportComment;
