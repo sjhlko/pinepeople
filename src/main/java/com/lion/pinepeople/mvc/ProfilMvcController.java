@@ -3,11 +3,10 @@ package com.lion.pinepeople.mvc;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginRequest;
 import com.lion.pinepeople.domain.dto.user.myInfo.MyInfoResponse;
+import com.lion.pinepeople.domain.dto.user.update.UserUpdateRequest;
 import com.lion.pinepeople.domain.dto.user.userInfo.UserInfoResponse;
-import com.lion.pinepeople.service.BrixService;
-import com.lion.pinepeople.service.PartyService;
-import com.lion.pinepeople.service.ReportService;
-import com.lion.pinepeople.service.UserService;
+import com.lion.pinepeople.exception.customException.AppException;
+import com.lion.pinepeople.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,19 +16,21 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Controller
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/pinepeople")
 public class ProfilMvcController {
-    private final BrixService brixService;
-    private final ReportService reportService;
+
     private final UserService userService;
-    private final PartyService partyService;
+    private final AdminService adminService;
 
     @GetMapping("/profile/myPage")
     public String getmyPage(@PageableDefault(page = 0 ,size = 10, sort ="createdAt", direction = Sort.Direction.DESC) Pageable pageable, Model model, Authentication authentication){
@@ -46,20 +47,46 @@ public class ProfilMvcController {
         return "profile/myPage";
     }
 
-    @GetMapping("/main")
-    public String mainPage(){
-        return "main/mainPage";
-    }
+
 
     @GetMapping("/profile/profilePage/{userId}")
     public String getProfil(@PathVariable Long userId, Model model, Authentication authentication){
         UserInfoResponse userInfo = userService.getUserInfo(userId);
+        log.info(userInfo.getProfileImg());
         model.addAttribute("userInfo", userInfo);
         return "profile/profilePage";
     }
 
     @GetMapping("/profile/adminPage")
-    public String getAdminPage(){
+    public String getAdminPage(Authentication authentication){
+        adminService.isAdmin(authentication.getName());
         return "profile/adminPage";
+    }
+
+    @GetMapping("/profile/myPage/update")
+    public String updateMyPageForm(Authentication authentication, Model model) {
+        model.addAttribute("userUpdateRequest", new UserUpdateRequest());
+        return "profile/updateMyPage";
+    }
+
+    @PostMapping("/profile/myPage/update")
+    public String updateMyInfo(@Validated @ModelAttribute UserUpdateRequest userUpdateRequest, @RequestPart(value = "file") MultipartFile file,  BindingResult bindingResult, Authentication authentication) {
+        if (bindingResult.hasErrors()) {
+            return "profile/updateMyPage";
+        }
+
+        try {
+            userService.modify(authentication.getName(),userUpdateRequest, file);
+        } catch (AppException e) {
+            bindingResult.reject("userUpdateFail", e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "profile/updateMyPage";
+        }
+
+        return "redirect:/pinepeople/profile/myPage";
     }
 }

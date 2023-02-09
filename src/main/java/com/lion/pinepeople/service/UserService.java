@@ -8,6 +8,7 @@ import com.lion.pinepeople.domain.dto.user.login.UserLoginRequest;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginResponse;
 import com.lion.pinepeople.domain.dto.user.logout.UserLogoutResponse;
 import com.lion.pinepeople.domain.dto.user.myInfo.MyInfoResponse;
+import com.lion.pinepeople.domain.dto.user.search.UserSearchResponse;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateRequest;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateResponse;
 import com.lion.pinepeople.domain.dto.user.userInfo.UserInfoResponse;
@@ -26,9 +27,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -40,11 +43,15 @@ public class UserService {
     private final BCryptPasswordEncoder encoder;
     private final BrixService brixService;
     private final RedisService redisService;
+    private final FileUploadService fileUploadService;
     private final long accessTokenExpireTimeMs = 1000 * 60 * 15L;
     private final long refreshTokenExpireTimeMs = 1000 * 60 * 60 * 24L;
+    private final String dir = "profile";
+
     @Value("${jwt.token.secret}")
     private String key;
 
+    private String DEFAULT_PROFILE_URL = "https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/profile/774a9913-cb42-4b24-a7fb-93156054152c-04-2.png";
     /**
      * 회원가입 메서드
      *
@@ -57,7 +64,7 @@ public class UserService {
             throw new AppException(ErrorCode.DUPLICATED_USER_NAME, ErrorCode.DUPLICATED_USER_NAME.getMessage());
         });
         //UserJoinRequest -> User
-        User user = User.of(userJoinRequest, encoder.encode(userJoinRequest.getPassword()));
+        User user = User.of(userJoinRequest, encoder.encode(userJoinRequest.getPassword()), DEFAULT_PROFILE_URL);
         //User 저장
         user = userRepository.save(user);
         brixService.setBrix(user);
@@ -171,13 +178,17 @@ public class UserService {
      * @param userUpdateRequest name, address, phone, birth
      * @return UserUpdateResponse message, userName
      */
-    public UserUpdateResponse modify(String userId, UserUpdateRequest userUpdateRequest) {
+    public UserUpdateResponse modify(String userId, UserUpdateRequest userUpdateRequest, MultipartFile file) throws IOException {
         // 수정을 하는 유저 체크
         User updateUser = userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> {
             throw new AppException(ErrorCode.USER_NOT_FOUND, "유저를 찾을 수 없습니다.");
         });
+        //프로필 사진 클라우드에 업로드
+        String profileImg = fileUploadService.uploadFile(file, dir);
+        log.info(profileImg);
+
         // 유저 수정
-        updateUser.updateUser(userUpdateRequest);
+        updateUser.updateUser(userUpdateRequest, profileImg);
         userRepository.saveAndFlush(updateUser);
         // 유저 번경 dto 반환
         return UserUpdateResponse.of(String.format(updateUser.getName() + "님의 유저 정보가 변경되었습니다."), updateUser.getId());
@@ -275,5 +286,11 @@ public class UserService {
         userRepository.saveAndFlush(findUser);
         log.info("패스워드 변경 완료");
         return "패스워드가 변경되었습니다.";
+    }
+
+    public Page<UserSearchResponse> searchUser(String keyword, Pageable pageable){
+        Page<User> users = userRepository.findDistinctByNameContainsOrEmailContains(pageable,keyword,keyword);
+        Page<UserSearchResponse> userSearchResponses = UserSearchResponse.ofList(users);
+        return userSearchResponses;
     }
 }

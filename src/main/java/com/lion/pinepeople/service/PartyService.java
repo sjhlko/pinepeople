@@ -3,6 +3,7 @@ package com.lion.pinepeople.service;
 import com.lion.pinepeople.domain.dto.party.*;
 import com.lion.pinepeople.domain.entity.*;
 import com.lion.pinepeople.enums.ParticipantRole;
+import com.lion.pinepeople.enums.PartyStatus;
 import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
@@ -49,11 +50,12 @@ public class PartyService {
 
     /**
      * 특정 캬테고리가 존재하는지를 확인함
-     * @param categoryName 존재하는 파티인지 확인하고픈 카테고리의 이름
+     * @param branch 존재하는 파티인지 확인하고픈 카테고리의 branch
+     * @param code 존재하는 파티인지 확인하고픈 카테고리의 code
      * @return 존재할 경우 해당 카테고리 이름에 맞는 category 리턴, 존재하지 않을 경우 CATEGORY_NOT_FOUND 에러 발생
      */
-    public Category validateCategory(String categoryName){
-        return categoryRepository.findByName(categoryName)
+    public Category validateCategory(String branch, String code){
+        return categoryRepository.findByBranchAndCode(branch, code)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, ErrorCode.CATEGORY_NOT_FOUND.getMessage()));
     }
 
@@ -68,6 +70,18 @@ public class PartyService {
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
         }
     }
+
+    /**
+     * 특정 유저가 특정 파티의 host인지 확인
+     * 유저가 해당 파티의 host 가 아닐 경우 INVALID_PERMISSION 에러 발생
+     * controller 에서 사용하기 용이하다.
+     */
+    public void validateHost(String userId, Long partyId){
+        User user = validateUser(userId);
+        Party party = validateParty(partyId);
+        validateHost(party,user);
+    }
+
 
     /**
      * 특정 유저가 특정 파티의 host 이거나 관리자인지 확인
@@ -97,7 +111,14 @@ public class PartyService {
         System.out.println(request.getCode());
         Category category = categoryRepository.findByBranchAndCode(request.getBranch(), request.getCode()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         System.out.println(category.getBranch());
-        Party party = partyRepository.save(request.toEntity(category,user));
+
+        Party party;
+        if(request.getPartySize()==1){
+            party = partyRepository.save(request.toEntity(category,user, PartyStatus.CLOSED));
+        }
+        else {
+            party = partyRepository.save(request.toEntity(category,user));
+        }
         Participant participant = participantService.createHostParticipant(user,party);
         return PartyCreateResponse.of(party,participant);
     }
@@ -133,7 +154,7 @@ public class PartyService {
         User user = validateUser(userId);
         Party party = validateParty(partyId);
         validateHost(party,user);
-        Category category = validateCategory(partyUpdateRequest.getCategory());
+        Category category = validateCategory(partyUpdateRequest.getBranch(), partyUpdateRequest.getCode());
         Timestamp createdAt = party.getCreatedAt();
         Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party,category));
         return PartyUpdateResponse.of(createdAt,updatedParty);
@@ -201,6 +222,11 @@ public class PartyService {
 
     public Page<PartyInfoResponse> getPartyByCategory(Pageable pageable, String categoryName){
         Page<Party> parties = partyRepository.findByCategory_Name(pageable,categoryName);
+        return parties.map(PartyInfoResponse::of);
+    }
+
+    public Page<PartyInfoResponse> getPartyByCategoryBranch(Pageable pageable, String branch){
+        Page<Party> parties = partyRepository.findByCategory_Branch(pageable,branch);
         return parties.map(PartyInfoResponse::of);
     }
 }

@@ -1,5 +1,6 @@
 package com.lion.pinepeople.config.security.filter;
 
+import com.lion.pinepeople.config.security.userdetail.UserPrinclial;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.repository.UserRepository;
@@ -56,7 +57,8 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         User findUser = userRepository.findById(JwtTokenUtil.getUserId(token, key)).get();
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(JwtTokenUtil.getUserId(token, key), null, List.of(new SimpleGrantedAuthority("ROLE_" + findUser.getRole().name())));
+        UserPrinclial userPrinclial = new UserPrinclial(findUser);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrinclial, null, List.of(new SimpleGrantedAuthority("ROLE_" + userPrinclial.getRole())));
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
