@@ -11,22 +11,29 @@ import com.lion.pinepeople.repository.CategoryRepository;
 import com.lion.pinepeople.repository.PartyRepository;
 import com.lion.pinepeople.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class PartyService {
     private final PartyRepository partyRepository;
     private final UserRepository userRepository;
     private final ParticipantService participantService;
     private final CategoryRepository categoryRepository;
+    private final FileUploadService fileUploadService;
+    private final String dir = "party";
+    private final String PARTY_DEFAULT_IMG = "https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/static/logo.png";
 
     /**
      * 특정 유저가 존재하는지를 확인함
@@ -103,21 +110,29 @@ public class PartyService {
      * 파티 생성시 해당 파티와 유저의 정보가 participant 테이블에도 저장됨
      * @return 생성된 파티와 파티의 host 정보를 리턴
      */
-    public PartyCreateResponse createPartyWithCategory(PartyCategoryRequest request, String userId) {
+    public PartyCreateResponse createPartyWithCategory(PartyCategoryRequest request, MultipartFile file, String userId) throws IOException {
+
         User user = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
+
         //카테고리 생성
-        System.out.println(request.getBranch());
-        System.out.println(request.getCode());
         Category category = categoryRepository.findByBranchAndCode(request.getBranch(), request.getCode()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        System.out.println(category.getBranch());
+
+        String partyImg;
+        if(!file.isEmpty()){
+            partyImg = fileUploadService.uploadFile(file, dir);
+        }else{
+            partyImg = PARTY_DEFAULT_IMG;
+        }
+        //파티 사진 클라우드에 업로드
+
 
         Party party;
         if(request.getPartySize()==1){
-            party = partyRepository.save(request.toEntity(category,user, PartyStatus.CLOSED));
+            party = partyRepository.save(request.toEntity(category,user, partyImg, PartyStatus.CLOSED));
         }
         else {
-            party = partyRepository.save(request.toEntity(category,user));
+            party = partyRepository.save(request.toEntity(category, user, partyImg));
         }
         Participant participant = participantService.createHostParticipant(user,party);
         return PartyCreateResponse.of(party,participant);

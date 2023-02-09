@@ -31,12 +31,12 @@ public class PartyController {
      * 파티 생성시 category 와 participant 에도 자동적으로 해당하는 내용이 생성된다.
      * @return 생성된 파티의 상세 정보와 생성한 host 의 상세정보
      * **/
-    @PostMapping
-    @ApiOperation(value = "파티 생성")
-    public Response<PartyCreateResponse> createParty(@RequestBody PartyCategoryRequest partyCreateRequest, Authentication authentication) {
-        PartyCreateResponse partyCreateResponse = partyService.createPartyWithCategory(partyCreateRequest, authentication.getName());
-        return Response.success(partyCreateResponse);
-    }
+//    @PostMapping
+//    @ApiOperation(value = "파티 생성")
+//    public Response<PartyCreateResponse> createParty(@RequestBody PartyCategoryRequest partyCreateRequest, Authentication authentication) {
+//        PartyCreateResponse partyCreateResponse = partyService.createPartyWithCategory(partyCreateRequest, authentication.getName());
+//        return Response.success(partyCreateResponse);
+//    }
 
 
     /**

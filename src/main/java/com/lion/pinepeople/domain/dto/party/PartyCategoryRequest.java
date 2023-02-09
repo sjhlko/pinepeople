@@ -5,6 +5,7 @@ import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.enums.PartyStatus;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
 @Builder
@@ -24,8 +25,9 @@ public class PartyCategoryRequest {
     private String announcement;
     private String branch; // 카테고리 대분류
     private String code; // 카테고리 소분류
+    private String partyImg;
 
-    public Party toEntity(Category category, User user){
+    public Party toEntity(Category category, User user, String partyImg){
         return Party.builder()
                 .partyContent(this.partyContent)
                 .address(this.address)
@@ -38,10 +40,11 @@ public class PartyCategoryRequest {
                 .partyStatus(PartyStatus.RECRUITING)
                 .category(category)
                 .user(user)
+                .partyImg(partyImg)
                 .build();
     }
 
-    public Party toEntity(Category category, User user, PartyStatus partyStatus){
+    public Party toEntity(Category category, User user, String partyImg, PartyStatus partyStatus){
         return Party.builder()
                 .partyContent(this.partyContent)
                 .address(this.address)
@@ -54,6 +57,7 @@ public class PartyCategoryRequest {
                 .partyStatus(partyStatus)
                 .category(category)
                 .user(user)
+                .partyImg(partyImg)
                 .build();
     }
 

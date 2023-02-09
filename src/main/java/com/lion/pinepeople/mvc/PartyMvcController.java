@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -75,12 +76,14 @@ public class PartyMvcController {
         List<PartyComment> comments = partyCommentService.getCommentList(id);
         if (authentication == null) {
             PartyInfoResponse party = partyService.getParty(id);
+            log.info(party.getPartyImg());
             model.addAttribute("party", party);
             model.addAttribute("comments", comments);
             model.addAttribute(new PartyComment());
             return "party/partyDetailNonLogin";
         }
         PartyInfoResponse party = partyService.getParty(id);
+        log.info(party.getPartyImg());
         User user = getUser(authentication);
         model.addAttribute("party", party);
         model.addAttribute("user", user);
@@ -155,13 +158,13 @@ public class PartyMvcController {
      * */
     @PostMapping("/create-new")
     public String createParty(Authentication authentication, @Validated @ModelAttribute PartyCategoryRequest partyCategoryRequest,
-                              @RequestParam String branch, @RequestParam String code, HttpServletResponse response) throws IOException {
+                              @RequestPart(value = "file") MultipartFile file, @RequestParam String branch,  @RequestParam String code, HttpServletResponse response) throws IOException {
         try {
             PartyCategoryRequest request = PartyCategoryRequest.of(partyCategoryRequest,branch,code.split(",")[0]);
             if(branch.equals("Steadily")){
                 request = PartyCategoryRequest.of(partyCategoryRequest,branch,code.split(",")[1]);
             }
-            partyService.createPartyWithCategory(request,authentication.getName());
+            partyService.createPartyWithCategory(request, file, authentication.getName());
         } catch (AppException e){
             printMessage(e.getMessage(),response);
         }
@@ -174,6 +177,7 @@ public class PartyMvcController {
     @GetMapping("/update/{id}")
     public String getUpdateParty(Model model, Authentication authentication, @PathVariable Long id, HttpServletResponse response) throws IOException {
         try {
+            model.addAttribute("partyId", id);
             model.addAttribute("partyUpdateRequest", new PartyUpdateRequest());
             model.addAttribute("rightNowCategory", categoryService.getCategorySteadily("RightNow",1));
             model.addAttribute("steadilyCategory", categoryService.getCategorySteadily("Steadily",1));
