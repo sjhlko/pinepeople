@@ -24,6 +24,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,11 +112,19 @@ public class AdminService {
         isAdmin(loginUserId);
 
         //블랙리스트에서 삭제할 유저 확인
-        blackListRepository.findById(blackListId).orElseThrow(() -> {
+        BlackList blackList = blackListRepository.findById(blackListId).orElseThrow(() -> {
             throw new AppException(ErrorCode.USER_ROLE_NOT_FOUND, ErrorCode.USER_ROLE_NOT_FOUND.getMessage());
         });
 
-        blackListRepository.deleteById(blackListId);
+//        List<Long> reportedIdList =  reportRepository.findAllByUser(blackList.getUser()).stream()
+//                .map(r -> r.getId())
+//                .collect(Collectors.toList());
+//        for (Long reportId: reportedIdList) {
+//            reportRepository.deleteById(reportId);
+//        }
+        blackList.getUser().resetWarningCnt();
+        userRepository.save(blackList.getUser());
+        blackListRepository.deleteById(blackList.getBlackListId());
         return "블랙리스트에서 삭제 완료 하였습니다.";
     }
 

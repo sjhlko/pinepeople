@@ -36,6 +36,7 @@ public class PartyInfoResponse {
     private String code;
     private String hostName;
     private PartyStatus partyStatus;
+    private String partyImg;
 
     //파티 생성, 조회에 쓰이는 메소드
     public static PartyInfoResponse of(Party party){
@@ -61,6 +62,7 @@ public class PartyInfoResponse {
                 .branch(party.getCategory().getBranch())
                 .partyStatus(party.getPartyStatus())
                 .categoryName(party.getCategory().getName())
+                .partyImg(party.getPartyImg())
                 .build();
     }
 
@@ -89,6 +91,7 @@ public class PartyInfoResponse {
                 .branch(party.getCategory().getBranch())
                 .partyStatus(party.getPartyStatus())
                 .categoryName(party.getCategory().getName())
+                .partyImg(party.getPartyImg())
                 .build();
     }
 
@@ -111,6 +114,7 @@ public class PartyInfoResponse {
                 .branch(m.getCategory().getBranch())
                 .partyStatus(m.getPartyStatus())
                 .endDate(m.getEndDate())
+                .partyImg(m.getPartyImg())
                 .build());
 
         return pageResponse;
