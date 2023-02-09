@@ -200,7 +200,6 @@ public class UserService {
         });
         //프로필 사진 클라우드에 업로드
         String profileImg = fileUploadService.uploadFile(file, dir);
-        log.info(profileImg);
 
         // 유저 수정
         updateUser.updateUser(userUpdateRequest, profileImg);
