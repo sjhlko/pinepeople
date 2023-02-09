@@ -27,7 +27,7 @@ public class MyInfoResponse {
     private String brixName;
     private String profileImg;
 
-    public static MyInfoResponse of(User user, String profileImg) {
+    public static MyInfoResponse of(User user) {
         return MyInfoResponse.builder()
                 .userId(user.getId())
                 .userName(user.getName())
@@ -38,7 +38,7 @@ public class MyInfoResponse {
                 .point(user.getPoint())
                 .brixFiguer(user.getBrix().getBrixFigure())
                 .brixName(user.getBrix().getBrixName())
-                .profileImg(profileImg)
+                .profileImg(user.getProfileImg())
                 .build();
     }
 }

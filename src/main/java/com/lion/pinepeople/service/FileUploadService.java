@@ -1,7 +1,6 @@
 package com.lion.pinepeople.service;
 
 import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +20,10 @@ public class FileUploadService {
     private String bucketName;
 
     private String defaultUrl = "https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com";
-    private String dir = "/profile";
 
-    public String uploadFile(MultipartFile file) throws IOException {
+    public String uploadFile(MultipartFile file, String dir) throws IOException {
         try{
+            dir = "/" + dir;
             String bucketDir = bucketName + dir;
             String dirUrl = defaultUrl + dir + "/";
             String fileName = generateFileName(file);

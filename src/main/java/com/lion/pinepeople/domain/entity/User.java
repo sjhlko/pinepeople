@@ -62,11 +62,12 @@ public class User extends BaseEntity {
         this.role = userRole;
     }
 
-    public void updateUser(UserUpdateRequest userUpdateRequest) {
+    public void updateUser(UserUpdateRequest userUpdateRequest, String profileImg) {
         this.name = userUpdateRequest.getName();
         this.address = userUpdateRequest.getAddress();
         this.phone = userUpdateRequest.getPhone();
         this.birth = userUpdateRequest.getBirth().atStartOfDay();
+        this.profileImg = profileImg;
     }
 
     public void updateWarningCnt() {
