@@ -49,7 +49,7 @@ public class PartyMvcController {
 
     /**파티 리스트 페이지**/
     @GetMapping("/list")
-    public String getPartyList(@PageableDefault(page = 0, size = 5, sort = "createdAt",
+    public String getPartyList(@PageableDefault(page = 0, size = 8, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable, Model model, String address, String partyContent, String partyTitle) {
         Page<PartyInfoResponse> partys = null;
         if (address == null || partyTitle == null) {
@@ -65,7 +65,8 @@ public class PartyMvcController {
         model.addAttribute("rightNows", categoryService.getCategorySteadily("RightNow",1));
         model.addAttribute("steadilys", categoryService.getCategorySteadily("Steadily",1));
         doPage(model, partys);
-        return "party/partyList";
+//        return "party/partyList";
+        return "party/partyList2";
     }
 
 
@@ -106,25 +107,25 @@ public class PartyMvcController {
 
     /**상세 카테고리별 파티 조회**/
     @GetMapping("/category/{categoryName}")
-    public String getCategoryParties(@PathVariable String categoryName,Model model,@PageableDefault(page = 0, size = 5, sort = "createdAt",
+    public String getCategoryParties(@PathVariable String categoryName,Model model,@PageableDefault(page = 0, size = 8, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PartyInfoResponse> partys = partyService.getPartyByCategory(pageable,categoryName);
         model.addAttribute("partys", partys);
         categoryService.doCategory(model);
         doPage(model, partys);
-        return "party/partyList";
-
+//        return "party/partyList";
+        return "party/partyList2";
     }
 
     @GetMapping("/category")
-    public String getBranchParties(@RequestParam String branch,Model model,@PageableDefault(page = 0, size = 5, sort = "createdAt",
+    public String getBranchParties(@RequestParam String branch,Model model,@PageableDefault(page = 0, size = 8, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PartyInfoResponse> partys = partyService.getPartyByCategoryBranch(pageable,branch);
         model.addAttribute("partys", partys);
         categoryService.doCategory(model);
         doPage(model, partys);
-        return "party/partyList";
-
+//        return "party/partyList";
+        return "party/partyList2";
     }
 
 

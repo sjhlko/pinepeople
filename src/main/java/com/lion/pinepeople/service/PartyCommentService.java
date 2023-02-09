@@ -7,6 +7,7 @@ import com.lion.pinepeople.domain.dto.partyComment.PartyCommentDeleteResponse;
 import com.lion.pinepeople.domain.dto.partyComment.PartyCommentListResponse;
 import com.lion.pinepeople.domain.dto.partyComment.PartyCommentResponse;
 import com.lion.pinepeople.domain.dto.partyComment.PartyCommentUpdateResponse;
+import com.lion.pinepeople.enums.NotificationType;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.PartyCommentRepository;
@@ -30,6 +31,7 @@ public class PartyCommentService {
     private final PartyCommentRepository partyCommentRepository;
     private final UserRepository userRepository;
     private final PartyRepository partyRepository;
+    private final NotificationService notificationService;
 
 
     /**
@@ -56,6 +58,11 @@ public class PartyCommentService {
         //파티 댓글 저장
         log.info(partyComment.toString());
         PartyComment savedPartyComment = partyCommentRepository.save(partyComment);
+        if (party.getUser().getId() != user.getId()) {
+            String url ="/pinepeople/party/show-comment/" + party.getId();
+            notificationService.send(party.getUser(), url, NotificationType.COMMENT_ON_PARTY,
+                    user.getName() + "님이 회원님 \"" + party.getPartyTitle()+"\" "+ NotificationType.COMMENT_ON_PARTY.getMessage());
+        }
         return PartyCommentResponse.of(savedPartyComment);
     }
 

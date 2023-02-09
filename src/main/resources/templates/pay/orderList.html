@@ -85,19 +85,9 @@
             <strong th:if="${page==nowPage}" th:text="${page}" style="color:black"></strong>
             </th:block>
         </div>
-        <div class="order__mainbtns">
-            <button onclick="replace()" class="order__bigorderbtn left"> < 메인 페이지로 돌아가기</button>
-        </div>
-
     </section>
 </order>
 <!--footer-->
 <div th:insert="~{base :: pinepeople-footer}"></div>
 </body>
 </html>
-
-<script th:inline="javascript">
-    function replace() {
-        location.href = "/pinepeople/main"; // 메인 페이지 이동
-    }
-</script>
