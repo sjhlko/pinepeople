@@ -30,6 +30,13 @@
 
     <script th:href="@{/static/assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js}"></script>
 
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- toast 적용-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <style>
         h1, h2, h3, h4, h5, h6, p {
             font-family: 'Noto Sans KR', sans-serif;
@@ -48,6 +55,35 @@
         }
 
     </style>
+
+    <!-- sse -->
+    <script>
+        $(document).ready(function () {
+            console.log("들어오니??");
+            const eventSource = new EventSource("/pinepeople/api/subscribe");
+            eventSource.addEventListener("sse", function (event) {
+                let message = JSON.parse(event.data);
+                console.log(message.content);
+                console.log(message.id);
+                toastr.options= {
+                    positionClass :"toast-bottom-right",
+                    closeButton: true,
+                    progressBar: true,
+                    timeOut: 10000
+                },
+                    toastr.options.onclick = function () {
+                        // message.isRead=true
+                        location.href="pinepeople/api/notifications/"+message.id
+                        location.href=message.url
+                    }
+                toastr.info(message.content)
+            })
+            eventSource.addEventListener("error", function(event) {
+                eventSource.close()
+            })
+        })
+
+    </script>
 </head>
 
 <body data-spy="scroll" data-target=".navbar-collapse" data-offset="100">
@@ -266,7 +302,7 @@
 
 <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
 </body>
