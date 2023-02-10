@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Chating</title>
     <style>
+
         body{
             margin:0;
             padding:0;
@@ -13,8 +14,7 @@
         }
 
         .container{
-            width: 100%;
-            height: 100%;
+            width: 500px;
             margin: 0 auto;
             /*padding: 25px*/
         }
@@ -28,11 +28,9 @@
         .chating{
             background-color: #ffeef5;
             width: 100%;
-            height: 100%;
-            min-height: 700px;
+            height: 700px;
             overflow: auto;
         }
-
         .me{
             float: right;
             clear: both;
@@ -42,6 +40,7 @@
             margin: 5px;
             background-color: rgba(255, 192, 203, 0.5);
             border-radius: 10px;
+            word-break:break-all;
         }
         .others{
             float: left;
@@ -53,17 +52,15 @@
             background-color: rgba(255, 192, 203, 0.5);
             border-radius: 10px;
         }
+        input{
+            width: 99.5%;
+            height: 50px;
+        }
 
         .inputTable{
             width: 99.5%;
             height: 50px;
         }
-
-        input{
-            width: 99.5%;
-            height: 100%;
-        }
-
         #yourMsg{
             display: none;
         }
@@ -105,9 +102,9 @@
                     }
                 }else if(d.type == "message"){
                     if(d.sessionId == $("#sessionId").val()){
-                        $("#chating").append("<p id='me' class='me'>나: " + d.msg + "</p>");
+                        $("#chating").append("<div class='me' id='me'>나 :" + d.msg + "</div>");
                     }else{
-                        $("#chating").append("<p id='others' class='others'>" + d.userName + ": " + d.msg + "</p>");
+                        $("#chating").append("<div class='others' id='others'>" + d.userName + " :" + d.msg + "</div>");
                     }
 
                 }else{
@@ -157,7 +154,6 @@
     <input type="hidden" id="roomNumber" th:value="*{roomNumber}">
 
     <div id="chating" class="chating">
-    <!--새로 생긴 채팅이 들어갈 공간-->
     </div>
 
     <div id="yourName">
@@ -172,7 +168,6 @@
         <table class="inputTable">
             <tr>
                 <th><input id="chatting" placeholder="보내실 메시지를 입력하세요."></th>
-<!--                <th><button onclick="send()" id="sendBtn">보내기</button></th>-->
             </tr>
         </table>
     </div>
