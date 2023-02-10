@@ -5,12 +5,16 @@
     <meta charset="UTF-8">
     <title>Chating</title>
     <style>
-        *{
+        body{
             margin:0;
             padding:0;
+            width: 100%;
+            height: 100%;
         }
+
         .container{
-            width: 500px;
+            width: 100%;
+            height: 100%;
             margin: 0 auto;
             /*padding: 25px*/
         }
@@ -22,29 +26,46 @@
             margin-bottom: 20px;
         }
         .chating{
-            background-color: #ffe989;
-            width: 500px;
-            height: 500px;
+            background-color: #ffeef5;
+            width: 100%;
+            height: 100%;
+            min-height: 700px;
             overflow: auto;
         }
-        .chating .me{
-            color: #F6F6F6;
-            text-align: right;
+
+        .me{
+            float: right;
+            clear: both;
+            width: auto;
+            max-width: 40%;
+            padding:5px;
+            margin: 5px;
+            background-color: rgba(255, 192, 203, 0.5);
+            border-radius: 10px;
         }
-        .chating .others{
-            color: #FFE400;
-            text-align: left;
+        .others{
+            float: left;
+            clear: both;
+            width: auto;
+            max-width: 40%;
+            padding:5px;
+            margin: 5px;
+            background-color: rgba(255, 192, 203, 0.5);
+            border-radius: 10px;
         }
+
+        .inputTable{
+            width: 99.5%;
+            height: 50px;
+        }
+
         input{
-            width: 330px;
-            height: 25px;
+            width: 99.5%;
+            height: 100%;
         }
+
         #yourMsg{
             display: none;
-        }
-        * {
-            margin: 0px;
-            padding: 0px;
         }
 
         .header {
@@ -55,59 +76,6 @@
             text-align: center;
         }
 
-        .chat_wrap #chat {
-            padding-bottom: 100px;
-            width: 100%;
-        }
-
-        .chat_wrap #chat .left {
-            text-align: left;
-        }
-
-        .chat_wrap #chat .right {
-            text-align: right;
-        }
-
-        .chat_wrap #chat {
-            font-size: 12px;
-        }
-
-        .chat_wrap #chat .sender {
-            margin: 10px 25px 0px 10px;
-            font-weight: bold;
-        }
-
-        .chat_wrap #chat .message {
-            display: inline-block;
-            margin: 5px 20px 0px 10px;
-            max-width: 75%;
-            border: 1px solid gray;
-            padding: 5px;
-            border-radius: 5px;
-            background-color: #FCFCFC;
-            text-align: left;
-        }
-
-        .chat_wrap #chat .date {
-            margin: 5px 20px 10px 10px;
-            font-size: 10px;
-        }
-
-        .chat_wrap .input-div {
-            position: fixed;
-            bottom: 0px;
-            width: 100%;
-            background-color: #FFF;
-            text-align: center;
-            border-top: 1px solid #F18C7E;
-        }
-
-        #txtMessage {
-            width: 100%;
-            height: 80px;
-            border: none;
-            padding: 5px;
-        }
     </style>
 </head>
 
@@ -137,9 +105,9 @@
                     }
                 }else if(d.type == "message"){
                     if(d.sessionId == $("#sessionId").val()){
-                        $("#chating").append("<p class='me'>나 :" + d.msg + "</p>");
+                        $("#chating").append("<p id='me' class='me'>나: " + d.msg + "</p>");
                     }else{
-                        $("#chating").append("<p class='others'>" + d.userName + " :" + d.msg + "</p>");
+                        $("#chating").append("<p id='others' class='others'>" + d.userName + ": " + d.msg + "</p>");
                     }
 
                 }else{
@@ -189,12 +157,12 @@
     <input type="hidden" id="roomNumber" th:value="*{roomNumber}">
 
     <div id="chating" class="chating">
+    <!--새로 생긴 채팅이 들어갈 공간-->
     </div>
 
     <div id="yourName">
         <table class="inputTable">
             <tr>
-                <th>사용자명</th>
                 <th><input type="text" name="userName" id="userName"></th>
                 <th><button onclick="chatName()" id="startBtn">이름 등록</button></th>
             </tr>
@@ -203,9 +171,8 @@
     <div id="yourMsg">
         <table class="inputTable">
             <tr>
-                <th>메시지</th>
                 <th><input id="chatting" placeholder="보내실 메시지를 입력하세요."></th>
-                <th><button onclick="send()" id="sendBtn">보내기</button></th>
+<!--                <th><button onclick="send()" id="sendBtn">보내기</button></th>-->
             </tr>
         </table>
     </div>
