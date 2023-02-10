@@ -93,18 +93,18 @@
         ws.onmessage = function(data) {
             //메시지를 받으면 동작
             var msg = data.data;
-            if(msg != null && msg.trim() != ''){
+            if(msg != null && msg.trim() !== ''){
                 var d = JSON.parse(msg);
-                if(d.type == "getId"){
+                if(d.type === "getId"){
                     var si = d.sessionId != null ? d.sessionId : "";
-                    if(si != ''){
+                    if(si !== ''){
                         $("#sessionId").val(si);
                     }
-                }else if(d.type == "message"){
-                    if(d.sessionId == $("#sessionId").val()){
-                        $("#chating").append("<div class='me' id='me'>나 :" + d.msg + "</div>");
+                }else if(d.type === "message"&& d.msg!==""){
+                    if(d.sessionId === $("#sessionId").val()){
+                        $("#chating").append("<div class='me' id='me'>" + d.msg + "</div>");
                     }else{
-                        $("#chating").append("<div class='others' id='others'>" + d.userName + " :" + d.msg + "</div>");
+                        $("#chating").append("<div class='others' id='others'>" + d.msg + "</div>");
                     }
 
                 }else{
@@ -124,7 +124,7 @@
 
     function chatName(){
         var userName = $("#userName").val();
-        if(userName == null || userName.trim() == ""){
+        if(userName == null || userName.trim() === ""){
             alert("사용자 이름을 입력해주세요.");
             $("#userName").focus();
         }else{
