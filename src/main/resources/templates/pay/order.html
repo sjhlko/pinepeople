@@ -73,10 +73,15 @@
             </div>
             <br>
             <div class="order_info_box">
-                <input type="radio" name="radio" value="CREDIT_CARD" id="cart">카드 결제
-                <input type="radio" name="radio" value="CONTACT_PAYMENT" id="contact">만나서 결제
+                <input type="radio" name="radio" value="CREDIT_CARD" id="cart"> 카드 결제
+                <input type="radio" name="radio" value="CONTACT_PAYMENT" id="contact"> 만나서 결제
             </div>
-
+            <br>
+            <div class="pay_btn_box" >
+                <span><input type="checkbox" name="checkbox" value="Y" id="pay_ck"><label style="color: #a94442" for="pay_ck">(필수)
+                    <em>구매하실 상품의 결제정보를 확인하였으며, 구매진행에 동의합니다.</em></label></span>
+                <br>
+            </div>
             <br>
             <div class="frame">
                 <button class="button_1" onclick="payment()">주문하기</button>
@@ -160,6 +165,13 @@
         if (!$('input[name=discountPoint]').val()) {
             data.discountPoint = 0;
         }
+
+        if (!$('input[type=checkbox]:checked').val()) {
+            alert('결제 동의 사항을 체크해주세요. ')
+            $('input[type=checkbox]:checked').focus();
+            return false;
+        }
+
         if (data.paymentType == 'CONTACT_PAYMENT') {
             paymentContact(data);
             return;
@@ -181,7 +193,7 @@
                 text: '주문이 완료되었습니다.',
                 closeOnClickOutside: false
             }).then(function () {
-                location.replace("/pinepeople/party/order-list"); // 주문 상세 내역 가고싶은데..
+                location.replace("/pinepeople/party/order-list");
             })
         }).fail(function (result) {
             var responseText = result.responseText;
