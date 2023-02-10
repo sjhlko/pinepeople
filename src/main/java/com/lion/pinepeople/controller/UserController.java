@@ -143,7 +143,7 @@ public class UserController {
         return Response.success(userDeleteResponse);
     }
     @GetMapping("/search")
-    public Response<Page<UserSearchResponse>> searchUser(@RequestParam String keyword,@ApiIgnore @PageableDefault (size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
-        return Response.success(userService.searchUser(keyword,pageable));
+    public Response<Page<UserSearchResponse>> searchUser(@RequestParam String search,@ApiIgnore @PageableDefault (size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+        return Response.success(userService.searchUser(search,pageable));
     }
 }
