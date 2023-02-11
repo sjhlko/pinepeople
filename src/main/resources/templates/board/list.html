@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<head>
+    <div th:replace="base :: base-head"></div>
+    <style>
+    </style>
+</head>
+<body>
+<div th:insert="~{base :: pinepeople-nav}"></div>
+<section>
+    <table class="table">
+    <thead>
+    <tr>
+        <th scope="col">글번호</th>
+        <th scope="col">Title</th>
+        <th scope="col">Writer</th>
+    </tr>
+    </thead>
+    <tbody>
+    <th:block th:each="post:${posts}">
+        <tr>
+            <th scope="row" th:text="${post.id}">1</th>
+            <td th:text="${post.title}" style="cursor:pointer;" th:onclick="|location.href='/pinepeople/board/'+${post.id}|">Mark</td>
+            <td th:text="${post.userName}">Otto</td>
+        </tr>
+    </th:block>
+    </tbody>
+    </table>
+    <div>
+        <th:block  th:each="page:${#numbers.sequence(startPage,endPage)}">
+            <a class="page-item" th:if="${page != nowPage}" th:href="@{list(page=${page-1},title=${param.title})}" th:text ="${page}" style="font-size:25px"></a>
+            <strong th:if="${page==nowPage}" th:text ="${page}" style="color:lightskyblue; font-size:25px"></strong>
+        </th:block>
+    </div>
+</section>
+<div th:insert="~{base :: pinepeople-footer}"></div>
+</body>
+</html>

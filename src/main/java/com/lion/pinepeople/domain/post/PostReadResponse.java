@@ -1,4 +1,4 @@
-package com.lion.pinepeople.domain.dto.post;
+package com.lion.pinepeople.domain.post;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lion.pinepeople.domain.entity.Post;
@@ -36,7 +36,7 @@ public class PostReadResponse {
                 .userName(post.get().getUser().getName())
                 .title(post.get().getTitle())
                 .body(post.get().getBody())
-                //  .hits(post.getHits())
+              //  .hits(post.getHits())
                 .createdAt(post.get().getCreatedAt())
                 .updatedAt(post.get().getUpdatedAt())
                 .build();
@@ -55,5 +55,5 @@ public class PostReadResponse {
                 .build()
         );
     }
-
+    
 }
