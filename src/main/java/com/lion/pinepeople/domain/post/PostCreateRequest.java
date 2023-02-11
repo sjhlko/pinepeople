@@ -1,6 +1,8 @@
-package com.lion.pinepeople.domain.dto.post;
+package com.lion.pinepeople.domain.post;
+
 
 import com.lion.pinepeople.domain.entity.Post;
+import com.lion.pinepeople.domain.entity.User;
 import lombok.*;
 
 @Builder
@@ -8,18 +10,21 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostDeleteRequest {
+public class PostCreateRequest {
 
 
-    private String title;
+     private String title;
 
-    private String body;
+     private String body;
 
-    public Post of() {
+
+    public Post of(User user) {
         return Post.builder()
                 .title(this.title)
                 .body(this.body)
+                .user(user)
                 .build();
     }
 
 }
+

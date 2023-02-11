@@ -1,4 +1,4 @@
-package com.lion.pinepeople.domain.dto.post;
+package com.lion.pinepeople.domain.post;
 
  import com.lion.pinepeople.domain.entity.Post;
 import lombok.AllArgsConstructor;
