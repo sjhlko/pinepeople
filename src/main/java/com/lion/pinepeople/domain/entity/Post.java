@@ -1,11 +1,11 @@
 package com.lion.pinepeople.domain.entity;
 
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
-
-import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -13,9 +13,13 @@ import static javax.persistence.FetchType.LAZY;
 @Builder
 @Getter
 @Entity
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Where(clause = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE post SET deleted_at = CURRENT_TIMESTAMP where post_id = ?")
 public class Post extends BaseEntity {
+
 
     @Id
     @GeneratedValue
@@ -27,40 +31,35 @@ public class Post extends BaseEntity {
     private String body;
 
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true) // orphanRemoval 관계가 끊어진 child를 자동 제거
-    private List<Comment> commentPage;
+//    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true) // orphanRemoval 관계가 끊어진 child를 자동 제거
+//    private List<Comment> comments;
+//
+//    private Long commentsCount;
+//
+//    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true) 케이스케이드 casecade
+//    private List<PostRecommend> recommends;
+//
+//    private Long recommendsCount;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Like> likes;
+    //@ColumnDefault = 0, nullable = false)	// 조회수의 기본 값을 0으로 지정, null 불가 처리
+    private int hits; // 조회수
 
-
-    /***
-     * convertToEntity dto를 entity로 변환하여 DB 저장
-     * 고정된 크기를 가지는 자료 구조를 생성하는 메소드로 불필요한 할당을 하지 않기 위해 사용
-     * @param title
-     * @param body
-     * @param user
-     * @return
-     */
-    public static Post convertToEntity(String title, String body, User user) {
-        return Post.builder()
-                .title(title)
-                .body(body)
-                .user(user)
-                .build();
-    }
+    private String keyword;
 
 
-    /****
-     * update 게시물 수정
-     * @param title
-     * @param body
-     */
-    public void update(String title, String body) {
+    public void updatePost(String title, String body) {
+
         this.title = title;
         this.body = body;
+
     }
+
+//    public void updateHits(int hits) {
+//        this.hits = hits + 1;
+//
+//    }
 
 }

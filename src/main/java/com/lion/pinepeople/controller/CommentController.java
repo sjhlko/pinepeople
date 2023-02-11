@@ -1,9 +1,6 @@
 package com.lion.pinepeople.controller;
 
-import com.lion.pinepeople.domain.dto.comment.CommentDeleteResponse;
-import com.lion.pinepeople.domain.dto.comment.CommentRequest;
-import com.lion.pinepeople.domain.dto.comment.CommentResponse;
-import com.lion.pinepeople.domain.dto.comment.CommentUpdateResponse;
+import com.lion.pinepeople.domain.dto.comment.*;
 import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.service.CommentService;
 import io.swagger.annotations.Api;
@@ -18,70 +15,58 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 
-
 @RestController
-@RequestMapping("/api/posts/{postId}/comments")
+@RequestMapping("/pinepeople/api/posts/{postId}/comments")
 @RequiredArgsConstructor
-@Api(tags = "댓글")
+@Api(tags = "Comment API")
 public class CommentController {
+
 
     private final CommentService commentService;
 
 
     @PostMapping
     @ApiOperation(value = "댓글 작성")
-    public Response<CommentResponse> createComment(@ApiIgnore Authentication authentication, @PathVariable Long postId, @RequestBody CommentRequest commentRequest) {
+    public Response<CommentCreateResponse> create(@ApiIgnore Authentication authentication, @PathVariable Long postId, @RequestBody CommentCreateRequest commentCreateRequest) {
 
-        String userId = authentication.getName(); // 리소스 접근 가능한 회원 불러오기?
-        CommentResponse commentResponse = commentService.createComment(userId, postId, commentRequest.getBody());
-        return Response.success(commentResponse);
+        return Response.success(commentService.createComment(authentication.getName(), postId, commentCreateRequest));
 
     }
 
 
     @GetMapping
     @ApiOperation(value = "댓글 목록 조회")
-    public Response<Page<CommentResponse>> readCommentPage(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @PathVariable Long postId) {
+    public Response<Page<CommentReadResponse>> read(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @PathVariable Long postId) {
 
-        Page<CommentResponse> commentResponses = commentService.readCommentPage(pageable, postId);
-
-        return Response.success(commentResponses);
+        return Response.success(commentService.readCommentPage(pageable, postId));
 
     }
 
-    /***
-     * getMyComments 내가 작성한 댓글 조회
-     * @param pageable
-     * @param authentication
-     * @return
-     */
-    @ApiOperation(value = "마이 피드")
+
     @GetMapping("/my")
-    public Response<Page<CommentResponse>> getMyComments(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @ApiIgnore Authentication authentication) {
-        String userId = authentication.getName();
-        Page<CommentResponse> getCommentPage = commentService.readMyComments(pageable, userId);
-        return Response.success(getCommentPage);
+    @ApiOperation(value = "내가 작성한 댓글 목록 조회")
+    public Response<Page<CommentReadResponse>> read(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @PathVariable Long postId, Long userId) {
+
+        return Response.success(commentService.readCommentPage(pageable, postId));
 
     }
 
 
     @ApiOperation(value = "댓글 수정")
     @PutMapping("/{commentId}")
-    public Response<CommentUpdateResponse> update(@ApiIgnore Authentication authentication, @PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentRequest commentRequest) {
-        String userId = authentication.getName();
-        CommentUpdateResponse commentUpdateResponse = commentService.update(userId, postId, commentId, commentRequest.getBody());
+    public Response<CommentUpdateResponse> update(@ApiIgnore Authentication authentication, @PathVariable Long postId, @PathVariable Long commentId, @RequestBody String comment) {
 
-        return Response.success(commentUpdateResponse);
+        return Response.success(commentService.updateComment(authentication.getName(), postId, commentId, comment));
     }
 
 
     @DeleteMapping("/{commentId}")
     @ApiOperation(value = "댓글 삭제")
     public Response<CommentDeleteResponse> delete(@ApiIgnore Authentication authentication, @PathVariable Long postId, @PathVariable Long commentId) {
-        String userId = authentication.getName();
-        CommentDeleteResponse commentDeleteResponse = commentService.delete(userId, postId, commentId);
-        return Response.success(commentDeleteResponse);
+
+        return Response.success(commentService.deleteComment(authentication.getName(), postId, commentId));
     }
+
 
 
 }

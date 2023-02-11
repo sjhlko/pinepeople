@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<head>
+    <div th:replace="base :: base-head"></div>
+    <style>
+    </style>
+</head>
+<body>
+<div th:insert="~{base :: pinepeople-nav}"></div>
+<section>
+    <form th:action th:object="${postUpdateRequest}" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" th:field="*{title}" placeholder="title">
+        </div>
+        <div class="mb-3">
+            <label for="body" class="form-label">Content</label>
+            <textarea class="form-control" id="body" th:field="*{body}" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-warning">수정하기</button>
+    </form>
+</section>
+<div th:insert="~{base :: pinepeople-footer}"></div>
+</body>
+</html>

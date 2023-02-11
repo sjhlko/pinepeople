@@ -18,6 +18,7 @@ public class CommentUpdateResponse {
     private Long userId;
     private Long postId;
 
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp createdAt;
 
@@ -25,15 +26,11 @@ public class CommentUpdateResponse {
     private Timestamp updatedAt;
 
 
-    public static CommentUpdateResponse convertToDto(Comment comment) {
+    public static CommentUpdateResponse of (Comment updatedComment) {
         return CommentUpdateResponse.builder()
-                .id(comment.getId())
-                .body(comment.getBody())
-                .userId(comment.getUser().getId())
-                .postId(comment.getPost().getId())
-                .createdAt(comment.getCreatedAt())
-                .updatedAt(comment.getUpdatedAt())
+                .id(updatedComment.getId())
                 .build();
     }
+
 
 }
