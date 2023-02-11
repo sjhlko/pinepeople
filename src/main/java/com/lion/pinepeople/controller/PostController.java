@@ -13,16 +13,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 
 @RestController
-@RequestMapping("/pinepeople/posts")
-@Api(tags = "게시물")
+@RequestMapping("/pinepeople/api/posts")
+@Api(tags = "Post API")
 @Slf4j
 @RequiredArgsConstructor
-
 public class PostController {
 
 
@@ -41,10 +39,12 @@ public class PostController {
 
 
     @ApiOperation(value = "게시물 상세 조회")
-    @GetMapping("/{id}")
-    public Response<PostReadResponse> getPost(@PathVariable Long id) {
+    @GetMapping("/{postId}")
+    public Response<PostReadResponse> getPost(@PathVariable Long postId) {
 
-        return Response.success(postService.getPost(id));
+       // postService.updateHits(postId, request, response);
+
+        return Response.success(postService.getPost(postId));
 
     }
 
@@ -67,22 +67,24 @@ public class PostController {
 
 
     @ApiOperation(value = "게시물 수정")
-    @PutMapping("/{id}")
-    public Response<PostUpdateResponse> update (@RequestBody PostUpdateRequest postUpdateRequest, @PathVariable Long id, @ApiIgnore Authentication authentication, MultipartFile file) {
+    @PutMapping("/{postId}")
+    public Response<PostUpdateResponse> update (@RequestBody PostUpdateRequest postUpdateRequest, @PathVariable Long postId, @ApiIgnore Authentication authentication) {
 
-        return Response.success(postService.update(id, authentication.getName(), postUpdateRequest));
+        return Response.success(postService.update(postId, authentication.getName(), postUpdateRequest));
 
     }
 
 
 
     @ApiOperation(value = "게시물 삭제")
-    @DeleteMapping("{id}")
-    public Response<PostDeleteResponse> delete (@PathVariable Long id, @ApiIgnore Authentication authentication) {
+    @DeleteMapping("{postId}")
+    public Response<PostDeleteResponse> delete (@PathVariable Long postId, @ApiIgnore Authentication authentication) {
 
-        return Response.success(postService.delete(id, authentication.getName()));
+        return Response.success(postService.delete(postId, authentication.getName()));
 
     }
+
+
 
     @ApiOperation(value = "게시물 키워드로 검색")
     @GetMapping("/keyword")
@@ -91,6 +93,7 @@ public class PostController {
         return Response.success(postService.searchByKeyword(pageable, keyword));
 
     }
+
 
     @ApiOperation(value = "게시물 제목으로 검색")
     @GetMapping("/title")

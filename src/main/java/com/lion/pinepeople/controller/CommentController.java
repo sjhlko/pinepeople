@@ -15,11 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 
-
 @RestController
-@RequestMapping("/api/posts/{postId}/comments")
+@RequestMapping("/pinepeople/api/posts/{postId}/comments")
 @RequiredArgsConstructor
-@Api(tags = "댓글")
+@Api(tags = "Comment API")
 public class CommentController {
 
 
@@ -54,14 +53,14 @@ public class CommentController {
 
 
     @ApiOperation(value = "댓글 수정")
-    @PutMapping("/{id}")
+    @PutMapping("/{commentId}")
     public Response<CommentUpdateResponse> update(@ApiIgnore Authentication authentication, @PathVariable Long postId, @PathVariable Long commentId, @RequestBody String comment) {
 
         return Response.success(commentService.updateComment(authentication.getName(), postId, commentId, comment));
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{commentId}")
     @ApiOperation(value = "댓글 삭제")
     public Response<CommentDeleteResponse> delete(@ApiIgnore Authentication authentication, @PathVariable Long postId, @PathVariable Long commentId) {
 
