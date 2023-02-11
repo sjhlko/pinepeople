@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Getter
-public class PostBookmark {
+public class PostRecommend {
 
 
 
@@ -20,12 +20,14 @@ public class PostBookmark {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer PostBookmarkCount;
+    private int PostRecommendCount;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
+    @JoinColumn(name = "post_id")
     private Post post;
 
 
