@@ -20,7 +20,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     // 내 게시물 조회 시
     Page<Comment> findByUser(Pageable pageable, User findUser);
 
-    void deleteById(String userId);
 
 }
 
