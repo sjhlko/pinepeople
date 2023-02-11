@@ -1,12 +1,11 @@
 package com.lion.pinepeople.domain.entity;
 
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
-
-import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -14,8 +13,11 @@ import static javax.persistence.FetchType.LAZY;
 @Builder
 @Getter
 @Entity
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Where(clause = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE post SET deleted_at = CURRENT_TIMESTAMP where post_id = ?")
 public class Post extends BaseEntity {
 
 
@@ -32,25 +34,32 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true) // orphanRemoval 관계가 끊어진 child를 자동 제거
-    private List<Comment> comments;
-
-    private Long commentsCount;
-
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<PostBookmark> bookmarks;
-
-    private Long boomarksCount;
+//    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true) // orphanRemoval 관계가 끊어진 child를 자동 제거
+//    private List<Comment> comments;
+//
+//    private Long commentsCount;
+//
+//    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true) 케이스케이드 casecade
+//    private List<PostRecommend> recommends;
+//
+//    private Long recommendsCount;
 
     //@ColumnDefault = 0, nullable = false)	// 조회수의 기본 값을 0으로 지정, null 불가 처리
-    private Long hits;
+    private int hits; // 조회수
 
     private String keyword;
 
 
     public void updatePost(String title, String body) {
+
         this.title = title;
         this.body = body;
+
     }
+
+//    public void updateHits(int hits) {
+//        this.hits = hits + 1;
+//
+//    }
 
 }
