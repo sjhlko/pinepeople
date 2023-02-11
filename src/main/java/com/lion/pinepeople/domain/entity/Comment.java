@@ -8,7 +8,6 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.util.List;
 
 
 @AllArgsConstructor
@@ -36,11 +35,6 @@ public class Comment extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
-
-    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<CommentLike> commentLikes;
-
-    private Long likesCount;
 
     public void updateComment(String body) {
         this.body = body;
