@@ -9,17 +9,17 @@ import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.CommentRepository;
 import com.lion.pinepeople.repository.PostRepository;
 import com.lion.pinepeople.repository.UserRepository;
-import com.lion.pinepeople.utils.AppUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 public class CommentService {
 
 
@@ -30,7 +30,7 @@ public class CommentService {
 
 
 
-    @Transactional
+//    @Transactional
     public CommentCreateResponse createComment(String userId, Long postId, CommentCreateRequest commentCreateRequest) {
 
         Comment savedComment = commentRepository.save(commentCreateRequest.of(validateUser(userId), validatePost(postId)));
@@ -56,12 +56,12 @@ public class CommentService {
         return CommentReadResponse.of(myComments);
     }
 
-
+//    @Transactional
     public CommentUpdateResponse updateComment(String userId, Long postId, Long commentId, String body) {
 
         validateUser(userId);
         validateComment(postId, commentId);
-        AppUtil.verifyCommentAuthor(userId, commentId);
+        verifyCommentAuthor(userId, commentId);
 
         Comment updatedComment = validateComment(postId, commentId);
 
@@ -73,11 +73,15 @@ public class CommentService {
 
     public CommentDeleteResponse deleteComment(String userId, Long postId, Long commentId) {
 
+        log.info("userId: {}", userId);
         validateUser(userId);
-        validateComment(postId, commentId);
-        AppUtil.verifyCommentAuthor(userId, commentId);
 
-        commentRepository.delete(validateComment(postId, commentId));
+        log.info("postId: {}", postId);
+        log.info("commentId: {}", commentId);
+        validateComment(postId, commentId);
+        verifyCommentAuthor(userId, commentId);
+
+        commentRepository.deleteById(commentId);
 
         return CommentDeleteResponse.of(commentId);
     }
@@ -102,5 +106,10 @@ public class CommentService {
         });
     }
 
+    public void verifyCommentAuthor(String userId, Long commentId) {
+        if (userRepository.findById(Long.parseLong(userId)).get().getId() != commentRepository.findById(commentId).get().getUser().getId()) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
+        }
+    }
 
 }
