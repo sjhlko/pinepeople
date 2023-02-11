@@ -1,6 +1,6 @@
 package com.lion.pinepeople.domain.dto.order;
 
-import com.lion.pinepeople.domain.entity.PaymentType;
+import com.lion.pinepeople.enums.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

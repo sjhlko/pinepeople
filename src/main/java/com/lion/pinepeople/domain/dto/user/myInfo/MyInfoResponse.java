@@ -25,6 +25,7 @@ public class MyInfoResponse {
     private Integer point;
     private Double brixFiguer;
     private String brixName;
+    private String profileImg;
 
     public static MyInfoResponse of(User user) {
         return MyInfoResponse.builder()
@@ -37,6 +38,7 @@ public class MyInfoResponse {
                 .point(user.getPoint())
                 .brixFiguer(user.getBrix().getBrixFigure())
                 .brixName(user.getBrix().getBrixName())
+                .profileImg(user.getProfileImg())
                 .build();
     }
 }

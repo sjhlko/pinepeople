@@ -25,10 +25,14 @@ public class Report extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
-    public static Report toEntity(Long loginUserId, User user) {
+    @Column(name = "report_content")
+    private String reportContent;
+
+    public static Report toEntity(Long loginUserId, User user, String content) {
         return Report.builder()
                 .fromUserId(loginUserId)
                 .user(user)
+                .reportContent(content)
                 .build();
     }
 }

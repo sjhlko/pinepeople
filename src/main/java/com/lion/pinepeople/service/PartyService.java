@@ -3,6 +3,7 @@ package com.lion.pinepeople.service;
 import com.lion.pinepeople.domain.dto.party.*;
 import com.lion.pinepeople.domain.entity.*;
 import com.lion.pinepeople.enums.ParticipantRole;
+import com.lion.pinepeople.enums.PartyStatus;
 import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
@@ -10,17 +11,29 @@ import com.lion.pinepeople.repository.CategoryRepository;
 import com.lion.pinepeople.repository.PartyRepository;
 import com.lion.pinepeople.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
+@Slf4j
 public class PartyService {
     private final PartyRepository partyRepository;
     private final UserRepository userRepository;
     private final ParticipantService participantService;
     private final CategoryRepository categoryRepository;
+    private final FileUploadService fileUploadService;
+    private final String dir = "party";
+    private final String PARTY_DEFAULT_IMG = "https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/static/logo.png";
 
     /**
      * 특정 유저가 존재하는지를 확인함
@@ -43,16 +56,39 @@ public class PartyService {
     }
 
     /**
+     * 특정 캬테고리가 존재하는지를 확인함
+     * @param branch 존재하는 파티인지 확인하고픈 카테고리의 branch
+     * @param code 존재하는 파티인지 확인하고픈 카테고리의 code
+     * @return 존재할 경우 해당 카테고리 이름에 맞는 category 리턴, 존재하지 않을 경우 CATEGORY_NOT_FOUND 에러 발생
+     */
+    public Category validateCategory(String branch, String code){
+        return categoryRepository.findByBranchAndCode(branch, code)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, ErrorCode.CATEGORY_NOT_FOUND.getMessage()));
+    }
+
+    /**
      * 특정 유저가 특정 파티의 host인지 확인
      * @param currentUser 현재 로그인된 회원
      * @param party 현재 로그인된 회원이 host 인지 확인할 파티
      * 유저가 해당 파티의 host 가 아닐 경우 INVALID_PERMISSION 에러 발생
      */
     public void validateHost(Party party, User currentUser){
-        if(party.getUser().equals(currentUser)){
+        if(!Objects.equals(party.getUser().getId(), currentUser.getId())){
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
         }
     }
+
+    /**
+     * 특정 유저가 특정 파티의 host인지 확인
+     * 유저가 해당 파티의 host 가 아닐 경우 INVALID_PERMISSION 에러 발생
+     * controller 에서 사용하기 용이하다.
+     */
+    public void validateHost(String userId, Long partyId){
+        User user = validateUser(userId);
+        Party party = validateParty(partyId);
+        validateHost(party,user);
+    }
+
 
     /**
      * 특정 유저가 특정 파티의 host 이거나 관리자인지 확인
@@ -74,12 +110,30 @@ public class PartyService {
      * 파티 생성시 해당 파티와 유저의 정보가 participant 테이블에도 저장됨
      * @return 생성된 파티와 파티의 host 정보를 리턴
      */
-    public PartyCreateResponse createPartyWithCategory(PartyCategoryRequest request, String userId) {
+    public PartyCreateResponse createPartyWithCategory(PartyCategoryRequest request, MultipartFile file, String userId) throws IOException {
+
         User user = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
+
         //카테고리 생성
         Category category = categoryRepository.findByBranchAndCode(request.getBranch(), request.getCode()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        Party party = partyRepository.save(request.toEntity(category,user));
+
+        String partyImg;
+        if(!file.isEmpty()){
+            partyImg = fileUploadService.uploadFile(file, dir);
+        }else{
+            partyImg = PARTY_DEFAULT_IMG;
+        }
+        //파티 사진 클라우드에 업로드
+
+
+        Party party;
+        if(request.getPartySize()==1){
+            party = partyRepository.save(request.toEntity(category,user, partyImg, PartyStatus.CLOSED));
+        }
+        else {
+            party = partyRepository.save(request.toEntity(category, user, partyImg));
+        }
         Participant participant = participantService.createHostParticipant(user,party);
         return PartyCreateResponse.of(party,participant);
     }
@@ -108,15 +162,17 @@ public class PartyService {
      * @param userId 현재 로그인된 유저의 userId
      * @param partyId 수정하고자 하는 파티의 partyId
      * @param partyUpdateRequest 수정사항이 담긴 request
-     * @return 수정 전 파티정보와 수정 후 파티 정보를 리턴
+     * @return 수정 후 파티 정보를 리턴
      * 파티 정보 수정은 해당 파티의 host 만 가능하다.
      */
     public PartyUpdateResponse updateParty(Long partyId, PartyUpdateRequest partyUpdateRequest, String userId) {
         User user = validateUser(userId);
         Party party = validateParty(partyId);
         validateHost(party,user);
-        Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party));
-        return PartyUpdateResponse.of(party,updatedParty);
+        Category category = validateCategory(partyUpdateRequest.getBranch(), partyUpdateRequest.getCode());
+        Timestamp createdAt = party.getCreatedAt();
+        Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party,category));
+        return PartyUpdateResponse.of(createdAt,updatedParty);
     }
 
     /**
@@ -162,8 +218,30 @@ public class PartyService {
             Page<Party> parties = partyRepository.findAllByUser(pageable,user);
             return parties.map(PartyInfoResponse::of);
         }
-        Page<Participant> participants = participantService.getMyGuestParty(pageable,user);
-        return participants.map(PartyInfoResponse::of);
+        else {
+            Page<Participant> participants = participantService.getMyGuestParty(pageable,user);
+            return participants.map(PartyInfoResponse::of);
+        }
+    }
 
+    /**
+     * 내가 대기중인 파티 조회
+     * @param userId 현재 로그인한 사용자의 id
+     * @return 파티 부합하는 파티의 상세 정보를 페이징해 리턴
+     */
+    public Page<PartyInfoResponse> getMyWaitingParty(Pageable pageable, String userId) {
+        User user = validateUser(userId);
+        Page<Participant> participants = participantService.getMyWaitingParty(pageable,user);
+        return participants.map(PartyInfoResponse::of);
+    }
+
+    public Page<PartyInfoResponse> getPartyByCategory(Pageable pageable, String categoryName){
+        Page<Party> parties = partyRepository.findByCategory_Name(pageable,categoryName);
+        return parties.map(PartyInfoResponse::of);
+    }
+
+    public Page<PartyInfoResponse> getPartyByCategoryBranch(Pageable pageable, String branch){
+        Page<Party> parties = partyRepository.findByCategory_Branch(pageable,branch);
+        return parties.map(PartyInfoResponse::of);
     }
 }

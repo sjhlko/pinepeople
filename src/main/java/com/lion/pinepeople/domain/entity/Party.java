@@ -1,5 +1,6 @@
 package com.lion.pinepeople.domain.entity;
 
+import com.lion.pinepeople.enums.PartyStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +12,8 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javax.persistence.EnumType.STRING;
 
 @Entity
 @Getter
@@ -32,13 +35,22 @@ public class Party extends BaseEntity{
     private Date endDate;
     private String address;
     private String announcement;
+    private String partyImg;
+
+    @Enumerated(STRING)
+    private PartyStatus partyStatus;
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn (name ="user_id")
     private User user;
     @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    List<Participant> participants = new ArrayList<>();
+    private List<Participant> participants = new ArrayList<>();
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cagegory_id")
     private Category category;
+
+    public void updateStatus(PartyStatus partyStatus){
+        this.partyStatus=partyStatus;
+    }
 
 }

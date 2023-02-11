@@ -7,6 +7,7 @@ import com.lion.pinepeople.service.PartyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -19,8 +20,9 @@ import java.util.List;
 
 @Api(tags = "Party API")
 @RestController
-@RequestMapping("/api/partys")
+@RequestMapping("/pinepeople/api/partys")
 @RequiredArgsConstructor
+@Slf4j
 public class PartyController {
     private final PartyService partyService;
 
@@ -29,12 +31,12 @@ public class PartyController {
      * 파티 생성시 category 와 participant 에도 자동적으로 해당하는 내용이 생성된다.
      * @return 생성된 파티의 상세 정보와 생성한 host 의 상세정보
      * **/
-    @PostMapping
-    @ApiOperation(value = "파티 생성")
-    public Response<PartyCreateResponse> createParty(@RequestBody PartyCategoryRequest partyCreateRequest, Authentication authentication) {
-        PartyCreateResponse partyCreateResponse = partyService.createPartyWithCategory(partyCreateRequest, authentication.getName());
-        return Response.success(partyCreateResponse);
-    }
+//    @PostMapping
+//    @ApiOperation(value = "파티 생성")
+//    public Response<PartyCreateResponse> createParty(@RequestBody PartyCategoryRequest partyCreateRequest, Authentication authentication) {
+//        PartyCreateResponse partyCreateResponse = partyService.createPartyWithCategory(partyCreateRequest, authentication.getName());
+//        return Response.success(partyCreateResponse);
+//    }
 
 
     /**
@@ -65,11 +67,11 @@ public class PartyController {
      * 파티 id를 통해 파티를 수정한다.
      * @param id 조회하고자 하는 파티의 id
      * @param authentication 로그인한 회원이면서 자신의 파티를 수정하는 경우만 가능
-     * @return 수정 전 파티 상세정보와 수정 후 파티 상세정보
+     * @return  수정 후 파티 상세정보
      */
     @PatchMapping("/{id}")
     @ApiOperation(value = "파티 수정")
-    public Response<PartyUpdateResponse> modifyPost(@PathVariable Long id, @RequestBody PartyUpdateRequest partyUpdateRequest, Authentication authentication){
+    public Response<PartyUpdateResponse> modifyParty(@PathVariable Long id, @RequestBody PartyUpdateRequest partyUpdateRequest, Authentication authentication){
         PartyUpdateResponse partyUpdateResponse = partyService.updateParty(id, partyUpdateRequest, authentication.getName());
         return Response.success(partyUpdateResponse);
 
@@ -111,9 +113,23 @@ public class PartyController {
      */
     @GetMapping("/my")
     @ApiOperation(value = "내가 참가한 파티 조회")
-    public Response<Page<PartyInfoResponse>> getMyPosts(@PageableDefault(size = 20, sort ="createdAt",
+    public Response<Page<PartyInfoResponse>> getMyParty(@PageableDefault(size = 20, sort ="createdAt",
             direction = Sort.Direction.DESC) Pageable pageable, @RequestParam String role, Authentication authentication) {
         Page<PartyInfoResponse> parties = partyService.getMyParty(pageable, role, authentication.getName());
+        return Response.success(parties);
+    }
+
+    /**
+     * 대기중인 파티를 조회한다.
+     * @param authentication 로그인된 유저만 이용 가능
+     * @return 대기중인 파티의 상세 정보들을 페이징 해서 리턴함
+     */
+    @GetMapping("/my-waitings")
+    @ApiOperation(value = "대기중인 파티 조회")
+    public Response<Page<PartyInfoResponse>> getMyWaitingParty(@PageableDefault(size = 20, sort ="createdAt",
+            direction = Sort.Direction.DESC) Pageable pageable, Authentication authentication) {
+        log.info("hello");
+        Page<PartyInfoResponse> parties = partyService.getMyWaitingParty(pageable,authentication.getName());
         return Response.success(parties);
     }
 

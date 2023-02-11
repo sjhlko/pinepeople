@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="base :: base-head"></div>
+
+    <style>
+        table.type06 {
+            border-collapse: collapse;
+            text-align: left;
+            line-height: 1.5;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            margin: 20px 10px;
+        }
+        table.type06 th {
+            width: 150px;
+            padding: 10px;
+            font-weight: bold;
+            vertical-align: top;
+        }
+        table.type06 td {
+            width: 350px;
+            padding: 10px;
+            vertical-align: top;
+        }
+        table.type06 .even {
+            background: #efefef;
+        }
+
+    </style>
+</head>
+<body>
+<!-- Navigation-->
+<div th:insert="~{base :: pinepeople-nav}"></div>
+
+<!-- Header-->
+<header class="bg-yellow py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Pine People</h1>
+            <p class="lead fw-normal text-white-50 mb-0">관리자페이지</p>
+        </div>
+    </div>
+</header>
+
+<!-- Section-->
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2  justify-content-center">
+
+            <!-- profile start -->
+            <div class="col h-100">
+                회원 관리
+                <div class="card h-100 p-3">
+
+                    <!-- profile-header -->
+                    <div class="h-40 p-2">
+                        <form class="d-flex" id="form">
+                            <input class="form-control me-2"  type="search" name="search" placeholder="Search" aria-label="Search">
+                            <button class="userSearch btn-xs btn-outline-success" type="button">Search</button>
+                        </form>
+                    </div>
+
+                    <!-- profile-body -->
+                    <table class="table h-60 p-2" id="usersTable">
+                        <thead class="table">
+                        <tr>
+                            <th>번호</th>
+                            <th>닉네임</th>
+                            <th>이메일</th>
+                            <th>당도</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody id="user-body">
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-primary user-detail">상세보기</button>
+                </div>
+            </div>
+            <!-- profile end -->
+
+            <!-- userModal -->
+            <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div id="userModelTitle"></div>
+                            <h5 class="modal-title" id="userNumber">1</h5>
+                            <h5 class="modal-title" id="userModalLabel">회원 상세 정보</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="h-40 text-center m-auto pb-3">
+                                <img id="profileImg" src="#">
+                            </div>
+                            <table class="h-60 type06 p-2 m-auto text-center" id="userModelTable">
+                                <tr>
+                                    <th>이름</th>
+                                    <td id="userName"></td>
+                                </tr>
+                                <tr>
+                                    <th>이메일</th>
+                                    <td id="email"></td>
+                                </tr>
+                                <tr>
+                                    <th>당도</th>
+                                    <td id="brix"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="add-blackList"  data-bs-dismiss="modal">블랙리스트 등록</button>
+                            <button type="button" class="btn btn-secondary" id="change-role"  data-bs-dismiss="modal">관리자 변경</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- party list start -->
+            <div class="col h-100">
+                블랙 리스트 관리
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active blackList-waiting" aria-current="page" href="#">대기중</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link blackList-approval" href="#">블랙리스트</a>
+                    </li>
+                </ul>
+                <div class="card h-100">
+                    <table class="table" id="blackListTable">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>번호</th>
+                            <th>닉네임</th>
+                            <th>이메일</th>
+                            <th>신고일</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody id="blackList-body">
+                        </tbody>
+                    </table>
+
+                    <div class="text-center">
+                        <nav  aria-label="...">
+                            <ul class="pagination pagination-sm" style="justify-content : center">
+                                <li class="page-item active" aria-current="page">
+                                    <span class="page-link">1</span>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            </ul>
+                        </nav>
+                        <button type="button" class="btn btn-primary blackList-detail">상세보기</button>
+                    </div>
+
+                    <!-- blackListModal -->
+                    <div class="modal fade" id="blackListModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div id="modelTitleTest"></div>
+                                    <h5 class="modal-title" id="blackListNumber">1</h5>
+                                    <h5 class="modal-title" id="blackListModalLabel">블랙리스트</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table" id="ModelTable">
+                                        <thead class="table-dark">
+                                        <tr>
+                                            <th>신고자</th>
+                                            <th>신고내용</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="blackListModal-body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" id="blackList-delete" style="visibility: visible" data-bs-dismiss="modal">블랙리스트 삭제</button>
+                                    <button type="button" class="btn btn-secondary" id="blackList-approval" style="visibility: visible" data-bs-dismiss="modal">승인</button>
+                                    <button type="button" class="btn btn-primary " id="blackList-reject" style="visibility: visible" data-bs-dismiss="modal">반려</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- party list end -->
+
+
+        </div>
+    </div>
+</section>
+
+<!-- Footer-->
+<div th:insert="~{base :: pinepeople-footer}"></div>
+
+<!-- Core theme JS-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    $('.userSearch').on("click", function(){
+        let url = '/pinepeople/api';
+        var search = $("#form").serialize();
+        console.log(search)
+
+        if(search.length == 7){
+            $.ajax({
+                url: url,
+                dataType:'json',
+                type:'GET',
+                success:function(data){
+                    console.log(data)
+                    $('#user-body').empty()
+                    for(var i=0; i<data.result.content.length; i++){
+                        var tableId = '<tr>';
+                        tableId += '<td>' + data.result.content[i].userId + '</td>';
+                        tableId += '<td>' + data.result.content[i].userName + '</td>';
+                        tableId += '<td>' + data.result.content[i].email + '</td>';
+                        tableId += '<td>' + data.result.content[i].brixFiguer + '</td>';
+                        tableId += '<td><input class="form-check-input" type="radio" name="user-detail" value='+data.result.content[i].userId+'></td>';
+                        tableId += '</tr>';
+                        $('#user-body').append(tableId)
+                    }
+
+                }
+            })
+        }else{
+            $.ajax({
+                url: url + "/search" + "?" + search,
+                dataType:'json',
+                type:'GET',
+                success:function(data){
+                    console.log(data)
+                    $('#user-body').empty()
+                    for(var i=0; i<data.result.content.length; i++){
+                        var tableId = '<tr>';
+                        tableId += '<td>' + data.result.content[i].userId + '</td>';
+                        tableId += '<td>' + data.result.content[i].userName + '</td>';
+                        tableId += '<td>' + data.result.content[i].email + '</td>';
+                        tableId += '<td>' + data.result.content[i].brixFiguer + '</td>';
+                        tableId += '<td><input class="form-check-input" type="radio" name="user-detail" value='+data.result.content[i].userId+'></td>';
+                        tableId += '</tr>';
+                        $('#user-body').append(tableId)
+                        console.log(tableId)
+                    }
+
+                }
+            })
+        }
+
+    })
+
+    $('.user-detail').on("click", function(){
+        var userId = $("input[type=radio][name=user-detail]:checked").val();
+        let url = `/pinepeople/api/`+ userId;
+
+        $.ajax({
+            url: url,
+            dataType:'json',
+            type:'GET',
+            success:function(data){
+                console.log(data)
+                $('.modal-title#userModalLabel').empty()
+                $('#userModal-body').empty()
+                $('#userNumber').empty()
+                $('#profileImg').empty()
+                $('#userName').empty()
+                $('#email').empty()
+                $('#brix').empty()
+
+                $('#userNumber').append(data.result.userId)
+                $('.modal-title#userModalLabel').append(data.result.userName)
+                $('#blackListNumber').append(data.result.userId)
+                $('#profileImg').attr("src",data.result.profileImg)
+                $('#userName').append(data.result.userName)
+                $('#email').append(data.result.email)
+                $('#brix').append(data.result.brixFiguer)
+
+            }
+        })
+        $('#userModal').modal("show");
+    })
+
+    $('#add-blackList').on("click", function(){
+        var userId = $('#userNumber').text();
+        let url = `/pinepeople/api/admin/black-lists/`;
+        let data = JSON.stringify({
+            userId: userId
+        })
+        console.log(userId)
+
+        $.ajax({
+            url: url,
+            data: data,
+            contentType: 'application/json',
+            type:'POST',
+            success:function(data){
+                alert("블랙리스트 등록 완료!")
+            },
+            error:function (data){
+                alert(data.responseJSON.result.message)
+            }
+        })
+    })
+
+    $('#change-role').on("click", function(){
+        var userId = $('#userNumber').text();
+        let url = `/pinepeople/api/admin/`+userId+`/change-role`;
+        console.log(userId)
+        $.ajax({
+            url: url,
+            data: null,
+            contentType: 'application/json',
+            type:'POST',
+            success:function(data){
+                alert("계정 등급 변경 완료!")
+            },
+            error:function (data){
+                alert(data.responseJSON.result.message)
+            }
+        })
+    })
+
+
+
+    $('.blackList-waiting').on("click", function(){
+        let url = `/pinepeople/api/admin/black-lists?status=WATING`;
+        $.ajax({
+            url: url,
+            dataType:'json',
+            type:'GET',
+            success:function(data){
+                $('#blackList-body').empty()
+                for(var i=0; i<data.result.content.length; i++){
+                    var tableId = '<tr>';
+                    tableId += '<td>' + data.result.content[i].blackListId + '</td>';
+                    tableId += '<td>' + data.result.content[i].user.name + '</td>';
+                    tableId += '<td>' + data.result.content[i].user.email + '</td>';
+                    tableId += '<td>' + data.result.content[i].startDate + '</td>';
+                    tableId += '<td><input class="form-check-input" type="radio" name="blackList-waiting" value='+data.result.content[i].blackListId+'></td>';
+                    tableId += '</tr>';
+                    $('#blackList-body').append(tableId)
+                }
+            }
+        })
+    })
+
+
+    $('.blackList-approval').on("click", function(){
+        let url = `/pinepeople/api/admin/black-lists?status=APPROVAL`;
+
+        $.ajax({
+            url: url,
+            dataType:'json',
+            type:'GET',
+            success:function(data){
+                console.log(data)
+                $('#blackList-body').empty()
+                for(var i=0; i<data.result.content.length; i++){
+                    var tableId = '<tr>';
+                    tableId += '<td>' + data.result.content[i].blackListId + '</td>';
+                    tableId += '<td>' + data.result.content[i].user.name + '</td>';
+                    tableId += '<td>' + data.result.content[i].user.email + '</td>';
+                    tableId += '<td>' + data.result.content[i].startDate + '</td>';
+                    tableId += '<td><input class="form-check-input" type="radio" name="blackList-approval" value='+data.result.content[i].blackListId+'></td>';
+                    tableId += '</tr>';
+                    $('#blackList-body').append(tableId)
+                }
+            }
+        })
+    })
+
+    $('.blackList-detail').on("click", function(){
+        var blackListId;
+        const deleteBtn = document.getElementById('blackList-delete');
+        const approvalBtn = document.getElementById('blackList-approval');
+        const rejectBtn = document.getElementById('blackList-reject');
+
+        if($("input[type=radio][name=blackList-approval]:checked").val()){
+            console.log("True")
+            blackListId=$("input[type=radio][name=blackList-approval]:checked").val();
+            deleteBtn.style.visibility='visible';
+            approvalBtn.style.visibility='hidden';
+            rejectBtn.style.visibility='hidden';
+
+
+        }else{
+            console.log("False")
+            blackListId=$("input[type=radio][name=blackList-waiting]:checked").val();
+            approvalBtn.style.visibility='visible';
+            rejectBtn.style.visibility='visible';
+            deleteBtn.style.visibility='hidden';
+        }
+        let url = `/pinepeople/api/admin/black-lists/`+blackListId;
+
+        $.ajax({
+            url: url,
+            dataType:'json',
+            type:'GET',
+            success:function(data){
+                console.log(data)
+                $('.modal-title#blackListModalLabel').empty()
+                $('#blackListModal-body').empty()
+                $('#blackListNumber').empty()
+
+
+                $('.modal-title#blackListModalLabel').append(data.result.user.name)
+                $('#blackListNumber').append(data.result.blackListId)
+                for(var i=0; i<data.result.fromUserEmail.length; i++){
+                    var content = '<tr>';
+                    content += '<td>' + data.result.fromUserEmail[i]+'</td>';
+                    content += '<td>' + data.result.reportComment[i] + '</td>';
+                    content += '</tr>';
+                    $('#blackListModal-body').append(content)
+                }
+            }
+        })
+        $('#blackListModal').modal("show");
+    })
+
+    $('#blackList-delete').on("click", function(){
+        var blackListId = $('#blackListNumber').text();
+        let url = `/pinepeople/api/admin/black-lists/`+ blackListId;
+
+        $.ajax({
+            url: url,
+            dataType:'json',
+            type:'DELETE',
+            success:function(data){
+                alert("블랙리스트에서 삭제되었습니다.")
+            },
+            error:function(data){
+                alert("해당 권한이 없습니다")
+            }
+        })
+    })
+
+    $('#blackList-approval').on("click", function(){
+        var blackListId = $('#blackListNumber').text();
+        let url = `/pinepeople/api/admin/black-lists/`+ blackListId;
+        let data = JSON.stringify({
+            status : 1
+        })
+
+        $.ajax({
+            url: url,
+            data : data,
+            contentType:'application/json',
+            type:'PATCH',
+            success:function(data){
+                console.log(data)
+                // alert(".")
+            },
+            error:function(data){
+                console.log(data)
+                alert("해당 권한이 없습니다")
+            }
+        })
+    })
+
+    $('#blackList-reject').on("click", function(){
+        var blackListId = $('#blackListNumber').text();
+        let url = `/pinepeople/api/admin/black-lists/`+ blackListId;
+        let data = JSON.stringify({
+            status : 2
+        })
+
+        $.ajax({
+            url: url,
+            data : data,
+            contentType:'application/json',
+            type:'PATCH',
+            processData: false,
+            dataType: 'json',
+            success:function(data){
+                console.log(data)
+                // alert(".")
+            },
+            error:function(data){
+                console.log(data)
+                alert("해당 권한이 없습니다")
+            }
+        })
+    })
+
+</script>
+
+</body>
+</html>

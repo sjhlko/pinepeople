@@ -1,14 +1,14 @@
 package com.lion.pinepeople.controller;
 
 
+import com.lion.pinepeople.domain.dto.admin.AdminUpdateRequest;
 import com.lion.pinepeople.domain.dto.admin.AllBlackListResponse;
 import com.lion.pinepeople.domain.dto.admin.BlackListRequest;
 import com.lion.pinepeople.domain.dto.admin.BlackListResponse;
 import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
 import com.lion.pinepeople.domain.response.Response;
-import com.lion.pinepeople.repository.UserRepository;
+import com.lion.pinepeople.enums.BlackListStatus;
 import com.lion.pinepeople.service.AdminService;
-import com.lion.pinepeople.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/pinepeople/api/admin")
 @RequiredArgsConstructor
 @Slf4j
 public class AdminController {
@@ -52,6 +52,20 @@ public class AdminController {
     public Response<Void> addBlackList(@RequestBody BlackListRequest request, Authentication authentication){
         String loginUserId = authentication.getName();
         String result = adminService.addBlackList(request, loginUserId);
+        return Response.success(result);
+    }
+
+    /**
+     * 블랙리스트 상태 변경
+     * @param blackListId 상태 변경할 블랙리스트 아이디
+     * @param authentication 로그인 권한 인증
+     * @param request 상태 변경 메세지
+     * @return 상태 변경 메세지
+     */
+    @PatchMapping("/black-lists/{blackListId}")
+    public Response<Void> updateBlackList(@PathVariable Long blackListId, Authentication authentication, @RequestBody AdminUpdateRequest request){
+        String loginUserId = authentication.getName();
+        String result = adminService.updateBlackList(loginUserId,blackListId, request);
         return Response.success(result);
     }
 
@@ -87,10 +101,10 @@ public class AdminController {
      * @return 블랙리스트 전체 조회, 페이징포함(블랙리스트 아이디, 정지 시작 시간)
      */
     @GetMapping("/black-lists")
-    public Response<Page<AllBlackListResponse>> getAllBlackList(Authentication authentication){
+    public Response<Page<AllBlackListResponse>> getAllBlackList(Authentication authentication, @RequestParam(name = "status")BlackListStatus status){
         String loginUserId = authentication.getName();
         PageRequest pageable = PageRequest.of(0,10, Sort.by("blackListId").descending());
-        Page<AllBlackListResponse> response = adminService.getAllBlackList(loginUserId, pageable);
+        Page<AllBlackListResponse> response = adminService.getAllBlackList(loginUserId, pageable, status);
         return Response.success(response);
     }
 }

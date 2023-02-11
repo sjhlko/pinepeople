@@ -1,0 +1,117 @@
+html {
+    font-size: 130%;
+}
+
+main {
+    width: 800px;
+    margin: 50px auto 80px;
+}
+
+.container2 {
+    border: 1px solid #444444;
+}
+
+.orderDate {
+    font-size: small;
+    margin-left: 40px;
+}
+
+.orderDetailTable {
+    width: 90%;
+    /*height: 50%;*/
+    border-collapse: collapse;
+    border: 1px solid #444444;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.orderDetailTable tr {
+    border: 1px solid #444444;
+    line-height: 3rem;
+    margin-left: 40px;
+    /*text-align: right;*/
+    padding: 0 20px 0 0px;
+}
+
+.orderDetailTable th {
+    background: #c1e2b3;
+    /*text-align: left;*/
+    margin-left: 10px;
+}
+
+.paymentInfo {
+    width: 80%;
+    border-collapse: collapse;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.paymentInfo tr {
+    border: 1px solid #444444;
+}
+
+.paymentInfo td {
+    text-align: right;
+    padding: 0 30px 0 0;
+}
+
+.paymentInfo th {
+    text-align: left;
+    padding: 0 0 0 10px;
+}
+
+.detailCancel {
+    font-size: 25px;
+}
+
+.cancelInfo {
+    text-align: center;
+    font-weight: bold;
+
+}
+
+.refundTable {
+    width: 80%;
+    border-collapse: collapse;
+    border: 1px solid #444444;
+    margin-left: 73px;
+    /*margin-left: auto;*/
+    background: #c5d7f2;
+}
+
+.refundTable th {
+    text-align: left;
+    padding: 0 0 0 10px;
+}
+
+.refundTable td {
+    text-align: right;
+    padding: 0 30px 0 0px;
+}
+
+.refundTable tr {
+    border: 1px solid #444444;
+}
+
+.frame {
+    text-align: right;
+}
+
+.backdrop-ux {
+    font-size: 70%;
+    margin-left: 10px;
+}
+
+a {
+    text-decoration-line: none;
+}
+
+.orderListBtn {
+    background-color: #ffecb5;
+    font-size: 15px;
+    border: lightgrey solid 2px;
+    padding: 6px;
+}
+

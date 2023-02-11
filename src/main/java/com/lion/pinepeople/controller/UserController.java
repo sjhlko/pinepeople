@@ -5,10 +5,11 @@ import com.lion.pinepeople.domain.dto.user.join.UserJoinRequest;
 import com.lion.pinepeople.domain.dto.user.join.UserJoinResponse;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginRequest;
 import com.lion.pinepeople.domain.dto.user.login.UserLoginResponse;
+import com.lion.pinepeople.domain.dto.user.logout.UserLogoutResponse;
 import com.lion.pinepeople.domain.dto.user.myInfo.MyInfoResponse;
+import com.lion.pinepeople.domain.dto.user.search.UserSearchResponse;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateRequest;
 import com.lion.pinepeople.domain.dto.user.update.UserUpdateResponse;
-import com.lion.pinepeople.domain.dto.user.role.UserRoleResponse;
 import com.lion.pinepeople.domain.dto.user.userInfo.UserInfoResponse;
 import com.lion.pinepeople.domain.dto.user.userInfoList.UserInfoListResponse;
 import com.lion.pinepeople.domain.response.Response;
@@ -18,13 +19,17 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("pinepeople/api")
 @RequiredArgsConstructor
 @Api(tags = "User API")
 public class UserController {
@@ -52,7 +57,7 @@ public class UserController {
      */
     @GetMapping
     @ApiOperation(value = "유저 리스트 조회")
-    public Response<Page<UserInfoListResponse>> getUserInfoList(@PageableDefault(size = 20) @ApiIgnore Pageable pageable) {
+    public Response<Page<UserInfoListResponse>> getUserInfoList(@ApiIgnore @PageableDefault (size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<UserInfoListResponse> userInfoListResponses = userService.getUserInfoList(pageable);
         return Response.success(userInfoListResponses);
     }
@@ -86,14 +91,28 @@ public class UserController {
     /**
      * 로그인 메서드
      *
-     * @param userLoginRequest email, password
-     * @return jwt
+     * @param userLoginRequest 로그인 dto
+     * @param response         쿠키 설정을 하기 위해 response를 서비스로 넘긴다.
+     * @return jwt 토큰을 반환
      */
     @PostMapping("/login")
     @ApiOperation(value = "로그인")
-    public Response<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
-        UserLoginResponse userLoginResponse = userService.login(userLoginRequest);
+    public Response<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response) {
+        UserLoginResponse userLoginResponse = userService.login(userLoginRequest, response);
         return Response.success(userLoginResponse);
+    }
+
+    /**
+     * 로그아웃 메서드
+     *
+     * @param response 쿠키를 설정하기 위해 response를 서비스로 넘긴다.
+     * @return 로그인 성공여부에 대한 메세지 반환
+     */
+    @PostMapping("/logout")
+    @ApiOperation(value = "로그아웃")
+    public Response<UserLogoutResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+        UserLogoutResponse userLogoutResponse = userService.logout(request, response);
+        return Response.success(userLogoutResponse);
     }
 
     /**
@@ -103,12 +122,12 @@ public class UserController {
      * @param userUpdateRequest name, address, phone, birth
      * @return UserUpdateResponse message userId
      */
-    @PatchMapping("/my")
-    @ApiOperation(value = "유저 수정")
-    public Response<UserUpdateResponse> modify(@ApiIgnore Authentication authentication, @RequestBody UserUpdateRequest userUpdateRequest) {
-        UserUpdateResponse userModifyResponse = userService.modify(authentication.getName(), userUpdateRequest);
-        return Response.success(userModifyResponse);
-    }
+//    @PatchMapping("/my")
+//    @ApiOperation(value = "유저 수정")
+//    public Response<UserUpdateResponse> modify(@ApiIgnore Authentication authentication, @RequestBody UserUpdateRequest userUpdateRequest) {
+//        UserUpdateResponse userModifyResponse = userService.modify(authentication.getName(), userUpdateRequest);
+//        return Response.success(userModifyResponse);
+//    }
 
     /**
      * 유저 삭제 메서드
@@ -122,5 +141,9 @@ public class UserController {
     public Response<UserDeleteResponse> delete(@ApiIgnore Authentication authentication, @PathVariable Long id) {
         UserDeleteResponse userDeleteResponse = userService.delete(authentication.getName(), id);
         return Response.success(userDeleteResponse);
+    }
+    @GetMapping("/search")
+    public Response<Page<UserSearchResponse>> searchUser(@RequestParam String search,@ApiIgnore @PageableDefault (size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+        return Response.success(userService.searchUser(search,pageable));
     }
 }

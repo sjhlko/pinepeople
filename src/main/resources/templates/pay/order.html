@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <div th:replace="base.html :: base-head"></div>
+    <link rel="stylesheet" th:href="@{/static/assets/css/orderStyles.css}"/>
+</head>
+<body>
+<!-- jQuery -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<!-- iamport.payment.js -->
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+<!-- swal 적용 -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<!--    nav-bar-->
+<div th:insert="~{base :: pinepeople-nav}"></div>
+
+<order>
+    <main>
+        <div class="container" role="main">
+
+            <div class="orderInfo">
+                <table class="orderTable">
+                    <caption>주문 정보</caption>
+                    <tr>
+                        <th>서비스명</th>
+                        <th>판매가</th>
+                        <th>수수료</th>
+                        <th>합계</th>
+                    </tr>
+                    <tr>
+                        <td><span id="partyTitle" class="partyTitle" th:text="${party.partyTitle}"></span></td>
+                        <td><span id="orderCost" class="cost" th:text="${cost}"></span>원</td>
+                        <td><span id="orderCommission" class="commission" th:text="${commission}"></span>원</td>
+                        <td><span th:text="${cost} + ${commission}"></span></td>
+                    </tr>
+                </table>
+            </div>
+            <br>
+            <div>
+                <table class="paymentInfo">
+                    <caption>결제 정보</caption>
+                    <br>
+                    <tr>
+                        <th>ㆍ 상품 금액</th>
+                        <td><span id="cost" class="cost" th:text="${cost}" ></span>원</td>
+                    </tr>
+                    <tr>
+                        <th>ㆍ 수수료(10%)</th>
+                        <td><span id="commission" class="commission" th:text="${commission}"></span>원</td>
+                    </tr>
+                    <tr>
+                        <th>ㆍ 합계</th>
+                        <td><span id="sum" th:text="${cost} + ${commission}"></span>원</td>
+                    </tr>
+                    <tr>
+                        <th>ㆍ 사용 포인트</th>
+                        <td class="point">보유 포인트 : <span id="userPoint" class="userPoint"
+                                                         th:text="${user.point}"></span>p
+                            <input type="text" style="text-align: right; width:80px" id="discount" name="discountPoint"
+                                   onKeyup="this.value=this.value.replace(/[^0-9]/g,'');"> <span class="board_date"
+                                                                                                  th:text="${discountPoint}"></span>p</input>
+                            <button onclick="doAction()">사용하기</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <br>
+            <div>
+                <table class="totalCost">
+                    <tr>
+                        <th>ㆍ 총 결제 금액</th>
+                        <td><span id="total" th:text="${cost} + ${commission}"></span>원</td>
+                    </tr>
+                </table>
+            </div>
+
+            <br>
+            <div class="order_info_box">
+                <input type="radio" name="radio" value="CREDIT_CARD" id="cart">카드 결제
+                <input type="radio" name="radio" value="CONTACT_PAYMENT" id="contact">만나서 결제
+            </div>
+
+            <br>
+            <div class="frame">
+                <button class="button_1" onclick="payment()">주문하기</button>
+                <button class="button_2" onclick="cancel()">취소</button>
+            </div>
+            <br>
+            <br>
+        </div>
+    </main>
+</order>
+
+<!--footer-->
+<div th:insert="~{base :: pinepeople-footer}"></div>
+
+</body>
+</html>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // 포인트 사용 시 총 결제 금액 변경
+    function doAction(){
+        var sum = parseInt(document.getElementById('sum').innerText);
+        console.log(sum);
+        var usePoint = parseInt($('input[name=discountPoint]').val());
+        console.log(usePoint);
+        var userPoint = [[${user.point}]];
+        console.log(document.getElementById('total').innerHTML);
+
+        if (usePoint <= userPoint) {
+            var total = sum - usePoint;
+            console.log(total);
+            document.getElementById('total').innerText = total;
+        }else {
+            alert(userPoint + "포인트 사용 가능합니다. \n 다시 입력해주세요");
+        }
+        if (total < 0) {
+            alert("현재 사용할 수 있는 최대 포인트는 " + sum + "포인트 입니다. \n 다시 입력해주세요")
+            return false;
+        }
+    }
+
+
+    function cancel() {
+        alert("주문이 취소되었습니다.");
+        location.replace("/pinepeople/party/detail/"+[[${party.partyId}]]); // 파티 리스트 창으로 이동
+    }
+
+    function payment() {
+        var sum = parseInt(document.getElementById('sum').innerText);
+        var usePoint = parseInt($('input[name=discountPoint]').val());
+        var total = sum - usePoint;
+        if (total < 0) {
+            alert("포인트를 다시 입력해주세요.")
+            return false;
+        }
+        console.log($('input[type=radio]:checked').val());
+        const data = {
+            paymentType: $('input[type=radio]:checked').val(),
+            cost: document.getElementById('cost').innerText,
+            commission: document.getElementById('commission').innerText,
+            discountPoint: $('input[name=discountPoint]').val(),
+            partyId: [[${party.partyId}]],
+            userName: [[${user.userName}]],
+            userPoint: [[${user.point}]],
+            partyTitle: document.getElementById('partyTitle').innerText,
+            phone: [[${user.phone}]],
+            address: [[${user.address}]],
+            email: [[${user.email}]],
+            totalCost: Number(document.getElementById('cost').innerText) + Number(document.getElementById('commission').innerText) - Number($('input[name=discountPoint]').val()),
+        }
+        console.log([[${party.partyId}]]);
+        console.log([[${user.email}]]);
+        console.log(data.email);
+
+        if (!$('input[type=radio]:checked').val()) {
+            alert('결제 수단을 선택해주세요.')
+            $('input[type=radio]:checked').focus();
+            return false;
+        }
+
+        if (!$('input[name=discountPoint]').val()) {
+            data.discountPoint = 0;
+        }
+        if (data.paymentType == 'CONTACT_PAYMENT') {
+            paymentContact(data);
+            return;
+        }
+
+        paymentCard(data);
+    }
+
+    function paymentContact(data) { // 만나서 결제
+        console.log([[${party.partyId}]]);
+        console.log([[${user.point}]]);
+        $.ajax({
+            url: "/pinepeople/order/contact-payment",
+            method: "POST",
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+        }).done(function () {
+            swal({
+                text: '주문이 완료되었습니다.',
+                closeOnClickOutside: false
+            }).then(function () {
+                location.replace("/pinepeople/party/order-list"); // 주문 상세 내역 가고싶은데..
+            })
+        }).fail(function (result) {
+            var responseText = result.responseText;
+            var message = responseText.split('\"')[13];
+            console.log(message);
+
+            alert(message);
+            location.replace("/pinepeople/party/"+ [[${party.partyId}]] +"/order");
+        })
+    }
+
+    function paymentCard(data) { // 카드 결제
+        console.log(data);
+        console.log(data.totalCost);
+        console.log($('input[name=discountPoint]').val());
+
+        var IMP = window.IMP;
+        IMP.init("imp56670232");
+        IMP.request_pay({ // param
+                pg: "html5_inicis",
+                pay_method: "card",
+                merchant_uid: 'menubar_' + new Date().getTime(),
+                buyer_email: data.email,
+                amount: data.totalCost,
+                name: data.partyTitle,
+                buyer_name: data.userName,
+                buyer_tel: data.phone,
+                buyer_addr: data.address,
+            },
+            function (rsp) { // callback
+                if (rsp.success) {
+                    console.log(rsp.imp_uid);
+                    // 계산 완료
+                    // 결제 요청에 controller로 반환되는 응답 정보
+                    data.imp_uid = rsp.imp_uid; // 고유 ID
+                    data.merchant_uid = rsp.merchant_uid; // 거래 ID
+                    // 결제 성공 시 검증 로직
+                    paymentComplete(data);
+                } else {
+                    var msg = '결제에 실패하였습니다';
+                    console.log(rsp.error_msg);
+                    msg += '\n 에러 내용 : ' + rsp.error_msg;
+                    alert(msg);
+                }
+            });
+    }
+
+    function paymentComplete(data) {
+        // 최종 결제 정보 서버로 넘기기
+        $.ajax({
+            url: "/pinepeople/order/payment/complete",
+            method: "POST",
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+        }).done(function (result) { // 성공 응답 메세지 담아서 view로 보내줌
+            swal({
+                text: '주문이 완료되었습니다.',
+                closeOnClickOutside: false
+            }) // 에러 메세지 창 닫으면 실행될 함수
+                .then(function () {
+                    location.replace("/pinepeople/party/"+ [[${party.partyId}]] + "/order"); // 주문 내역으로 이동하기
+                })
+        }).fail(function (result) { // 실패 응답 메세지 담아서 view로 보내줌
+            // var json = JSON.stringify(result); // 쌍따옴표로 출력
+            // var parse = JSON.parse(json); // json 변환해서 저장
+            // var message = parse.responseText;
+            var responseText = result.responseText;
+            var message = responseText.split('\"')[13];
+            console.log(message);
+            alert(message);
+            location.replace("/pinepeople/party/"+ [[${party.partyId}]] + "/order")
+        });
+    }
+
+    /*]]>*/
+</script>

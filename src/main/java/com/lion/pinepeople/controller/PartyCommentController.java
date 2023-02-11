@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "PartyComment API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/partys/{partyId}/party-comments")
+@RequestMapping("pinepeople/api/partys/{partyId}/party-comments")
 public class PartyCommentController {
 
     private final PartyCommentService partyCommentService;
@@ -76,6 +76,13 @@ public class PartyCommentController {
     @DeleteMapping("/{commentId}")
     public Response deletePartyComment(@PathVariable Long partyId, @PathVariable Long commentId , Authentication authentication) {
 
+        PartyCommentDeleteResponse response = partyCommentService.deleteComment(partyId, commentId, authentication.getName());
+        return Response.success(response);
+    }
+
+
+    @PostMapping("/{commentId}")
+    public Response deletePostPartyComment(@PathVariable Long partyId, @PathVariable Long commentId , Authentication authentication) {
         PartyCommentDeleteResponse response = partyCommentService.deleteComment(partyId, commentId, authentication.getName());
         return Response.success(response);
     }

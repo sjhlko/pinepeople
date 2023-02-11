@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <div th:replace="base.html :: base-head"></div>
+    <link rel="stylesheet" th:href="@{/static/assets/css/orderListStyles.css}"/>
+</head>
+<body>
+<!-- jQuery -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<!-- swal 적용 -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!--    nav-bar-->
+<div th:insert="~{base :: pinepeople-nav}"></div>
+
+<order>
+    <section class="order">
+        <div class="order__information">
+            <p class="orderList_list" style="color: black; font-size: 20px;"  >주문 내역</p>
+            <br>
+        </div>
+        <form th:object="${orderSearch}" class="form-inline">
+            <div class="form-group mb2">
+                <select th:field="*{orderStatus}" class="form-control" >
+                    <option value="">=== 주문 상태 ===</option>
+                    <option th:each=" status: ${T(com.lion.pinepeople.enums.OrderStatus).values()}"
+                            th:value="${status}"
+                            th:text="${status.description}">
+                    </option>
+                </select>
+                <button type="submit" class="btn-btn-primary">검색</button>
+            </div>
+        </form>
+        <table class="order__list">
+            <form>
+                <thead>
+                <tr class="orderTable">
+                    <td colspan="2">상품정보</td>
+                    <td>결제 수단</td>
+                    <td>결제 금액</td>
+                    <td>주문 상태</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="order__list__detail" th:each="orderLists : ${orderList}">
+                    <td>
+<!--                       <img src="image/keyboard.jpg" alt="magic keyboard">&ndash;&gt;-->
+                    </td>
+                    <td><a href="#"></a><span class="order__list__title" th:text="${orderLists.partyTitle}"></span>
+                        <div><sapn class="price" th:text="${orderLists.cost}"></sapn>원</div>
+                        <span style=" color: lightgray;"
+                              th:text="${orderLists.cost} + ${#numbers.formatInteger(orderLists.cost * 0.1 ,1,'COMMA')}"></span>(수수료 포함 금액)
+                    </td>
+                    <td class="order__list__option">
+                        <p class="order__list__option_line"></p>
+                        <div th:switch="${#strings.toString(orderLists.paymentType)}">
+                            <span th:case="CONTACT_PAYMENT" th:text="'만나서 결제'"></span>
+                            <span th:case="CREDIT_CARD" th:text='카드'></span>
+                        </div><br>
+                        <button type="button" th:onclick="|location.href= '@{/pinepeople/party/order-detail/{orderId}(orderId=${orderLists.orderId})}'|" class="order__list__optionBtn">주문 상세 보기</button>
+                    </td>
+                    <td style="width: 15%"><span class="price" th:text="${orderLists.totalCost}"></span>원<br><br>
+                        <th:block th:if="${#strings.toString(orderLists.orderStatus)} != 'ORDER_CANCEL'">
+                            <button type="button" th:onclick="|location.href= '@{/pinepeople/party/order-detail/{orderId}(orderId=${orderLists.orderId})}'|" class="order__list__optionBtn2">결제 취소하기</button>
+                        </th:block>
+
+                    </td>
+                    <td>
+                        <span class="status" th:switch="${#strings.toString(orderLists.orderStatus)}">
+                            <p th:case="ORDER_COMPLETE" th:text="'주문 완료'"><br>
+                                <p th:if="${#strings.toString(orderLists.orderStatus)} == 'ORDER_COMPLETE'">
+                                    <span class="orderCreate" style="color:#0a58ca " th:text="${#dates.format(orderLists.orderDate, 'yyyy-MM-dd HH:mm')}"></span></p></p>
+                            <p th:case="ORDER_CANCEL" th:text="'주문 취소'"><br>
+                                <p th:if="${#strings.toString(orderLists.orderStatus)} == 'ORDER_CANCEL'">
+                                    <span class="cancelDt" style="color: #a94442" th:text="${#dates.format(orderLists.updatedAt, 'yyyy-MM-dd HH:mm')}"></span></p></p>
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </form>
+        </table>
+        <div class="pagingNum" >
+            <th:block th:each="page:${#numbers.sequence(startPage,endPage)}">
+            <a lass="page-item" th:if="${page != nowPage}" th:href="@{/pinepeople/party/order-list(page=${page-1})}" th:text="${page}"></a>
+            <strong th:if="${page==nowPage}" th:text="${page}" style="color:black"></strong>
+            </th:block>
+        </div>
+    </section>
+</order>
+<!--footer-->
+<div th:insert="~{base :: pinepeople-footer}"></div>
+</body>
+</html>

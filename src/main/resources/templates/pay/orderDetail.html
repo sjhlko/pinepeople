@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="base.html :: base-head"></div>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/static/assets/css/orderDetailStyles.css}"/>
+</head>
+<body>
+<!-- jQuery -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+<!-- swal 적용 -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<!--    nav-bar-->
+<div th:insert="~{base :: pinepeople-nav}"></div>
+<order>
+    <main>
+        <div class="container" role="main">
+            <div class="detailOrder">주문 상세</div>
+            <div class="container2">
+                <div class="orderDate">주문 시간 <span id="formatDate"
+                                                   th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span>
+                </div>
+
+                <table class="orderDetailTable">
+                    <tr>
+                        <th><span id="partyTitle" class="partyTitle" th:text="${order.partyTitle}"></span></th>
+                        <td><span id="totalCost" class="cost" th:text="${order.cost}"></span>원</td>
+                    </tr>
+                </table>
+                <br>
+                <div>
+                    <div class="paymentInfoTitle">결제 정보</div>
+                    <table class="paymentInfo">
+                        <br>
+                        <tr>
+                            <th>ㆍ 상품 금액</th>
+                            <td><span id="cost" class="cost" th:text="${order.cost}"></span>원</td>
+                        </tr>
+                        <tr>
+                            <th>ㆍ 수수료(10%)</th>
+                            <td><span id="commission" class="commission"
+                                      th:text="${#numbers.formatInteger(order.cost * 0.1,1,'COMMA')}"></span>원
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ㆍ 사용 포인트</th>
+                            <td><span id="usePoint" th:text="${order.discountPoint}"></span>원</td>
+                        </tr>
+                        <tr>
+                            <th>ㆍ 결제 수단</th>
+                            <td>
+                                <div th:switch="${#strings.toString(order.paymentType)}">
+                                    <span th:case="CONTACT_PAYMENT" th:text="'만나서 결제'"></span>
+                                    <span th:case="CREDIT_CARD" th:text='카드'></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ㆍ 총 결제 금액</th>
+                            <td><span id="sum" th:text="${order.totalCost}"></span>원</td>
+                        </tr>
+
+                    </table>
+                </div>
+
+                <br>
+                <div>
+                    <table class="accumulatePoint">
+                        <tr>
+                            <th class="plusPoint">ㆍ 적립 포인트(5%)</th>
+                            <td class="plusPointChild"><span id="total" th:text="${order.accumulatePoint}"></span>p
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="frame">
+                    <button class="button_2" onclick="cancel()">주문 취소하기</button>
+                </div>
+            </div>
+            <br>
+            <button class="orderListBtn" type="button"
+                    th:onclick="|location.href= '@{/pinepeople/party/order-list}'|"> < 주문 목록으로 가기
+            </button>
+        </div>
+    </main>
+</order>
+<!--footer-->
+<div th:insert="~{base :: pinepeople-footer}"></div>
+
+</body>
+</html>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    function cancel() {
+        if ([[${order.orderStatus}]] == 'ORDER_CANCEL') {
+            alert('이미 취소된 주문입니다.');
+            return false;
+        }
+        if (confirm("정말 취소하시겠습니까?") == true) {
+            const data = {
+                imp_uid: [[${order.impUid}]],
+                totalCost: document.getElementById('sum').innerText,
+                partyId: [[${order.partyId}]],
+                orderId: [[${order.orderId}]],
+            };
+            console.log([[${order.partyId}]]);
+
+            cancelPayment(data);
+
+            function cancelPayment(data) {
+                $.ajax({
+                    url: "/pinepeople/order/payment/cancel",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    dataType: "json"
+                }).done(function () {
+                    swal({
+                        text: '주문 취소가 완료되었습니다.',
+                        closeOnClickOutside: false
+                    })
+                        .then(function () {
+                            location.replace("/pinepeople/party/order-detail/" + [[${order.orderId}]])
+                        })
+                }).fail(function (result) {
+                    console.log(result);
+                    var responseText = result.responseText;
+                    console.log(responseText);
+                    var message = responseText.split('\"')[13];
+                    console.log(message);
+                    alert(message);
+                    location.replace("/pinepeople/party/order-detail/" + [[${order.orderId}]])
+                });
+            }
+        } else {
+            return;
+        }
+    }
+
+    /*]]>*/
+</script>

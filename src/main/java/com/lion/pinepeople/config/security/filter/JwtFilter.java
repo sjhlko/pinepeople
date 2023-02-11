@@ -1,12 +1,14 @@
 package com.lion.pinepeople.config.security.filter;
 
+import com.lion.pinepeople.config.security.userdetail.UserPrinclial;
 import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.repository.UserRepository;
+import com.lion.pinepeople.utils.CookieUtil;
 import com.lion.pinepeople.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,28 +35,32 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        log.info("authorization : {}", authorization);
+        String token = CookieUtil.getCookieValue(request, "token");
 
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
+        if (token == null) {
+            //log.info("쿠키가 존재하지 않습니다.");
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authorization.split(" ")[1];
         log.info("token : {}", token);
 
-        if (!JwtTokenUtil.isValidToken(request, token, key)) {
+        String validTokenCheck = JwtTokenUtil.isValid(token, key);
+        if (validTokenCheck.equals(ErrorCode.EXPIRE_TOKEN.name())) {
+            request.setAttribute("exception", ErrorCode.EXPIRE_TOKEN);
+            filterChain.doFilter(request, response);
+            return;
+        } else if (validTokenCheck.equals(ErrorCode.INVALID_TOKEN.name())) {
+            request.setAttribute("exception", ErrorCode.INVALID_TOKEN);
             filterChain.doFilter(request, response);
             return;
         }
 
         User findUser = userRepository.findById(JwtTokenUtil.getUserId(token, key)).get();
-        log.info("userRole : {}", findUser.getRole().name());
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(JwtTokenUtil.getUserId(token, key), null, List.of(new SimpleGrantedAuthority("ROLE_" + findUser.getRole().name())));
+        UserPrinclial userPrinclial = new UserPrinclial(findUser);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrinclial, null, List.of(new SimpleGrantedAuthority("ROLE_" + userPrinclial.getRole())));
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
-
     }
 }

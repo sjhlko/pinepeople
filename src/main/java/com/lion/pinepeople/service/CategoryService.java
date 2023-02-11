@@ -11,6 +11,7 @@ import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -91,6 +92,11 @@ public class CategoryService {
         return data;
     }
 
+    public List<Category> getCategorySteadily(String branch,Integer level) {
+        List<Category> branches = categoryRepository.findByBranchAndLevel(branch,level);
+        return branches;
+    }
+
     /**
      * 카테고리 소분류  단건 조회 메서드
      **/
@@ -152,6 +158,17 @@ public class CategoryService {
     private Category findCategory(Long categoryId) {
        return  categoryRepository.findById(categoryId).orElseThrow(()->
                new AppException(ErrorCode.CATEGORY_NOT_FOUND,categoryId +"번의 카테고리를 찾을 수 없습니다."));
+    }
+
+    /**검색
+     * RightNow 검색
+     * Steadily 검색
+     * **/
+    public void doCategory(Model model) {
+        List<Category> rightNows = getCategorySteadily("RightNow", 1);
+        List<Category> steadilys = getCategorySteadily("Steadily", 1);
+        model.addAttribute("rightNows", rightNows);
+        model.addAttribute("steadilys", steadilys);
     }
 
 

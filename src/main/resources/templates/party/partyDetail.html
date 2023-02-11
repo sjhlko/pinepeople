@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <div th:replace="base :: base-head"></div>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Shop Item - Start Bootstrap Template</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link rel="stylesheet"  href="css/styles.css" />
+        <link   rel="stylesheet"  th:href="@{/static/assets/css/styles.css}"/>
+    </head>
+    <body>
+        <!-- Navigation-->
+        <div th:insert="~{base :: pinepeople-nav}"></div>
+        <!-- Product section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="row gx-4 gx-lg-5 align-items-center">
+                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" th:src="${party.partyImg}" alt="partyImg" /></div>
+                    <div class="col-md-6">
+                        <h4 class="display-5" th:text="${party.categoryName}">파티 카테고리</h4>
+                        <h1 class="display-3 fw-bolder" th:text="${party.partyTitle}">파티 제목</h1>
+                        <div class="fs-5 mb-5">
+                            <div>
+                                <span style="font-weight: bold;" th:text="'상태 : ' + ${party.partyStatus.status}">$40.00</span>
+                                <br>
+                                <span th:text="'가격 : ' + ${party.partyCost}+ '원'">$40.00</span>
+                                <br>
+                                <span th:text="'인원 : '+${party.partySize}">$40.00</span>
+                                <br>
+                                <span th:text="'시작일 : '+${party.startDate}">$40.00</span>
+                                <br>
+                                <span th:text="'마감일 : '+${party.endDate}">$40.00</span>
+                            </div>
+                        </div>
+                        <p class="lead" th:text="${party.partyContent}">파티 내용</p>
+                        <div class="d-flex">
+<!--                            <input class="form-control text-center me-3" id="inputQuantity" type="num" th:value="" style="max-width: 3rem" />-->
+                            <form style="display: inline;" onclick="main.joinParty(this)">
+                                <input type="hidden" name="partyId" th:value="${party.partyId}" >
+                                <button class="btn btn-outline-dark flex-shrink-0" type="button"  >
+                                <i class="bi-cart-fill me-1"></i>
+                                파티 참여하기
+                                </button>
+                            </form>
+                            <form style="display: inline;">
+                                <a href="#" style="margin-left: 15px" class="btn btn-primary" th:href="@{/pinepeople/party/update/{id}(id=${party.partyId})}" >파티 수정하기</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <form action="/pinepeople/party/write-comment" method="post">
+        <div class="card mb-2">
+        <div class="card-header bg-light">
+            <i class="fa fa-comment fa"></i> REPLY
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <div class="form-inline mb-2">
+                        <label for="replyId"><i class="fa fa-user-circle-o fa-2x"></i></label>
+                        <input type="text" th:field="${party.partyId}" style="display: none" class="form-control ml-2" placeholder="Enter yourId" id="replyId">
+                       <th:block th:if="${user != null}">
+                        <label for="replyPassword" class="ml-4"><i class="fa fa-unlock-alt fa-2x"></i></label>
+                        <input type="text" th:field="${user.id}"  class="form-control ml-2" style="display: none" placeholder="Enter password" id="replyPassword">
+                       </th:block>
+                    </div>
+                    <textarea class="form-control" th:field="${partyComment.body}" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    <button type="submit" class="btn btn-dark mt-3" onClick="javascript:addReply();">post reply</button>
+                </li>
+            </ul>
+        </div>
+            <div class="card" th:if="${!#lists.isEmpty(comments)}">
+                <div class="card-header bi bi-chat-dots"th:text="'현재 댓글 개수 : '+${#lists.size(comments)}+'개'"> Comments</div>
+                <ul class="list-group-flush" th:each="comment :${comments}" >
+                    <li class="list-group-item">
+                <span>
+                    <span style="font-size: small" th:text="${comment.user.name}"></span>
+                    <span style="font-size: xx-small" th:text="${comment.createdAt}"></span>
+
+                 <form style="display: inline;" onclick="main.commentDelete(this)" >
+                    <input type="hidden"  name="commentId" th:value="${comment.id}">
+                           <input type="hidden" name="partyId" th:value="${party.partyId}" >
+                       <input type="hidden" name="userId" th:value="${comment.user.id}" >
+                            <a type="button" >
+                            삭제
+                            </a>
+                </form>
+                    </span>
+                        <div th:text="${comment.body}">댓글 내용</div>
+                    </li>
+                </ul>
+                <div class="chat__message-box">
+                    <ul class="chat__message-ul">
+                        <!--댓긇이 들어갈 공간-->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </form>
+        <!-- Footer-->
+        <div th:insert="~{base :: pinepeople-footer}"></div>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+    <script>
+        let main = {
+            commentDelete: function (form) {
+                const con_check = confirm("삭제하시겠습니까?");
+                if (con_check === true) {
+                    let commentId = form.commentId.value.trim();
+                    let partyId = form.partyId.value.trim();
+                    let userId = form.userId.value.trim();
+                    window.location.href = '/pinepeople/party/delete/' + partyId + '/' + commentId+'/'+userId;
+                }
+            },
+               /* console.log("commentId:");
+                let commentId = form.commentId.value.trim();
+                let partyId = form.partyId.value.trim();
+                console.log("commentId:" + commentId);
+
+                axios.post('api/partys/'+ partyId+'/party-comments'+commentId, JSON.stringify(data),
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'}
+                    }).then((response) => {
+                    console.log(response);
+                    console.log("삭제 axios");
+                    alert("댓글이 삭제되었습니다.");
+                    window.location.href = '/users/party/show-comment/' + commentId;
+                })
+            }*/
+
+            joinParty: function (form) {
+                const con_check = confirm("파티에 참여하시겠습니까?");
+                if (con_check === true) {
+                    let id = form.partyId.value;
+                    window.location.href = '/pinepeople/party/join/' + id ;
+                }
+            }
+
+        };
+        main.init();
+    </script>
+
+</html>

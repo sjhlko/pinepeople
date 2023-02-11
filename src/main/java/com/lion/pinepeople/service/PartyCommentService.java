@@ -7,6 +7,7 @@ import com.lion.pinepeople.domain.dto.partyComment.PartyCommentDeleteResponse;
 import com.lion.pinepeople.domain.dto.partyComment.PartyCommentListResponse;
 import com.lion.pinepeople.domain.dto.partyComment.PartyCommentResponse;
 import com.lion.pinepeople.domain.dto.partyComment.PartyCommentUpdateResponse;
+import com.lion.pinepeople.enums.NotificationType;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.PartyCommentRepository;
@@ -19,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -28,6 +31,7 @@ public class PartyCommentService {
     private final PartyCommentRepository partyCommentRepository;
     private final UserRepository userRepository;
     private final PartyRepository partyRepository;
+    private final NotificationService notificationService;
 
 
     /**
@@ -40,6 +44,7 @@ public class PartyCommentService {
      * @return PartyCommentResponse 응답
      */
     public PartyCommentResponse addPartyComment(Long partyId, String userId, String body) {
+        log.info("파티 댓글 들어옴");
         //회원
         User user = getUser(userId);
         //파티
@@ -51,7 +56,13 @@ public class PartyCommentService {
                 .party(party)
                 .build();
         //파티 댓글 저장
+        log.info(partyComment.toString());
         PartyComment savedPartyComment = partyCommentRepository.save(partyComment);
+        if (party.getUser().getId() != user.getId()) {
+            String url ="/pinepeople/party/show-comment/" + party.getId();
+            notificationService.send(party.getUser(), url, NotificationType.COMMENT_ON_PARTY,
+                    user.getName() + "님이 회원님 \"" + party.getPartyTitle()+"\" "+ NotificationType.COMMENT_ON_PARTY.getMessage());
+        }
         return PartyCommentResponse.of(savedPartyComment);
     }
 
@@ -71,6 +82,13 @@ public class PartyCommentService {
         Page<PartyComment> partyComments = partyCommentRepository.findAllByParty(party, pageable);
         return PartyCommentListResponse.toResponse(partyComments);
     }
+
+    public List<PartyComment> getCommentList(Long partyId) {
+        Party party = getParty(partyId, ErrorCode.BRIX_NOT_FOUND);
+        List<PartyComment> partyComments = partyCommentRepository.findListByParty(party);
+        return partyComments;
+    }
+
 
     /**
      * 파티모집글에 댓글 수정
