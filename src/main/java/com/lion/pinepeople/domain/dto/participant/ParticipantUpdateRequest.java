@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class ParticipantUpdateRequest {
-    ApprovalStatus approvalStatus;
+    String approvalStatus;
 
     public Participant toEntity(Participant participant) {
         return Participant.builder()
@@ -21,7 +21,7 @@ public class ParticipantUpdateRequest {
                 .participantRole(participant.getParticipantRole())
                 .id(participant.getId())
                 .user(participant.getUser())
-                .approvalStatus(this.approvalStatus)
+                .approvalStatus(ApprovalStatus.valueOf(this.approvalStatus))
                 .build();
     }
 }

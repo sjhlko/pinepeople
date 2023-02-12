@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ko" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <div th:replace="base.html :: base-head"></div>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://demo.plantpot.works/assets/css/normalize.css">
+    <style>
+        .clickColor:hover{
+            color: #0f5132;
+        }
+        .clickColor:active{
+            color: #a94442;
+        }
+        span.notification-badge {
+            position: relative;
+            top: -10px;
+            right: 10px;
+            border: white 1px solid;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<!--    nav-bar-->
+<div th:insert="~{base :: pinepeople-nav}"></div>
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center mb-5">
+                <h2 class="heading-section">🔔알람 내역</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>ID no.</th>
+                            <th>알람 내용</th>
+                            <th>읽음 표시</th>
+                            <th>시간</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="alert" th:each="notification : ${notifications}">
+                            <th scope="row"
+                                th:text="${notifications.getTotalElements() - (notifications.number * notifications.size) - notificationStat.index}">
+                            </th>
+                            <td>
+                                <a class="clickColor" th:onclick="'javascript:isRead(' + ${notification.id} +')'"
+                                   th:href="${notification.url}" >
+                                    <span th:text="${userInfo.userName} + '님이 ' + ${notification.notificationType}"></span>
+                                </a>
+                            </td>
+                            <td id="alarmRead" style="font-size: 20px">
+                                <p th:if="${notification.isRead} == false" th:text="'✉️'"></p>
+                                <p th:if="${notification.isRead} == true" th:text="'📨'"></p>
+                            </td>
+                            <td th:text="${#dates.format(notification.getCreatedAt(), 'yyyy-MM-dd HH:mm')}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br>
+            <br>
+            <div class="pagingNum" style="font-size: 20px">
+                <th:block th:each="page:${#numbers.sequence(startPage,endPage)}">
+                    <a class="page-item" th:if="${page != nowPage}"
+                       th:href="@{/pinepeople/notification/my(page=${page-1})}" th:text="${page}"></a>
+                    <strong th:if="${page==nowPage}" th:text="${page}" style="color:black"></strong>
+                </th:block>
+            </div>
+        </div>
+    </div>
+</section>
+<!--footer-->
+<div th:insert="~{base :: pinepeople-footer}"></div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</body>
+</html>
+<script th:inline="javascript">
+    function isRead(notificationId) {
+        $.ajax({
+            url: '/pinepeople/api/notifications/' + notificationId,
+            type: 'GET',
+            success: function () {
+            }
+        });
+    }
+</script>

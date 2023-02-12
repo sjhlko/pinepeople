@@ -17,6 +17,7 @@ import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.enums.UserRole;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
+import com.lion.pinepeople.repository.BlackListRepository;
 import com.lion.pinepeople.repository.UserRepository;
 import com.lion.pinepeople.utils.CookieUtil;
 import com.lion.pinepeople.utils.JwtTokenUtil;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +46,7 @@ public class UserService {
     private final BrixService brixService;
     private final RedisService redisService;
     private final FileUploadService fileUploadService;
+    private final BlackListRepository blackListRepository;
     private final long accessTokenExpireTimeMs = 1000 * 60 * 15L;
     private final long refreshTokenExpireTimeMs = 1000 * 60 * 60 * 24L;
     private final String dir = "profile";
@@ -63,8 +66,15 @@ public class UserService {
         userRepository.findByEmail(userJoinRequest.getEmail()).ifPresent(user -> {
             throw new AppException(ErrorCode.DUPLICATED_USER_NAME, ErrorCode.DUPLICATED_USER_NAME.getMessage());
         });
+
         //UserJoinRequest -> User
         User user = User.of(userJoinRequest, encoder.encode(userJoinRequest.getPassword()), DEFAULT_PROFILE_URL);
+
+        //블랙리스트 확인
+        blackListRepository.findByUser_Phone(user.getPhone()).ifPresent(blackList -> {
+            throw new AppException(ErrorCode.SUSPENDED_USER, ErrorCode.SUSPENDED_USER.getMessage());
+        });
+
         //User 저장
         user = userRepository.save(user);
         brixService.setBrix(user);
@@ -88,6 +98,12 @@ public class UserService {
         if (!encoder.matches(userLoginRequest.getPassword(), findUser.getPassword())) {
             throw new AppException(ErrorCode.INVALID_PASSWORD, ErrorCode.INVALID_PASSWORD.getMessage());
         }
+
+        //블랙리스트 확인
+        blackListRepository.findByUser(findUser).ifPresent(blackList ->{
+            throw new AppException(ErrorCode.SUSPENDED_USER, ErrorCode.SUSPENDED_USER.getMessage());
+        });
+
         //토큰 발행
         String accessToken = JwtTokenUtil.createToken(findUser.getId(), key, accessTokenExpireTimeMs);
         String refreshToken = JwtTokenUtil.createToken(findUser.getId(), key, refreshTokenExpireTimeMs);
@@ -185,7 +201,6 @@ public class UserService {
         });
         //프로필 사진 클라우드에 업로드
         String profileImg = fileUploadService.uploadFile(file, dir);
-        log.info(profileImg);
 
         // 유저 수정
         updateUser.updateUser(userUpdateRequest, profileImg);

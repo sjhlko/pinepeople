@@ -1,6 +1,7 @@
 package com.lion.pinepeople.mvc;
 
 import com.lion.pinepeople.domain.dto.participant.ParticipantCreateResponse;
+import com.lion.pinepeople.domain.dto.participant.ParticipantInfoResponse;
 import com.lion.pinepeople.domain.dto.party.PartyCategoryRequest;
 import com.lion.pinepeople.domain.dto.party.PartyCreateRequest;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -49,7 +51,7 @@ public class PartyMvcController {
 
     /**파티 리스트 페이지**/
     @GetMapping("/list")
-    public String getPartyList(@PageableDefault(page = 0, size = 5, sort = "createdAt",
+    public String getPartyList(@PageableDefault(page = 0, size = 8, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable, Model model, String address, String partyContent, String partyTitle) {
         Page<PartyInfoResponse> partys = null;
         if (address == null || partyTitle == null) {
@@ -65,24 +67,30 @@ public class PartyMvcController {
         model.addAttribute("rightNows", categoryService.getCategorySteadily("RightNow",1));
         model.addAttribute("steadilys", categoryService.getCategorySteadily("Steadily",1));
         doPage(model, partys);
-        return "party/partyList";
+//        return "party/partyList";
+        return "party/partyList2";
     }
 
 
     /**파티 상세보기**/
     @GetMapping("/detail/{id}")
-    public String getPartyDetail(@PathVariable Long id, Model model, Authentication authentication) {
+    public String getPartyDetail(@PageableDefault(page = 0, size = 8, sort = "createdAt",
+            direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long id, Model model, Authentication authentication) {
         log.info("로그인 파트-----------------------");
         log.info("id:{}", id);
         List<PartyComment> comments = partyCommentService.getCommentList(id);
+        Page<ParticipantInfoResponse> approvedParticipant = participantService.getApprovedParticipant(pageable, id);
+        model.addAttribute("approvedParticipant", approvedParticipant);
         if (authentication == null) {
             PartyInfoResponse party = partyService.getParty(id);
+            log.info(party.getPartyImg());
             model.addAttribute("party", party);
             model.addAttribute("comments", comments);
             model.addAttribute(new PartyComment());
             return "party/partyDetailNonLogin";
         }
         PartyInfoResponse party = partyService.getParty(id);
+        log.info(party.getPartyImg());
         User user = getUser(authentication);
         model.addAttribute("party", party);
         model.addAttribute("user", user);
@@ -106,25 +114,25 @@ public class PartyMvcController {
 
     /**상세 카테고리별 파티 조회**/
     @GetMapping("/category/{categoryName}")
-    public String getCategoryParties(@PathVariable String categoryName,Model model,@PageableDefault(page = 0, size = 5, sort = "createdAt",
+    public String getCategoryParties(@PathVariable String categoryName,Model model,@PageableDefault(page = 0, size = 8, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PartyInfoResponse> partys = partyService.getPartyByCategory(pageable,categoryName);
         model.addAttribute("partys", partys);
         categoryService.doCategory(model);
         doPage(model, partys);
-        return "party/partyList";
-
+//        return "party/partyList";
+        return "party/partyList2";
     }
 
     @GetMapping("/category")
-    public String getBranchParties(@RequestParam String branch,Model model,@PageableDefault(page = 0, size = 5, sort = "createdAt",
+    public String getBranchParties(@RequestParam String branch,Model model,@PageableDefault(page = 0, size = 8, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PartyInfoResponse> partys = partyService.getPartyByCategoryBranch(pageable,branch);
         model.addAttribute("partys", partys);
         categoryService.doCategory(model);
         doPage(model, partys);
-        return "party/partyList";
-
+//        return "party/partyList";
+        return "party/partyList2";
     }
 
 
@@ -157,13 +165,13 @@ public class PartyMvcController {
      * */
     @PostMapping("/create-new")
     public String createParty(Authentication authentication, @Validated @ModelAttribute PartyCategoryRequest partyCategoryRequest,
-                              @RequestParam String branch, @RequestParam String code, HttpServletResponse response) throws IOException {
+                              @RequestPart(value = "file") MultipartFile file, @RequestParam String branch,  @RequestParam String code, HttpServletResponse response) throws IOException {
         try {
             PartyCategoryRequest request = PartyCategoryRequest.of(partyCategoryRequest,branch,code.split(",")[0]);
             if(branch.equals("Steadily")){
                 request = PartyCategoryRequest.of(partyCategoryRequest,branch,code.split(",")[1]);
             }
-            partyService.createPartyWithCategory(request,authentication.getName());
+            partyService.createPartyWithCategory(request, file, authentication.getName());
         } catch (AppException e){
             printMessage(e.getMessage(),response);
         }
@@ -176,6 +184,7 @@ public class PartyMvcController {
     @GetMapping("/update/{id}")
     public String getUpdateParty(Model model, Authentication authentication, @PathVariable Long id, HttpServletResponse response) throws IOException {
         try {
+            model.addAttribute("partyId", id);
             model.addAttribute("partyUpdateRequest", new PartyUpdateRequest());
             model.addAttribute("rightNowCategory", categoryService.getCategorySteadily("RightNow",1));
             model.addAttribute("steadilyCategory", categoryService.getCategorySteadily("Steadily",1));

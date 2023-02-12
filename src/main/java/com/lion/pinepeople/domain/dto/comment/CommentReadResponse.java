@@ -12,34 +12,37 @@ import java.sql.Timestamp;
 @Builder
 @Getter
 @Setter
-public class CommentResponse {
+public class CommentReadResponse {
+
 
     private Long commentId;
-    private String comment;
+    private String body;
     private Long userId;
-    private Long postId; // postId
+    private String userName;
+    private Long postId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp createdAt;
 
 
-    // entity -> dto로 바꾼다
-    public static CommentResponse convertToDto(Comment comment) {
-        return CommentResponse.builder()
+    public static CommentReadResponse of (Comment comment) {
+        return CommentReadResponse.builder()
                 .commentId(comment.getId())
-                .comment(comment.getBody())
+                .body(comment.getBody())
                 .userId(comment.getUser().getId())
+                .userName(comment.getUser().getName())
                 .postId(comment.getPost().getId())
                 .createdAt(comment.getCreatedAt())
                 .build();
     }
 
 
-    public static Page<CommentResponse> convertListToDto(Page<Comment> commentPage) {
-        return commentPage.map(map -> CommentResponse.builder()
+    public static Page<CommentReadResponse> of (Page<Comment> comments) {
+        return comments.map(map -> CommentReadResponse.builder()
                 .commentId(map.getId())
-                .comment(map.getBody())
+                .body(map.getBody())
                 .userId(map.getUser().getId())
+                .userName(map.getUser().getName())
                 .postId(map.getPost().getId())
                 .createdAt(map.getCreatedAt())
                 .build());
