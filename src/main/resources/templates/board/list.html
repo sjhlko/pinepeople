@@ -20,7 +20,8 @@
             align-items: center;
             justify-content: center;
         }
-        .list-layout{
+
+        .list-layout {
             width: 70%;
             display: flex;
             flex-direction: column;
@@ -52,6 +53,9 @@
             </th:block>
             </tbody>
         </table>
+        <div style="width: 100%">
+            <a th:href="@{/pinepeople/board/register}">글작성</a>
+        </div>
         <div>
             <th:block th:each="page:${#numbers.sequence(startPage,endPage)}">
                 <a class="page-item" th:if="${page != nowPage}" th:href="@{list(page=${page-1},title=${param.title})}"
