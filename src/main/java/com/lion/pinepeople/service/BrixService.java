@@ -33,6 +33,12 @@ public class BrixService {
         User user = userRepository.findById(userId)
                 .orElseThrow( () -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
 
+        //본인은 당도를 줄 수 없음
+        if(Long.parseLong(loginUserId) == userId){
+            throw new AppException(ErrorCode.INVALID_PERMISSION, "본인의 당도를 측정할 수 없습니다.");
+        }
+
+
         //해당 유저의 당도 연산 후 저장
         Brix brix = brixRepository.findByUser(user)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
