@@ -15,11 +15,10 @@
 
 <!--    nav-bar-->
 <div th:insert="~{base :: pinepeople-nav}"></div>
-
 <order>
     <main>
         <div class="container" role="main">
-
+            <div class="order_title">ORDER</div>
             <div class="orderInfo">
                 <caption>주문 정보</caption>
                 <table class="orderTable">
@@ -39,36 +38,36 @@
             </div>
             <br>
             <div class="pay_info">
-                <span class="order_stitle">결제 정보</span>
                 <ul class="pay_ul">
-                <table class="paymentInfo">
-                    <tr>
-                        <th> 상품 금액</th>
-                        <td><span id="cost" class="cost" th:text="${cost}" ></span>원</td>
-                    </tr>
-                    <tr>
-                        <th> 수수료(10%)</th>
-                        <td><span id="commission" class="commission" th:text="${commission}"></span>원</td>
-                    </tr>
-                    <tr>
-                        <th> 합계</th>
-                        <td><span id="sum" th:text="${cost} + ${commission}"></span>원</td>
-                    </tr>
-                    <tr>
-                        <th> 포인트 사용</th>
-                        <td class="point">보유 포인트 : <span id="userPoint" class="userPoint"
-                                                         th:text="${user.point}"></span>p
-                            <input type="text" style="text-align: right; width:80px" id="discount" name="discountPoint"
-                                   onKeyup="this.value=this.value.replace(/[^0-9]/g,'');"> <span class="board_date"
-                                                                                                  th:text="${discountPoint}"></span>p</input>
-                            <button onclick="doAction()">사용하기</button>
-                        </td>
-                    </tr>
-                    <tr class="total">
-                        <th style="font-size: 18px"> 총 결제 금액</th>
-                        <td><span  id="total" th:text="${cost} + ${commission}"></span>원</td>
-                    </tr>
-                </table>
+                    <span class="order_stitle">결제 정보</span>
+                    <table class="paymentInfo">
+                        <tr>
+                            <th> 상품 금액</th>
+                            <td><span id="cost" class="cost" th:text="${cost}"></span>원</td>
+                        </tr>
+                        <tr>
+                            <th> 수수료(10%)</th>
+                            <td><span id="commission" class="commission" th:text="${commission}"></span>원</td>
+                        </tr>
+                        <tr>
+                            <th> 합계</th>
+                            <td><span id="sum" th:text="${cost} + ${commission}"></span>원</td>
+                        </tr>
+                        <tr>
+                            <th> 포인트 사용</th>
+                            <td class="point">보유 포인트 : <span id="userPoint" class="userPoint"
+                                                             th:text="${user.point}"></span>p
+                                <input type="text" style="text-align: right; width:80px" id="discount" name="discountPoint"
+                                       onKeyup="this.value=this.value.replace(/[^0-9]/g,'');"> <span class="board_date"
+                                                                                                     th:text="${discountPoint}"></span>p</input>
+                                <button onclick="doAction()">사용하기</button>
+                            </td>
+                        </tr>
+                        <tr class="total">
+                            <th style="font-size: 18px"> 총 결제 금액</th>
+                            <td><span id="total" th:text="${cost} + ${commission}"></span>원</td>
+                        </tr>
+                    </table>
                 </ul>
             </div>
             <br>
@@ -102,7 +101,7 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     // 포인트 사용 시 총 결제 금액 변경
-    function doAction(){
+    function doAction() {
         var sum = parseInt(document.getElementById('sum').innerText);
         console.log(sum);
         var usePoint = parseInt($('input[name=discountPoint]').val());
@@ -126,7 +125,7 @@
 
     function cancel() {
         alert("주문이 취소되었습니다.");
-        location.replace("/pinepeople/party/detail/"+[[${party.partyId}]]); // 파티 리스트 창으로 이동
+        location.replace("/pinepeople/party/detail/" + [[${party.partyId}]]); // 파티 리스트 창으로 이동
     }
 
     function payment() {
@@ -201,7 +200,7 @@
             console.log(message);
 
             alert(message);
-            location.replace("/pinepeople/party/"+ [[${party.partyId}]] +"/order");
+            location.replace("/pinepeople/party/" + [[${party.partyId}]] + "/order");
         })
     }
 
@@ -254,7 +253,7 @@
                 closeOnClickOutside: false
             }) // 에러 메세지 창 닫으면 실행될 함수
                 .then(function () {
-                    location.replace("/pinepeople/party/"+ [[${party.partyId}]] + "/order"); // 주문 내역으로 이동하기
+                    location.replace("/pinepeople/party/" + [[${party.partyId}]] + "/order"); // 주문 내역으로 이동하기
                 })
         }).fail(function (result) { // 실패 응답 메세지 담아서 view로 보내줌
             // var json = JSON.stringify(result); // 쌍따옴표로 출력
@@ -264,7 +263,7 @@
             var message = responseText.split('\"')[13];
             console.log(message);
             alert(message);
-            location.replace("/pinepeople/party/"+ [[${party.partyId}]] + "/order")
+            location.replace("/pinepeople/party/" + [[${party.partyId}]] + "/order")
         });
     }
 

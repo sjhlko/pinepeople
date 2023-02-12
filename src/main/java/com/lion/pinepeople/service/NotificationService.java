@@ -42,7 +42,7 @@ public class NotificationService {
      * 4. 클라이언트가 미수신한 Event 목록이 존재할 경우 전송 - 적용 전
      * @return 생성한 SseEmitter
      */
-    public SseEmitter subscribe(Long userId, String lastEventId) {
+    public SseEmitter subscribe(Long userId, String lastEventId) throws IOException {
 
         //emitter 하나하나 에 고유의 값을 주기 위해
         String emitterId = makeTimeIncludeId(userId);
@@ -54,8 +54,11 @@ public class NotificationService {
         //시간 만료된 경우 자동으로 레포지토리에서 삭제 처리하는 콜백 등록
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
         emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
+        emitter.onError((e)-> emitterRepository.deleteById(emitterId));
 
         // 503 에러를 방지하기 위해 처음 연결 진행 시 더미 데이터를 전달
+        emitter.send(SseEmitter.event().name("connect!!"));
+
         // 수 많은 이벤트 들을 구분하기 위해 이벤트 ID에 시간을 통해 구분을 해줌
 //        sendNotification(emitter,  emitterId, "EventStream Created. [userId=" + userId + "]");
 
@@ -63,7 +66,6 @@ public class NotificationService {
 //        if (!lastEventId.isEmpty()) {
 //            sendLostData(lastEventId, userId, emitterId, emitter);
 //        }
-        System.out.println("emitter = " + emitter);
         return emitter;
     }
 
@@ -114,17 +116,17 @@ public class NotificationService {
         notificationRepository.save(notification);
         System.out.println("2.알람 저장됨");
 
-        //emitter 하나하나 에 고유의 값을 주기 위해
         String receiverId = String.valueOf(receiver.getId());
+        //emitter 하나하나에 고유의 값을 주기 위해
         String eventId = makeTimeIncludeId(Long.parseLong(receiverId));
         //수신자의 SseEmitter 가져오기
         Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByUserId(receiverId);
 
-        log.info(emitters.toString());
+        log.info("emitters.toString()={}",emitters.toString());
         emitters.forEach(
                 (key, emitter) -> {
                     //데이터 캐시 저장(유실된 데이터처리하기위함)
-                    emitterRepository.saveEventCache(key, notification);
+//                    emitterRepository.saveEventCache(key, notification);
                     //데이터 전송
 //                    sendNotification(emitter, eventId, NotificationDto.from(notification));
                     sendNotification(emitter, receiverId, NotificationDto.from(notification));
@@ -158,13 +160,13 @@ public class NotificationService {
         return dtoPage;
     }
 
-//    @Transactional(readOnly = true)
-//    public Integer countUnReadNotifications(Long userId) {
-//        User user = getUser(userId);
-//        //유저의 알람리스트에서 ->isRead(false)인 갯수를 측정 ,
-//        Integer count = notificationRepository.countUnReadNotifications(user.getId());
-//        return count;
-//    }
+    @Transactional(readOnly = true)
+    public Integer countUnReadNotifications(Long userId) {
+        User user = getUser(userId);
+        //유저의 알람리스트에서 ->isRead(false)인 갯수를 측정 ,
+        Integer count = notificationRepository.countUnReadNotifications(user.getId());
+        return count;
+    }
 
     /**
      * 알람 단건 조회
