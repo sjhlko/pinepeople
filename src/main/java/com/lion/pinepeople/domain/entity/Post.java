@@ -54,7 +54,6 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "int default 0")
     private int recommendsCount = 0;
 
-    private String keyword;
 
 
     public void updatePost(String title, String body) {
