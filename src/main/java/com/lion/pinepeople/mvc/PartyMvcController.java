@@ -1,6 +1,7 @@
 package com.lion.pinepeople.mvc;
 
 import com.lion.pinepeople.domain.dto.participant.ParticipantCreateResponse;
+import com.lion.pinepeople.domain.dto.participant.ParticipantInfoResponse;
 import com.lion.pinepeople.domain.dto.party.PartyCategoryRequest;
 import com.lion.pinepeople.domain.dto.party.PartyCreateRequest;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
@@ -73,10 +74,13 @@ public class PartyMvcController {
 
     /**파티 상세보기**/
     @GetMapping("/detail/{id}")
-    public String getPartyDetail(@PathVariable Long id, Model model, Authentication authentication) {
+    public String getPartyDetail(@PageableDefault(page = 0, size = 8, sort = "createdAt",
+            direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long id, Model model, Authentication authentication) {
         log.info("로그인 파트-----------------------");
         log.info("id:{}", id);
         List<PartyComment> comments = partyCommentService.getCommentList(id);
+        Page<ParticipantInfoResponse> approvedParticipant = participantService.getApprovedParticipant(pageable, id);
+        model.addAttribute("approvedParticipant", approvedParticipant);
         if (authentication == null) {
             PartyInfoResponse party = partyService.getParty(id);
             log.info(party.getPartyImg());
