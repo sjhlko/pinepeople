@@ -18,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -36,10 +38,9 @@ public class NotificationController {
     // 전달받은 마지막 ID 값을 넘겨 그 이후의 데이터[ 받지 못한 데이터 ]부터 받을 수 있게 한다
     @GetMapping(value ="/subscribe" , produces = "text/event-stream")
     public SseEmitter subscribe( Authentication authentication,
-                                @RequestHeader(value= "Last-Event-ID", required = false, defaultValue = "") String lastEventId){
+                                @RequestHeader(value= "Last-Event-ID", required = false, defaultValue = "") String lastEventId) throws IOException {
         log.info("구독 요청 들어옴");
-        MyInfoResponse myInfo = userService.getMyInfo(authentication.getName());
-        return notificationService.subscribe(myInfo.getUserId(),lastEventId);
+        return notificationService.subscribe(Long.parseLong(authentication.getName()), lastEventId);
     }
 
     /**
@@ -56,7 +57,7 @@ public class NotificationController {
         return Response.success(findAll);
     }
 
-    // 알람 단건조회
+    // 알람 단건조회(읽음 처리)
     @GetMapping("/notifications/{notificationId}")
     public Response<NotificationReadResponse> findOne(@PathVariable Long notificationId,Authentication authentication) {
         String name = authentication.getName();
@@ -65,11 +66,11 @@ public class NotificationController {
         return Response.success(notification);
     }
 
-//    //알림 조회 - 현재 읽지않은 알림 갯수
-//    @GetMapping(value = "/notifications/count")
-//    public Response countUnReadNotifications(Authentication authentication) {
-//        Integer integer = notificationService.countUnReadNotifications(Long.parseLong(authentication.getName()));
-//        return Response.success(integer);
-//    }
+    //알림 조회 - 현재 읽지않은 알림 갯수
+    @GetMapping(value = "/notifications/count")
+    public Response countUnReadNotifications(Authentication authentication) {
+        Integer integer = notificationService.countUnReadNotifications(Long.parseLong(authentication.getName()));
+        return Response.success(integer);
+    }
 
 }

@@ -8,7 +8,7 @@
 
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <link rel="stylesheet" type="text/css" href="https://demo.plantpot.works/assets/css/normalize.css">
     <style>
         .clickColor:hover{
             color: #0f5132;
@@ -16,6 +16,13 @@
         .clickColor:active{
             color: #a94442;
         }
+        span.notification-badge {
+            position: relative;
+            top: -10px;
+            right: 10px;
+            border: white 1px solid;
+        }
+
     </style>
 
 </head>
@@ -78,9 +85,6 @@
 <!--footer-->
 <div th:insert="~{base :: pinepeople-footer}"></div>
 
-<script src="js/popper.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/main.js"></script>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </body>
