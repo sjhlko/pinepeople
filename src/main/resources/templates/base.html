@@ -123,7 +123,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li><a class="dropdown-item" th:href="@{/pinepeople/profile/myPage}">마이페이지</a></li>
-                        <li><a class="dropdown-item" href="@{/pinepeople/notification/my}">알림 확인하기</a></li>
+                        <li><a class="dropdown-item" th:href="@{/pinepeople/notification/my}">알림 확인하기</a></li>
                         <li><a class="dropdown-item" th:href="@{/pinepeople/party/order-list}">결제내역</a></li>
                         <li>
                             <form th:action="@{/pinepeople/logout}" method="post" sec:authorize="isAuthenticated()">
