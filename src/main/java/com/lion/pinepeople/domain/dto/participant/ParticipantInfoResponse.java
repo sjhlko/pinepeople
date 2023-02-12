@@ -24,6 +24,8 @@ public class ParticipantInfoResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
     private Timestamp updatedAt;
     private Long userId;
+    private String userName;
+    private String userProfileImg;
     private Long partyId;
     public static ParticipantInfoResponse of(Participant participant){
         return ParticipantInfoResponse.builder()
@@ -34,6 +36,8 @@ public class ParticipantInfoResponse {
                 .updatedAt(participant.getUpdatedAt())
                 .partyId(participant.getParty().getId())
                 .userId(participant.getUser().getId())
+                .userName(participant.getUser().getName())
+                .userProfileImg(participant.getUser().getProfileImg())
                 .build();
     }
 

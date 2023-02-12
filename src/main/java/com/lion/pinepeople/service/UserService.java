@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,7 +71,7 @@ public class UserService {
         User user = User.of(userJoinRequest, encoder.encode(userJoinRequest.getPassword()), DEFAULT_PROFILE_URL);
 
         //블랙리스트 확인
-        blackListRepository.findByUser(user).ifPresent(blackList ->{
+        blackListRepository.findByUser_Phone(user.getPhone()).ifPresent(blackList -> {
             throw new AppException(ErrorCode.SUSPENDED_USER, ErrorCode.SUSPENDED_USER.getMessage());
         });
 

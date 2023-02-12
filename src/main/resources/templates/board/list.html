@@ -4,34 +4,65 @@
 <head>
     <div th:replace="base :: base-head"></div>
     <style>
+        html,
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 100vw;
+            min-height: 100vh;
+        }
+
+        section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .list-layout {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
 <div th:insert="~{base :: pinepeople-nav}"></div>
 <section>
-    <table class="table">
-    <thead>
-    <tr>
-        <th scope="col">글번호</th>
-        <th scope="col">Title</th>
-        <th scope="col">Writer</th>
-    </tr>
-    </thead>
-    <tbody>
-    <th:block th:each="post:${posts}">
-        <tr>
-            <th scope="row" th:text="${post.id}">1</th>
-            <td th:text="${post.title}" style="cursor:pointer;" th:onclick="|location.href='/pinepeople/board/'+${post.id}|">Mark</td>
-            <td th:text="${post.userName}">Otto</td>
-        </tr>
-    </th:block>
-    </tbody>
-    </table>
-    <div>
-        <th:block  th:each="page:${#numbers.sequence(startPage,endPage)}">
-            <a class="page-item" th:if="${page != nowPage}" th:href="@{list(page=${page-1},title=${param.title})}" th:text ="${page}" style="font-size:25px"></a>
-            <strong th:if="${page==nowPage}" th:text ="${page}" style="color:lightskyblue; font-size:25px"></strong>
-        </th:block>
+    <div class="list-layout">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">글번호</th>
+                <th scope="col">Title</th>
+                <th scope="col">Writer</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="post:${posts}">
+                <tr>
+                    <th scope="row" th:text="${post.id}">1</th>
+                    <td th:text="${post.title}" style="cursor:pointer;"
+                        th:onclick="|location.href='/pinepeople/board/'+${post.id}|">Mark
+                    </td>
+                    <td th:text="${post.userName}">Otto</td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+        <div style="width: 100%">
+            <a th:href="@{/pinepeople/board/register}">글작성</a>
+        </div>
+        <div>
+            <th:block th:each="page:${#numbers.sequence(startPage,endPage)}">
+                <a class="page-item" th:if="${page != nowPage}" th:href="@{list(page=${page-1},title=${param.title})}"
+                   th:text="${page}" style="font-size:25px"></a>
+                <strong th:if="${page==nowPage}" th:text="${page}" style="color:lightskyblue; font-size:25px"></strong>
+            </th:block>
+        </div>
     </div>
 </section>
 <div th:insert="~{base :: pinepeople-footer}"></div>

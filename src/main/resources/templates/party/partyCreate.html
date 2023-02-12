@@ -3,25 +3,18 @@
 <head>
   <head>
     <div th:replace="base :: base-head"></div>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="🍍파인 피플🍍" />
-    <meta name="author" content="" />
-    <title>파인 피플 하나가 여럿이 되는 공간</title>
-    <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="/static/image/icon.png" />
     <!-- Bootstrap icons-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link rel="stylesheet" href="css/styles.css"  />
-    <link rel="stylesheet"  th:href="@{/static/assets/css/styles.css}"/>
   </head>
 </head>
 <body>
 <!-- Navigation-->
 <div th:insert="~{base :: pinepeople-nav}"></div>
 <article>
-  <form th:action="@{/pinepeople/party/create-new/}" th:object="${partyCreateRequest}" method="post" enctype="multipart/form-data">
+  <form
+
+
+          th:object="${partyCreateRequest}" method="post" enctype="multipart/form-data">
   <div class="container" role="main">
     <h2>파티 만들기🎉</h2>
 <!--    <form name="form" id="form" role="form" method="post" action="${pageContext.request.contextPath}/board/saveBoard" enctype="multipart/form-data">-->
