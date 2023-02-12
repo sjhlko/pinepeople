@@ -11,26 +11,24 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "likes")
 @Getter
-public class Like extends BaseEntity {
+public class PostRecommend {
+
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private int PostRecommendCount;
+
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "postId")
+    @JoinColumn(name = "post_id")
     private Post post;
 
-    public static Like convertToEntity(User user, Post post){
-        return Like.builder()
-                .user(user)
-                .post(post)
-                .build();
-    }
 
 }

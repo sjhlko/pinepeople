@@ -54,7 +54,7 @@ public class ReportService {
         userRepository.save(targetUser);
 
         //3이상이면 블랙리스트처리
-        if (targetUser.getWarningCnt() >= 3){
+        if (blackListRepository.findByUser(targetUser).isEmpty() && targetUser.getWarningCnt() >= 3){
             BlackList blackList = BlackList.toEntity(LocalDateTime.now(), targetUser, BlackListStatus.WATING);
             blackListRepository.save(blackList);
         }
