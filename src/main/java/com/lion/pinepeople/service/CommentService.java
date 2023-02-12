@@ -23,21 +23,20 @@ import org.springframework.stereotype.Service;
 public class CommentService {
 
 
-
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
 
-
-//    @Transactional
+    //    @Transactional
     public CommentCreateResponse createComment(String userId, Long postId, CommentCreateRequest commentCreateRequest) {
 
+        Post post = validatePost(postId);
+        post.addCommentsCount(post.getCommentsCount());
         Comment savedComment = commentRepository.save(commentCreateRequest.of(validateUser(userId), validatePost(postId)));
 
         return CommentCreateResponse.of(savedComment);
     }
-
 
 
     public Page<CommentReadResponse> readCommentPage(Pageable pageable, Long postId) {
@@ -48,7 +47,6 @@ public class CommentService {
     }
 
 
-
     public Page<CommentReadResponse> getMyComments(String userId, Pageable pageable) {
 
         Page<Comment> myComments = commentRepository.findByUser(pageable, validateUser(userId));
@@ -56,7 +54,7 @@ public class CommentService {
         return CommentReadResponse.of(myComments);
     }
 
-//    @Transactional
+    //    @Transactional
     public CommentUpdateResponse updateComment(String userId, Long postId, Long commentId, String body) {
 
         validateUser(userId);
@@ -80,6 +78,9 @@ public class CommentService {
         log.info("commentId: {}", commentId);
         validateComment(postId, commentId);
         verifyCommentAuthor(userId, commentId);
+
+        Post post = validatePost(postId);
+        post.deleteCommentsCount(post.getCommentsCount());
 
         commentRepository.deleteById(commentId);
 

@@ -12,7 +12,8 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Getter
-public class PostRecommend {
+@Table(name = "post_recommend")
+public class PostRecommend extends BaseEntity {
 
 
 
@@ -20,7 +21,8 @@ public class PostRecommend {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int PostRecommendCount;
+    // 추천 클릭 유무
+    private int recommendsCount;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

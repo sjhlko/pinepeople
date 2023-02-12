@@ -23,6 +23,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 @Slf4j
 @Controller
@@ -69,9 +72,9 @@ public class BoardMvcController {
 
 
     @GetMapping("/{postId}")
-    public String getPostDetail(@PageableDefault(sort = "createdAt", direction = Sort.Direction.ASC) @ApiIgnore Pageable pageable, @PathVariable Long postId, Model model) {
+    public String getPostDetail(@PageableDefault(sort = "createdAt", direction = Sort.Direction.ASC) @ApiIgnore Pageable pageable, @PathVariable Long postId, Model model, HttpServletRequest request, HttpServletResponse response) {
 
-        PostReadResponse postReadResponse = postService.getPost(postId);
+        PostReadResponse postReadResponse = postService.getPost(postId, request, response);
         Page<CommentReadResponse> commentReadResponses = commentService.readCommentPage(pageable, postId);
         model.addAttribute("postReadResponse", postReadResponse);
         model.addAttribute("commentCreateRequest", new CommentCreateRequest());
@@ -105,9 +108,9 @@ public class BoardMvcController {
 
 
     @GetMapping("/update/{postId}")
-    public String updatePost(Model model, @PathVariable Long postId, Authentication authentication) {
+    public String updatePost(Model model, @PathVariable Long postId, Authentication authenticationl, HttpServletRequest request, HttpServletResponse response) {
 
-        PostReadResponse postReadResponse = postService.getPost(postId);
+        PostReadResponse postReadResponse = postService.getPost(postId, request, response);
         model.addAttribute("postUpdateRequest", new PostUpdateRequest());
         model.addAttribute("postReadResponse", postReadResponse);
 
@@ -117,9 +120,9 @@ public class BoardMvcController {
 
     @PostMapping("/update/{postId}")
     public String updatePost(@Validated @ModelAttribute PostUpdateRequest postUpdateRequest, BindingResult bindingResult,
-                             @PathVariable Long postId, Model model, Authentication authentication) {
+                             @PathVariable Long postId, Model model, Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
         log.info("authentication : {}", authentication.getName());
-        PostReadResponse postReadResponse = postService.getPost(postId);
+        PostReadResponse postReadResponse = postService.getPost(postId, request, response);
         if (bindingResult.hasErrors()) {
             model.addAttribute("postReadResponse", postReadResponse);
             return "board/update";

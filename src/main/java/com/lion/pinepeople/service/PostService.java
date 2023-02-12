@@ -15,6 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 @Service
 @RequiredArgsConstructor
@@ -38,19 +42,23 @@ public class PostService {
     }
 
 
-    public PostReadResponse getPost(Long postId) {
+    public PostReadResponse getPost(Long postId, HttpServletRequest request, HttpServletResponse response) {
 
         validatePost(postId);
-        //countUpHits(postId, request, response);
-        //updateHits(postId, request, response);
-        //validateHits(postId, request, response);
 
         postRepository.findById(postId);
+        Post post = validatePost(postId);
+
+        countHits(postId, request, response);
+        post.updateHits(post.getHits()); // 변경 방지 ++1
 
 
         return PostReadResponse.of(postRepository.findById(postId));
 
     }
+
+
+
 
 
     public Page<PostReadResponse> getPostList(Pageable pageable) {
@@ -101,24 +109,6 @@ public class PostService {
     }
 
 
-
-
-
-    // 키워드로 게시물 검색
-    public Page<PostReadResponse> searchByKeyword(Pageable pageable, String keyword) {
-
-        if (keyword == null) {
-            searchByKeyword(pageable, null);
-        } else {
-            searchByKeyword(pageable, keyword);
-        }
-
-
-        return PostReadResponse.of(postRepository.findByKeywordContaining(keyword, pageable));
-
-    }
-
-
     // 제목으로 게시물 검색
     public Page<PostReadResponse> searchByTitle(Pageable pageable, String keyword) {
 
@@ -129,7 +119,7 @@ public class PostService {
         }
 
 
-        return PostReadResponse.of(postRepository.findByTitle(keyword, pageable));
+        return PostReadResponse.of(postRepository.findByTitleContaining(keyword, pageable));
 
     }
 
@@ -154,72 +144,36 @@ public class PostService {
     }
 
 
-//
-//    public void updateHits(Long postId, HttpServletRequest request, HttpServletResponse response) {
-////        postRepository.countUpHits(postId);
-//        Post findPost = postRepository.findById(postId).orElseThrow(() -> {
-//            throw new AppException(ErrorCode.POST_NOT_FOUND,ErrorCode.POST_NOT_FOUND.getMessage());
-//        });
-//        findPost.updateHits();
-//        postRepository.saveAndFlush(findPost);
-//    }
-//
-//    @Transactional
-//    public void validateHits(Post post, HttpServletRequest request, HttpServletResponse response) {
-//        Cookie[] cookies = request.getCookies();
-//        Cookie cookie = null;
-//        boolean isCookie = false;
-//        // request에 쿠키들이 있을 때
-//        for (int i = 0; cookies != null && i < cookies.length; i++) {
-//            // postView 쿠키가 있을 때
-//            if (cookies[i].getName().equals("postView")) {
-//                // cookie 변수에 저장
-//                cookie = cookies[i];
-//                // 만약 cookie 값에 현재 게시글 번호가 없을 때
-//                if (!cookie.getValue().contains("[" + post.getId() + "]")) {
-//                    // 해당 게시글 조회수를 증가시키고, 쿠키 값에 해당 게시글 번호를 추가
-//                    post.updateHits();
-//                    cookie.setValue(cookie.getValue() + "[" + post.getId() + "]");
-//                }
-//                isCookie = true;
-//                break;
-//            }
-//        }
-//        // 만약 postView라는 쿠키가 없으면 처음 접속한 것이므로 새로 생성
-//        if (!isCookie) {
-//            post.updateHits();
-//            cookie = new Cookie("postView", "[" + post.getId() + "]"); // oldCookie에 새 쿠키 생성
-//        }
-//
-//        // 쿠키 유지시간을 오늘 하루 자정까지로 설정
-//        long todayEndSecond = LocalDate.now().atTime(LocalTime.MAX).toEpochSecond(ZoneOffset.UTC);
-//        long currentSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-//        cookie.setPath("/"); // 모든 경로에서 접근 가능
-//        cookie.setMaxAge((int) (todayEndSecond - currentSecond));
-//        response.addCookie(cookie);
-//    }
+    private void countHits(Long postId, HttpServletRequest request, HttpServletResponse response) {
 
-//
-//    /*
-//     * 조회수 중복 방지를 위한 쿠키 생성 메소드
-//     * @param cookie
-//     * @return
-//     * */
-//    private Cookie createCookieForForNotOverlap(Long postId) {
-//        Cookie cookie = new Cookie(VIEWCOOKIENAME+postId, String.valueOf(postId));
-//        cookie.setComment("조회수 중복 증가 방지 쿠키");
-//        cookie.setMaxAge(getRemainSecondForTommorow());
-//        cookie.setHttpOnly(true);
-//        return cookie;
-//    }
-//
-//    // 다음 날 정각까지 남은 시간(초)
-//    private int getRemainSecondForTommorow() {
-//        LocalDateTime now = LocalDateTime.now();
-//        LocalDateTime tommorow = LocalDateTime.now().plusDays(1L).truncatedTo(ChronoUnit.DAYS);
-//        return (int) now.until(tommorow, ChronoUnit.SECONDS);
-//    }
-//
-//
+        Cookie oldCookie = null;
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("views")) {
+                    oldCookie = cookie;
+                }
+            }
+        }
+
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("[" + postId.toString() + "]")) {
+                Post post = validatePost(postId);
+                post.updateHits(post.getHits());
+                oldCookie.setValue(oldCookie.getValue() + "_[" + postId + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60 * 60 * 24);
+                response.addCookie(oldCookie);
+            }
+        } else {
+            Post post = validatePost(postId);
+            post.updateHits(post.getHits());
+            Cookie newCookie = new Cookie("views","[" + postId + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24);
+            response.addCookie(newCookie);
+        }
+    }
 
 }
