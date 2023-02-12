@@ -14,12 +14,13 @@ import lombok.*;
 public class CommentCreateRequest {
 
 
-
+    private Long id;
     private String body;
 
 
     public Comment of(User user, Post post) {
         return Comment.builder()
+                .id(this.id)
                 .body(this.body)
                 .user(user)
                 .post(post)
