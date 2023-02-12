@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import retrofit2.http.Path;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -61,7 +62,7 @@ public class BoardCommentMvcController {
 
 
     @GetMapping("/delete/{commentId}/{userId}")
-    public String viewComment(Authentication authentication, @PathVariable Long postId, @PathVariable Long commentId, @PathVariable Long userId, Model model, HttpServletResponse response, Pageable pageable) throws Exception {
+    public String viewComment(Authentication authentication, @PathVariable Long postId, @PathVariable Long commentId, @PathVariable Long userId, Model model, HttpServletRequest request, HttpServletResponse response, Pageable pageable) throws Exception {
 
         validateUser(authentication, userId, response);
 
@@ -70,7 +71,7 @@ public class BoardCommentMvcController {
 
         model.addAttribute("comment", commentService.deleteComment(authentication.getName(), postId, commentId));
         model.addAttribute(new Comment());
-        model.addAttribute("post", postService.getPost(postId));
+        model.addAttribute("post", postService.getPost(postId, request, response));
 
         return "redirect:/pinepeople/post/post/" + postId;
 

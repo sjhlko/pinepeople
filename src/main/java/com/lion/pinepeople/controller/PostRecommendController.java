@@ -26,32 +26,39 @@ public class PostRecommendController {
 
     private final PostRecommendService postRecommendService;
 
-
     @PostMapping
-    @ApiOperation(value = "북마크 추가")
+    @ApiOperation(value = "게시물 추천 추가")
     public Response<PostRecommendResponse> recommend(@PathVariable Long postId, @ApiIgnore Authentication authentication, PostRecommendRequest postRecommendRequest){
 
-        postRecommendService.recommend(postId, authentication.getName(), postRecommendRequest);
-
-        return Response.success(new PostRecommendResponse(postId));
+        return Response.success(postRecommendService.recommend(postId, authentication.getName(), postRecommendRequest));
     }
 
 
-    @GetMapping("/{postId}")
-    @ApiOperation(value = "북마크 개수 조회")
-    public Response<Long> recommendCount(@PathVariable Long postId) {
-
-        return Response.success(postRecommendService.countRecommend(postId));
-    }
-
-
-    @GetMapping("/my")
-    @ApiOperation(value = "내가 북마크한 게시물 조회")
-    public Response<Page<PostRecommendResponse>> getMyBookmarks(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @ApiIgnore Authentication authentication) {
-
-        return Response.success(postRecommendService.getMyRecommends(pageable, authentication.getName()));
-
-    }
+//    @PostMapping
+//    @ApiOperation(value = "북마크 추가")
+//    public Response<PostRecommendResponse> recommend(@PathVariable Long postId, @ApiIgnore Authentication authentication, PostRecommendRequest postRecommendRequest){
+//
+//        postRecommendService.recommend(postId, authentication.getName(), postRecommendRequest);
+//
+//        return Response.success(new PostRecommendResponse(postId));
+//    }
+//
+//
+//    @GetMapping("/{postId}")
+//    @ApiOperation(value = "북마크 개수 조회")
+//    public Response<Long> recommendCount(@PathVariable Long postId) {
+//
+//        return Response.success(postRecommendService.countRecommend(postId));
+//    }
+//
+//
+//    @GetMapping("/my")
+//    @ApiOperation(value = "내가 북마크한 게시물 조회")
+//    public Response<Page<PostRecommendResponse>> getMyBookmarks(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @ApiIgnore Authentication authentication) {
+//
+//        return Response.success(postRecommendService.getMyRecommends(pageable, authentication.getName()));
+//
+//    }
 
 
 }

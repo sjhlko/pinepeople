@@ -58,15 +58,15 @@
 <section>
     <div class="post-layout border border-secondary rounded" th:object="${postReadResponse}">
         <div class="title-layout">
-            <h3 th:field="*{title}" th:text="*{title}">Title</h3>
+             <h3 th:field="*{title}" th:text="*{title}">제목</h3>
             <div>
                 <a th:href="'/pinepeople/board/update/'+${postReadResponse.id}">수정</a>
                 /
                 <a th:href="'/pinepeople/board/delete/'+${postReadResponse.id}">삭제</a>
             </div>
         </div>
-        <span class="fs-6 mb1" th:field="*{userName}" th:text="*{userName}">Name</span>
-        <div class="fs-6" th:field="*{body}" th:text="*{body}">Content</div>
+        <span class="fs-6 mb1" th:field="*{userName}" th:text="*{userName}">작성자</span>
+        <div class="fs-6" th:field="*{body}" th:text="*{body}">내용</div>
     </div>
     <div class="comment-write-layout">
         <form class="comment-write-form"
@@ -84,12 +84,12 @@
         <th:block th:each="comment:${comments}">
             <div class="comment-form border-bottom" th:id="|comment${comment.commentId}|" style="padding: 5px">
                 <div class="title-layout">
-                    <h5 scope="row" th:text="${comment.userName}">Comment Writer</h5>
+                    <h5 scope="row" th:text="${comment.userName}">댓글 작성자</h5>
                     <div>
                         <a th:href="@{/pinepeople/board/{postId}/delete/{commentId}(postId=${postReadResponse.id}, commentId=${comment.commentId})}">삭제</a>
                     </div>
                 </div>
-                <p class="fs-6" th:text="${comment.body}">Comment Body</p>
+                <p class="fs-6" th:text="${comment.body}">댓글 내용</p>
             </div>
         </th:block>
     </div>

@@ -15,6 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 @RestController
 @RequestMapping("/pinepeople/api/posts")
@@ -40,11 +43,9 @@ public class PostController {
 
     @ApiOperation(value = "게시물 상세 조회")
     @GetMapping("/{postId}")
-    public Response<PostReadResponse> getPost(@PathVariable Long postId) {
+    public Response<PostReadResponse> getPost(@PathVariable Long postId, HttpServletRequest request, HttpServletResponse response) {
 
-       // postService.updateHits(postId, request, response);
-
-        return Response.success(postService.getPost(postId));
+        return Response.success(postService.getPost(postId, request, response));
 
     }
 
@@ -81,16 +82,6 @@ public class PostController {
     public Response<PostDeleteResponse> delete (@PathVariable Long postId, @ApiIgnore Authentication authentication) {
 
         return Response.success(postService.delete(postId, authentication.getName()));
-
-    }
-
-
-
-    @ApiOperation(value = "게시물 키워드로 검색")
-    @GetMapping("/keyword")
-    public Response<Page<PostReadResponse>> searchByKeyword (@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @RequestParam String keyword) {
-
-        return Response.success(postService.searchByKeyword(pageable, keyword));
 
     }
 
