@@ -1,7 +1,12 @@
 package com.lion.pinepeople.mvc;
 
 
+import com.lion.pinepeople.domain.dto.comment.CommentCreateRequest;
+import com.lion.pinepeople.domain.dto.comment.CommentReadResponse;
+import com.lion.pinepeople.domain.dto.comment.CommentUpdateRequest;
 import com.lion.pinepeople.domain.dto.post.*;
+import com.lion.pinepeople.exception.customException.AppException;
+import com.lion.pinepeople.service.CommentService;
 import com.lion.pinepeople.service.PostRecommendService;
 import com.lion.pinepeople.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +18,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 
 @Slf4j
@@ -25,12 +32,13 @@ public class BoardMvcController {
 
 
     private final PostService postService;
+    private final CommentService commentService;
     private final PostRecommendService postRecommendService;
-
 
 
     @GetMapping("/register")
     public String registerPost(Model model) {
+
 
         model.addAttribute("postCreateRequest", new PostCreateRequest());
 
@@ -40,17 +48,35 @@ public class BoardMvcController {
 
 
     @PostMapping("/register")
-    public String doRegisterPost(PostCreateRequest postCreateRequest, Authentication authentication) {
-        PostCreateResponse postCreateResponse = postService.create(postCreateRequest, authentication.getName());
+    public String doRegisterPost(@Validated @ModelAttribute PostCreateRequest postCreateRequest, BindingResult bindingResult, Authentication authentication) {
+
+        if (bindingResult.hasErrors()) {
+            return "board/register";
+        }
+        PostCreateResponse postCreateResponse = null;
+        try {
+            postCreateResponse = postService.create(postCreateRequest, authentication.getName());
+        } catch (AppException e) {
+            bindingResult.reject("postRegisterFail", e.getMessage());
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "board/register";
+        }
+
         return "redirect:/pinepeople/board/" + postCreateResponse.getId();
     }
 
 
     @GetMapping("/{postId}")
-    public String getPostDetail(@PathVariable Long postId, Model model) {
+    public String getPostDetail(@PageableDefault(sort = "createdAt", direction = Sort.Direction.ASC) @ApiIgnore Pageable pageable, @PathVariable Long postId, Model model) {
 
         PostReadResponse postReadResponse = postService.getPost(postId);
+        Page<CommentReadResponse> commentReadResponses = commentService.readCommentPage(pageable, postId);
         model.addAttribute("postReadResponse", postReadResponse);
+        model.addAttribute("commentCreateRequest", new CommentCreateRequest());
+        model.addAttribute("comments", commentReadResponses);
+        model.addAttribute("commentUpdateRequest", new CommentUpdateRequest());
         return "board/post";
 
     }
@@ -78,27 +104,41 @@ public class BoardMvcController {
     }
 
 
-
     @GetMapping("/update/{postId}")
     public String updatePost(Model model, @PathVariable Long postId, Authentication authentication) {
 
+        PostReadResponse postReadResponse = postService.getPost(postId);
         model.addAttribute("postUpdateRequest", new PostUpdateRequest());
+        model.addAttribute("postReadResponse", postReadResponse);
 
         return "board/update";
     }
 
 
     @PostMapping("/update/{postId}")
-    public String updatePost(@Validated @ModelAttribute PostUpdateRequest postUpdateRequest,
-                             @PathVariable Long postId, Authentication authentication) {
-        log.info("authentication : {}",authentication.getName());
+    public String updatePost(@Validated @ModelAttribute PostUpdateRequest postUpdateRequest, BindingResult bindingResult,
+                             @PathVariable Long postId, Model model, Authentication authentication) {
+        log.info("authentication : {}", authentication.getName());
+        PostReadResponse postReadResponse = postService.getPost(postId);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("postReadResponse", postReadResponse);
+            return "board/update";
+        }
 
-        PostUpdateResponse postUpdateResponse = postService.update(postId, authentication.getName(), postUpdateRequest);
+        PostUpdateResponse postUpdateResponse = null;
+        try {
+            postUpdateResponse = postService.update(postId, authentication.getName(), postUpdateRequest);
+        } catch (AppException e) {
+            bindingResult.reject("postUpdateFail", e.getMessage());
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("postReadResponse", postReadResponse);
+            return "board/update";
+        }
 
         return "redirect:/pinepeople/board/" + postUpdateResponse.getId();
     }
-
-
 
 
     @GetMapping("/delete/{postId}")
@@ -122,7 +162,6 @@ public class BoardMvcController {
 //        return Response.success(postRecommendResponse);
 //
 //    }
-
 
 
 }

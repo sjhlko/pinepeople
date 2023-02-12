@@ -36,7 +36,7 @@ public class CommentController {
 
     @GetMapping
     @ApiOperation(value = "댓글 목록 조회")
-    public Response<Page<CommentReadResponse>> read(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @PathVariable Long postId) {
+    public Response<Page<CommentReadResponse>> read(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @PathVariable Long postId) {
 
         return Response.success(commentService.readCommentPage(pageable, postId));
 

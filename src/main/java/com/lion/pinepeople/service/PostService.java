@@ -77,6 +77,7 @@ public class PostService {
         Post updatedPost = validatePost(postId);
 
         updatedPost.updatePost(postUpdateRequest.getTitle(), postUpdateRequest.getBody());
+        postRepository.saveAndFlush(updatedPost);
 
 
         return PostUpdateResponse.of(updatedPost);
