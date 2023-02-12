@@ -78,7 +78,7 @@
                     <a class="nav-link" th:href="@{/pinepeople/party/create-new}">파티 만들기</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">커뮤니티</a>
+                    <a class="nav-link" th:href="@{/pinepeople/board/list}">커뮤니티</a>
                 </li>
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
 
@@ -89,7 +89,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li><a class="dropdown-item" th:href="@{/pinepeople/profile/myPage}">마이페이지</a></li>
-                        <li><a class="dropdown-item" href="#">알림 확인하기</a></li>
+                        <li><a class="dropdown-item" href="@{/pinepeople/notification/my}">알림 확인하기</a></li>
                         <li><a class="dropdown-item" th:href="@{/pinepeople/party/order-list}">결제내역</a></li>
                         <li>
                             <form th:action="@{/pinepeople/logout}" method="post" sec:authorize="isAuthenticated()">
