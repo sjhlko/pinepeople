@@ -7,9 +7,14 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class CommentRequest {
+public class CommentUpdateRequest {
 
-    //@NotBlank(message = "댓글을 입력해 주세요.")
-    private String body;
+
+
+    private String comment;
+
+    public void of() {
+        this.comment = comment;
+    }
 
 }

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<head>
+    <div th:replace="base :: base-head"></div>
+    <style>
+        html,
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 100vw;
+            min-height: 100vh;
+        }
+
+        section {
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .post-layout {
+            width: 70%;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .title-layout {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .comment-layout {
+            width: 70%;
+        }
+
+        .comment-write-layout {
+            width: 70%;
+        }
+
+        .comment-write-form {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+        }
+
+    </style>
+</head>
+<body>
+<div th:insert="~{base :: pinepeople-nav}"></div>
+<section>
+    <div class="post-layout border border-secondary rounded" th:object="${postReadResponse}">
+        <div class="title-layout">
+            <h3 th:field="*{title}" th:text="*{title}">Title</h3>
+            <div>
+                <a th:href="'/pinepeople/board/update/'+${postReadResponse.id}">수정</a>
+                /
+                <a th:href="'/pinepeople/board/delete/'+${postReadResponse.id}">삭제</a>
+            </div>
+        </div>
+        <span class="fs-6 mb1" th:field="*{userName}" th:text="*{userName}">Name</span>
+        <div class="fs-6" th:field="*{body}" th:text="*{body}">Content</div>
+    </div>
+    <div class="comment-write-layout">
+        <form class="comment-write-form"
+              th:action="@{/pinepeople/board/{postId}/register(postId=${postReadResponse.id})}"
+              th:object="${commentCreateRequest}" method="post"
+              enctype="multipart/form-data">
+            <div style="width: 100%" class="mb-3">
+                <textarea style="width: 100%" class="form-control border border-secondary rounded" id="body" th:field="*{body}" rows="10"
+                          placeholder="Comment"></textarea>
+            </div>
+            <button style="height: 50px;" type="submit" class="btn btn-warning">write</button>
+        </form>
+    </div>
+    <div class="comment-layout border border-secondary rounded">
+        <th:block th:each="comment:${comments}">
+            <div class="comment-form border-bottom" th:id="|comment${comment.commentId}|" style="padding: 5px">
+                <div class="title-layout">
+                    <h5 scope="row" th:text="${comment.userName}">Comment Writer</h5>
+                    <div>
+                        <a th:href="@{/pinepeople/board/{postId}/delete/{commentId}(postId=${postReadResponse.id}, commentId=${comment.commentId})}">삭제</a>
+                    </div>
+                </div>
+                <p class="fs-6" th:text="${comment.body}">Comment Body</p>
+            </div>
+        </th:block>
+    </div>
+</section>
+<div th:insert="~{base :: pinepeople-footer}"></div>
+</body>
+</html>
