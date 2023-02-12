@@ -61,7 +61,7 @@ public class PartyCommentService {
         if (party.getUser().getId() != user.getId()) {
             String url ="/pinepeople/party/show-comment/" + party.getId();
             notificationService.send(party.getUser(), url, NotificationType.COMMENT_ON_PARTY,
-                    user.getName() + "님이 회원님 \"" + party.getPartyTitle()+"\" "+ NotificationType.COMMENT_ON_PARTY.getMessage());
+                    user.getName() + "님이 회원님의 \"" + party.getPartyTitle()+"\" "+ NotificationType.COMMENT_ON_PARTY.getMessage());
         }
         return PartyCommentResponse.of(savedPartyComment);
     }
