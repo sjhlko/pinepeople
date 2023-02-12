@@ -18,6 +18,7 @@ public class CommentReadResponse {
     private Long commentId;
     private String body;
     private Long userId;
+    private String userName;
     private Long postId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm:ss", timezone = "Asia/Seoul")
@@ -29,6 +30,7 @@ public class CommentReadResponse {
                 .commentId(comment.getId())
                 .body(comment.getBody())
                 .userId(comment.getUser().getId())
+                .userName(comment.getUser().getName())
                 .postId(comment.getPost().getId())
                 .createdAt(comment.getCreatedAt())
                 .build();
@@ -40,6 +42,7 @@ public class CommentReadResponse {
                 .commentId(map.getId())
                 .body(map.getBody())
                 .userId(map.getUser().getId())
+                .userName(map.getUser().getName())
                 .postId(map.getPost().getId())
                 .createdAt(map.getCreatedAt())
                 .build());

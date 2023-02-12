@@ -5,6 +5,8 @@ import com.lion.pinepeople.domain.entity.Post;
 import com.lion.pinepeople.domain.entity.User;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+
 @Builder
 @Setter
 @Getter
@@ -12,10 +14,10 @@ import lombok.*;
 @AllArgsConstructor
 public class PostCreateRequest {
 
-
-     private String title;
-
-     private String body;
+    @NotBlank(message = "제목을 입력해주세요.")
+    private String title;
+    @NotBlank(message = "내용을 입력해주세요.")
+    private String body;
 
 
     public Post of(User user) {

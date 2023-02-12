@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import retrofit2.http.Path;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -29,56 +30,34 @@ public class BoardCommentMvcController {
     private final PostService postService;
 
 
-    // 댓글 작성 페이지
-    @GetMapping("/register")
-    public String viewComment(Model model, @PathVariable Long postId, Pageable pageable) {
-
-        PostReadResponse postReadResponse = postService.getPost(postId);
-        Page<CommentReadResponse> comments = commentService.readCommentPage(pageable, postId);
-
-        model.addAttribute("post", postService.getPost(postId));
-        model.addAttribute("comment", commentService.readCommentPage(pageable, postId));
-        model.addAttribute("commentCreateRequest", new CommentCreateRequest());
-
-        return "board/post";
-
-    }
-
-    // 댓글 작성한 페이지
     @PostMapping("/register")
-    public String createComment(Authentication authentication, Model model, CommentCreateRequest commentCreateRequest, @PathVariable Long postId) { // <- 파라미터에 postId를 넣는 게 맞나?
+    public String createComment(Authentication authentication, CommentCreateRequest commentCreateRequest, @PathVariable Long postId) { // <- 파라미터에 postId를 넣는 게 맞나?
 
         log.info("authentication.getName() :{}", authentication.getName());
         log.info("postId: {}", postId);
         log.info("commentCreateRequest: {}", commentCreateRequest);
 
-        CommentCreateResponse commentCreateResponse = commentService.createComment(authentication.getName(), postId, commentCreateRequest);
+        commentService.createComment(authentication.getName(), postId, commentCreateRequest);
 
-        return "redirect:/pinepeople/board/" + commentCreateResponse.getId();
-    }
-
-
-    @GetMapping("/update/{commentId}")
-    public String updatePost(Model model, @PathVariable Long commentId, Authentication authentication) {
-
-        model.addAttribute("commentUpdateRequest", new CommentUpdateRequest());
-
-        return "board/update";
+        return "redirect:/pinepeople/board/" + postId;
     }
 
 
     @PostMapping("/update/{commentId}")
-    public String updatePost(@Validated @ModelAttribute Comment comment,
+    public String updatePost(CommentUpdateRequest commentUpdateRequest,
                              @PathVariable Long postId, @PathVariable Long commentId, Authentication authentication) {
 
 
-        CommentUpdateResponse commentUpdateResponse = commentService.updateComment(authentication.getName(), commentId, postId, comment.getBody());
+        CommentUpdateResponse commentUpdateResponse = commentService.updateComment(authentication.getName(), commentId, postId, commentUpdateRequest.getComment());
 
-        return "redirect:/pinepeople/board/" + commentUpdateResponse.getId();
+        return "redirect:/pinepeople/board/" + postId;
     }
 
-
-
+    @GetMapping("/delete/{commentId}")
+    public String deleteComment(@PathVariable Long commentId, @PathVariable Long postId, Authentication authentication) {
+        commentService.deleteComment(authentication.getName(), postId, commentId);
+        return "redirect:/pinepeople/board/" + postId;
+    }
 
 
     @GetMapping("/delete/{commentId}/{userId}")
