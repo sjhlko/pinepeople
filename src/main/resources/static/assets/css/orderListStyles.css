@@ -18,15 +18,17 @@ a {
 .orderTable {
     background-color: #c1e2b3;
 }
+.form-group mb2{
+    text-align: center;
+    display:inline-block
+}
 
 .form-control {
-    font-size: 0.9rem;
-    padding: 2px 5px;
+    text-align: center;
 }
 
 
 .btn-btn-primary {
-    border: whitesmoke solid 1px;
 }
 
 /*img {*/
