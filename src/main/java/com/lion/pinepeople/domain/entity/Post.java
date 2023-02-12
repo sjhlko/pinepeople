@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 
+import java.util.List;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Transactional // @Transactional LAZY 값 조회
@@ -26,6 +28,7 @@ public class Post extends BaseEntity {
     @Column(name = "post_id")
     private Long id;
 
+    @Column(length = 50)
     private String title;
 
     private String body;
@@ -34,18 +37,22 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true) // orphanRemoval 관계가 끊어진 child를 자동 제거
-//    private List<Comment> comments;
-//
-//    private Long commentsCount;
-//
-//    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true) 케이스케이드 casecade
-//    private List<PostRecommend> recommends;
-//
-//    private Long recommendsCount;
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Comment> comments;
 
-    //@ColumnDefault = 0, nullable = false)	// 조회수의 기본 값을 0으로 지정, null 불가 처리
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PostRecommend> recommends;
+
+
+    @Column(columnDefinition = "int default 0")	// 조회수의 기본 값을 0으로 지정, null 불가 처리
     private int hits; // 조회수
+
+    @Column(columnDefinition = "int default 0")
+    private int commentsCount = 0;
+
+    @Column(columnDefinition = "int default 0")
+    private int recommendsCount = 0;
 
     private String keyword;
 
@@ -57,9 +64,24 @@ public class Post extends BaseEntity {
 
     }
 
-//    public void updateHits(int hits) {
-//        this.hits = hits + 1;
-//
-//    }
+
+    public void updateHits(int hits) {
+        this.hits = hits + 1;
+    }
+
+    public void addCommentsCount(int commentsCount) {
+        this.commentsCount = commentsCount + 1;
+    }
+    public void deleteCommentsCount(int commentsCount) {
+        this.commentsCount = commentsCount - 1;
+    }
+
+    public void addRecommendsCount(int recommendsCount) {
+        this.recommendsCount = recommendsCount + 1;
+    }
+    public void deleteRecommendsCount(int recommendsCount) {
+        this.recommendsCount = recommendsCount - 1;
+    }
+
 
 }
