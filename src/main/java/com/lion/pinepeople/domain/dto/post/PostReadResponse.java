@@ -22,6 +22,8 @@ public class PostReadResponse {
     private String body;
     private String userName;
     private int hits;
+    private Integer commentsCount;
+    private Integer recommendsCount;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp createdAt;
@@ -35,8 +37,9 @@ public class PostReadResponse {
                 .id(post.get().getId())
                 .userName(post.get().getUser().getName())
                 .title(post.get().getTitle())
-                .body(post.get().getBody())
-                //  .hits(post.getHits())
+                .commentsCount(post.get().getCommentsCount())
+                .recommendsCount(post.get().getRecommendsCount())
+                .hits(post.get().getHits())
                 .createdAt(post.get().getCreatedAt())
                 .updatedAt(post.get().getUpdatedAt())
                 .build();
@@ -48,10 +51,10 @@ public class PostReadResponse {
         return posts.map(map -> PostReadResponse.builder()
                 .id(map.getId())
                 .title(map.getTitle())
-                .body(map.getBody())
+                .commentsCount(map.getCommentsCount())
+                .recommendsCount(map.getRecommendsCount())
+                .hits(map.getHits())
                 .userName(map.getUser().getName())
-                .createdAt(map.getCreatedAt())
-                .updatedAt(map.getUpdatedAt())
                 .build()
         );
     }

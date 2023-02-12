@@ -16,8 +16,15 @@ public interface PostRecommendRepository extends JpaRepository<PostRecommend, Lo
     Page<PostRecommend> findByUser (Pageable pageable, User user);
     Optional<PostRecommend> findByPostAndUser(Post post, User user);
 
-    @Query(value = "SELECT COUNT(*) FROM post_like c where c.post_id = :post_id", nativeQuery = true)
-    Long countBookmarkedPost(@Param("post_id") Long postId);
+//    @Query(value = "SELECT COUNT(*) FROM PostRecommend c where c.post = :post", nativeQuery = true)
+//    Long countPostRecommendsBypostId(@Param("post") Long postId);
+
+    @Query(value = "SELECT COUNT(*) FROM PostRecommend e WHERE e.post = :post")
+    Integer countByPost(@Param("post") Post post);
+
+    // 좋아요 유무 (이미 클릭했을 시 1, 클릭 안 했다면 0)
+    @Query(value = "SELECT COUNT(*) FROM PostRecommend e WHERE e.post = :post and  e.user = :user")
+    Integer countByPostAndUser(@Param("post") Post post, @Param("user") User user);
 
     void delete(PostRecommend findPostRecommend);
 

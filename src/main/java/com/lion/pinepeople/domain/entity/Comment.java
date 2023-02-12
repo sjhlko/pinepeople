@@ -26,7 +26,8 @@ public class Comment extends BaseEntity {
     @Column(length = 600)
     private String body;
 
-    private Long commentsCount;
+    @Column(columnDefinition = "int default 0")
+    private int commentsCount;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -39,4 +40,6 @@ public class Comment extends BaseEntity {
     public void updateComment(String body) {
         this.body = body;
     }
+
+
 }
