@@ -168,7 +168,7 @@
                     success:function(data){
                         $('#party-body').empty()
                         for(var i=0; i<data.result.content.length; i++){
-                            var tableId = '<tr>';
+                            var tableId = '<tr style="cursor:pointer" class="partyDetail" value="'+ data.result.content[i].partyId +'">';
                             tableId += '<td>' + data.result.content[i].partyId + '</td>';
                             tableId += '<td>' + data.result.content[i].categoryName + '</td>';
                             tableId += '<td>' + data.result.content[i].partyTitle + '</td>';
@@ -176,9 +176,18 @@
                             tableId += '</tr>';
                             $('#party-body').append(tableId)
                         }
+
                     }
                 })
             })
+
+            $(document).on("click", ".partyDetail", function (e) {
+                console.log("partyDetail")
+                var partyId = $(this).attr('value');
+                let url = `/pinepeople/party/detail/`+partyId
+                window.location.href = url
+            });
+
 
         </script>
     </body>
