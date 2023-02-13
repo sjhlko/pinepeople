@@ -19,6 +19,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     Page<Participant> findAllByPartyAndApprovalStatus(Pageable pageable, Party party, ApprovalStatus approvalStatus);
     Optional<Participant> findParticipantByUserAndParty(User user, Party party);
     @Query(value = "SELECT COUNT(*) FROM participant p where p.approval_status = :approval_status and p.party_id = :party_id", nativeQuery = true)
-    Long countByApprovalStatus(@Param("approval_status") ApprovalStatus approvalStatus, @Param("party_id") Long partyId);
+    Long countByApprovalStatus(@Param("approval_status") String approvalStatus, @Param("party_id") Long partyId);
 
 }

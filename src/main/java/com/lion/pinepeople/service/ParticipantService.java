@@ -224,7 +224,7 @@ public class ParticipantService {
      */
     public PartyStatus checkPartyStatus(Long partyId){
         Party party = validateParty(partyId);
-        Long count = participantRepository.countByApprovalStatus(ApprovalStatus.APPROVED,partyId);
+        Long count = participantRepository.countByApprovalStatus(ApprovalStatus.APPROVED.name(),partyId);
         if(count.intValue()<party.getPartySize()){
             return PartyStatus.RECRUITING;
         }
