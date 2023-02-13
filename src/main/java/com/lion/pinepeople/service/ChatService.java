@@ -1,5 +1,6 @@
 package com.lion.pinepeople.service;
 
+import com.lion.pinepeople.domain.dto.chatting.ChatInfoResponse;
 import com.lion.pinepeople.domain.dto.chatting.ChatMessageDto;
 import com.lion.pinepeople.domain.dto.participant.ParticipantInfoResponse;
 import com.lion.pinepeople.domain.entity.Chat;
@@ -36,11 +37,11 @@ public class ChatService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
     }
 
-    public List<ChatMessageDto> getChat(Long chattingRoomId){
+    public List<ChatInfoResponse> getChat(Long chattingRoomId){
         ChattingRoom chattingRoom = chattingRoomRepository.findById(chattingRoomId)
                 .orElseThrow(() -> new AppException(ErrorCode.CHATTING_ROOM_NOT_FOUND, ErrorCode.CHATTING_ROOM_NOT_FOUND.getMessage()));
         List<Chat> chats = chatRepository.findAllByChattingRoom(chattingRoom);
-        return chats.stream().map(ChatMessageDto::of).collect(Collectors.toList());
+        return chats.stream().map(ChatInfoResponse::of).collect(Collectors.toList());
     }
 
     public Chat saveChat(ChatMessageDto chatMessageDto){

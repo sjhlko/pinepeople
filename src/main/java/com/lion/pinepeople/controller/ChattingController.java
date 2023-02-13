@@ -1,5 +1,6 @@
 package com.lion.pinepeople.controller;
 
+import com.lion.pinepeople.domain.dto.chatting.ChatInfoResponse;
 import com.lion.pinepeople.domain.dto.chatting.ChatMessageDto;
 import com.lion.pinepeople.domain.dto.chatting.ChattingRoomDto;
 import com.lion.pinepeople.domain.dto.chatting.Room;
@@ -57,8 +58,8 @@ public class ChattingController {
      * 채팅 내역 불러오기
      */
     @GetMapping("/get-chatting/{chattingRoomId}")
-    public Response<List<ChatMessageDto>> saveChatting(@PathVariable Long chattingRoomId, Authentication authentication){
-        List<ChatMessageDto> chat = chatService.getChat(chattingRoomId);
+    public Response<List<ChatInfoResponse>> saveChatting(@PathVariable Long chattingRoomId){
+        List<ChatInfoResponse> chat = chatService.getChat(chattingRoomId);
         return Response.success(chat);
     }
 }

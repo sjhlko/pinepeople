@@ -155,10 +155,34 @@
       wsOpen();
       $("#confirm").hide();
       $("#yourMsg").show();
+
+    let url = `/pinepeople/get-chatting/`+ [[${chattingRoom.id}]];
+    $.ajax({
+      url: url,
+      contentType: 'application/json',
+      type:'GET',
+      success:function(data){
+        console.log(data);
+        for (const datum of data.result) {
+          console.log(datum);
+          if(datum.userId === [[${user.id}]]){
+            $("#chating").append("<div class='me' id='me'>" + datum.message + "</div>");
+          }else{
+            $("#chating").append("<div class='others' id='others'>" + datum.message + "</div>");
+          }
+        }
+      },
+      error:function (data){
+        console.log("error")
+      }
+    })
   });
 
 
   function send() {
+    if($("#chatting").val()===""){
+      return;
+    }
     var option ={
       type: "message",
       roomNumber: $("#roomNumber").val(),
