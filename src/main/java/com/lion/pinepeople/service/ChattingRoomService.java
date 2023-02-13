@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -40,5 +41,15 @@ public class ChattingRoomService {
                 .receiver(userRepository.findById(userId2).get())
                 .build());
         return chattingRoomRepository.save(newChattingRoom);
+    }
+
+    public User getChattingUser(Long chattingRoomId, String userId){
+        User currentUser = validateUser(userId);
+        ChattingRoom chattingRoom = chattingRoomRepository.findById(chattingRoomId)
+                .orElseThrow(()->new AppException(ErrorCode.CHATTING_ROOM_NOT_FOUND,ErrorCode.CHATTING_ROOM_NOT_FOUND.getMessage()));
+        if (Objects.equals(chattingRoom.getReceiver().getId(), currentUser.getId())){
+            return chattingRoom.getSender();
+        }
+        return chattingRoom.getReceiver();
     }
 }

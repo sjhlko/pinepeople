@@ -231,7 +231,7 @@
             type:'POST',
             success:function(data){
                 console.log(data);
-                // window.open("/pinepeople/moveChating?roomNumber=" + data, "chat", "width=500, height=800, top=200, left=200");
+                window.open("/pinepeople/moveChating?roomNumber=" + data.result.chattingRoomId , "chat", "width=500, height=800, top=200, left=200");
             },
             error:function (data){
                 alert(data.responseJSON.result.message)

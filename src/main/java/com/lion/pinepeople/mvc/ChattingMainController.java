@@ -93,45 +93,19 @@ public class ChattingMainController {
      * 채팅방
      * @return
      */
-//    @GetMapping("/moveChating")
-//    public ModelAndView chating(@RequestParam HashMap<Object, Object> params, Authentication authentication) {
-//        ModelAndView mv = new ModelAndView();
-//        int roomNumber = Integer.parseInt((String) params.get("roomNumber"));
-//
-//        List<Room> new_list = roomList.stream().filter(o->o.getRoomNumber()==roomNumber).collect(Collectors.toList());
-//        if(new_list != null && new_list.size() > 0) {
-//            mv.addObject("roomName", params.get("roomName"));
-//            mv.addObject("roomNumber", params.get("roomNumber"));
-//            mv.addObject("user",getUser(authentication));
-//            System.out.println(getUser(authentication).getName());
-//            mv.setViewName("chatting/chat");
-//        }else {
-//            mv.setViewName("chatting/room");
-//        }
-//        return mv;
-//    }
-
-    /**
-     * 채팅방
-     * @return
-     */
-    @GetMapping("/move-chatting")
-    public ModelAndView chating(@RequestParam HashMap<Object, Object> params, Authentication authentication) {
+    @GetMapping("/moveChating")
+    public ModelAndView moveChating(@RequestParam Long roomNumber, Authentication authentication) {
         ModelAndView mv = new ModelAndView();
-        int roomNumber = Integer.parseInt((String) params.get("roomNumber"));
-
-        List<Room> new_list = roomList.stream().filter(o->o.getRoomNumber()==roomNumber).collect(Collectors.toList());
-        if(new_list != null && new_list.size() > 0) {
-            mv.addObject("roomName", params.get("roomName"));
-            mv.addObject("roomNumber", params.get("roomNumber"));
-            mv.addObject("user",getUser(authentication));
-            System.out.println(getUser(authentication).getName());
-            mv.setViewName("chatting/chat");
-        }else {
-            mv.setViewName("chatting/room");
-        }
+        User user = chattingRoomService.getChattingUser(roomNumber,authentication.getName());
+        mv.addObject("roomName", user.getName());
+        mv.addObject("roomNumber", roomNumber);
+        mv.addObject("user",getUser(authentication));
+        System.out.println(getUser(authentication).getName());
+        mv.setViewName("chatting/chat");
         return mv;
     }
+
+
 
     private User getUser(Authentication authentication) {
         long userId = Long.parseLong(authentication.getName());
