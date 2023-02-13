@@ -17,7 +17,6 @@ html {
 div, span, label, section, aside, footer, header, nav, video, table, tr, td, th {
     margin: 0;
     border: 0;
-    /*font-size: 100%;*/
     color: black;
     text-align: center;
 }
@@ -28,11 +27,15 @@ div, span, label, section, aside, footer, header, nav, video, table, tr, td, th 
 }
 
 .orderDate {
-    font-size: small;
+    font-size: 15px;
     text-align: right;
     margin-right: 150px;
 }
+.accumulate {
+    text-align: right;
+    padding: 0 150px 0 0px;
 
+}
 .orderDetailTable {
     width: 1000px;
     border-collapse: collapse;
@@ -57,7 +60,7 @@ div, span, label, section, aside, footer, header, nav, video, table, tr, td, th 
 }
 
 .orderDetailTable th {
-    background: #c1e2b3;
+    background: #c5d7f2;
     margin-left: 40px;
 }
 
@@ -68,10 +71,15 @@ div, span, label, section, aside, footer, header, nav, video, table, tr, td, th 
     text-align: center;
     margin-left: auto;
     margin-right: auto;
+    border: 1px solid #0b0b0b;
+}
+tbody{
+    border: 1px solid #0b0b0b;
+    border-bottom: #adadad;
 }
 
 .paymentInfo tr {
-    border: 1px solid #444444;
+    border: 1px solid #0b0b0b;
 }
 
 .paymentInfo td {
@@ -84,11 +92,12 @@ div, span, label, section, aside, footer, header, nav, video, table, tr, td, th 
 }
 
 .paymentInfo th {
-    text-align: left;
-    width: 170px;
+    text-align: center;
+    width: 360px;
     height: 50px;
     padding: 0 0px 0 30px;
-    background: #adadad;
+    background: #d7d8da;
+    border-bottom: #adadad;
 }
 
 .accumulatePoint {

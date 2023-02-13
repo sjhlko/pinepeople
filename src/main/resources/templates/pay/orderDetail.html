@@ -3,9 +3,10 @@
 <head>
     <div th:replace="base.html :: base-head"></div>
     <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/css/css/orderDetailStyles.css"/>
-<!--    <link rel="stylesheet" th:href="@{/assets/css/orderDetailStyles.css}"/>-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!--        <link rel="stylesheet" href="https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/css/css/orderDetailStyles.css"/>-->
+    <link rel="stylesheet" th:href="@{/assets/css/orderDetailStyles.css}"/>
 </head>
 <body>
 <!-- jQuery -->
@@ -24,7 +25,6 @@
                 <div class="orderDate">주문 시간 <span id="formatDate"
                                                    th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span>
                 </div>
-
                 <table class="orderDetailTable">
                     <tr>
                         <th><span id="partyTitle" class="partyTitle" th:text="${order.partyTitle}"></span></th>
@@ -41,8 +41,7 @@
                         </tr>
                         <tr>
                             <th> 수수료(10%)</th>
-                            <td><span id="commission" class="commission"
-                                      th:text="${#numbers.formatInteger(order.cost * 0.1,1,'COMMA')}"></span>원
+                            <td><span id="commission" class="commission" th:text="${commission}"></span>원
                             </td>
                         </tr>
                         <tr>
@@ -67,20 +66,14 @@
                 </div>
 
                 <br>
-                <div>
-                    <table class="accumulatePoint">
-                        <div>
-                            <tr class="accumulatePoint2">
-                                <th class="plusPoint"> 적립 포인트(5%)</th>
-                                <td class="plusPointChild"><span id="total" th:text="${order.accumulatePoint}"></span>p
-                                </td>
-                            </tr>
-                        </div>
-                    </table>
+                <div class="accumulate">
+                    <span>적립 포인트(5%) </span><input type="text" th:value="${order.accumulatePoint}+'p'" disabled/>
                 </div>
                 <div class="button-container d-flex">
                     <div class="GetOrderList">
-                        <button class="btn btn-primary" type="button" th:onclick="|location.href= '@{/pinepeople/party/order-list}'|"> < 주문 목록으로 가기</button>
+                        <button class="btn btn-primary" type="button"
+                                th:onclick="|location.href= '@{/pinepeople/party/order-list}'|"> < 주문 목록으로 가기
+                        </button>
                     </div>
                     <div class="cancelButton">
                         <button class="button_2" onclick="cancel()">주문 취소하기</button>
@@ -93,7 +86,9 @@
 
 <!--footer-->
 <div th:insert="~{base :: pinepeople-footer}"></div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 </body>
 </html>
 
