@@ -49,10 +49,10 @@ public class Post extends BaseEntity {
     private int hits; // 조회수
 
     @Column(columnDefinition = "int default 0")
-    private int commentsCount = 0;
+    private int commentsCount;
 
     @Column(columnDefinition = "int default 0")
-    private int recommendsCount = 0;
+    private int recommendsCount;
 
 
 
@@ -66,7 +66,7 @@ public class Post extends BaseEntity {
 
     public void updateHits(int hits) {
         this.hits = hits + 1;
-    }
+     }
 
     public void addCommentsCount(int commentsCount) {
         this.commentsCount = commentsCount + 1;
@@ -75,10 +75,11 @@ public class Post extends BaseEntity {
         this.commentsCount = commentsCount - 1;
     }
 
-    public void addRecommendsCount(int recommendsCount) {
+    public void addRecommendsCount() {
         this.recommendsCount = recommendsCount + 1;
     }
-    public void deleteRecommendsCount(int recommendsCount) {
+
+    public void deleteRecommendsCount() {
         this.recommendsCount = recommendsCount - 1;
     }
 
