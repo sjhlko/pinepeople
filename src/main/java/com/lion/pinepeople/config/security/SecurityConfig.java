@@ -35,8 +35,6 @@ public class SecurityConfig {
             "/pinepeople/join",
             "/pinepeople/change-password",
             "/pinepeople/upload",
-            "/createRoom",
-            "/getRoom"
 
     };
 
@@ -74,7 +72,9 @@ public class SecurityConfig {
             "/pinepeople/profile/profilePage/*",
             /* UserMvcContorller */
             "/pinepeople/profile/myPage/update",
-            "/pinepeople/myInfo"
+            "/pinepeople/myInfo",
+            "/pinepeople/room"
+
     };
 
     @Bean

@@ -79,7 +79,8 @@
   }
 
   function getRoom(){
-    commonAjax('/getRoom', "", 'post', function(result){
+    commonAjax('/pinepeople/getRoom', "", 'post', function(result){
+      console.log(result)
       createChatingRoom(result);
     });
   }
@@ -88,7 +89,7 @@
     $("#createRoom").click(function(){
       var msg = {	roomName : $('#roomName').val()	};
 
-      commonAjax('/createRoom', msg, 'post', function(result){
+      commonAjax('/pinepeople/createRoom', msg, 'post', function(result){
         createChatingRoom(result);
       });
 
@@ -97,7 +98,7 @@
   }
 
   function goRoom(number, name){
-    window.open("/moveChating?roomName="+name+"&"+"roomNumber="+number, "chat", "width=500, height=800, top=200, left=200");
+    window.open("/pinepeople/moveChating?roomName="+name+"&"+"roomNumber="+number, "chat", "width=500, height=800, top=200, left=200");
     //location.href="/moveChating?roomName="+name+"&"+"roomNumber="+number;
   }
 

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <meta charset="UTF-8">
   <title>Chating</title>
   <style>
@@ -75,13 +74,41 @@
 
   </style>
 </head>
+<body>
+<!-- jQuery -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 
-<script type="text/javascript">
+<div id="container" class="container">
+  <div class="header" th:text="*{roomName}"></div>
+  <input type="hidden" id="sessionId" value="">
+  <input type="hidden" id="roomNumber" th:value="*{roomNumber}">
+  <input type="hidden" id="userName" th:value="*{user.name}">
+
+  <div id="chating" class="chating">
+  </div>
+
+  <div id="confirm">
+    <table class="inputTable">
+      <tr>
+        <th><button id="startBtn">시작</button></th>
+      </tr>
+    </table>
+  </div>
+  <div id="yourMsg">
+    <table class="inputTable">
+      <tr>
+        <th><input id="chatting" placeholder="보내실 메시지를 입력하세요."></th>
+      </tr>
+    </table>
+  </div>
+</div>
+
+</body>
+<script th:inline="javascript">
   var ws;
-
   function wsOpen(){
     //웹소켓 전송시 현재 방의 번호를 넘겨서 보낸다.
-    ws = new WebSocket("ws://" + location.host + "/chating/"+$("#roomNumber").val());
+    ws = new WebSocket("ws://" + location.host + "/pinepeople/chating/"+$("#roomNumber").val());
     wsEvt();
   }
 
@@ -122,17 +149,14 @@
     });
   }
 
-  function chatName(){
-    var userName = $("#userName").val();
-    if(userName == null || userName.trim() === ""){
-      alert("사용자 이름을 입력해주세요.");
-      $("#userName").focus();
-    }else{
+  $('#startBtn').on("click", function (e) {
+    const name = [[${user.name}]];
+    console.log(name);
       wsOpen();
-      $("#yourName").hide();
+      $("#confirm").hide();
       $("#yourMsg").show();
-    }
-  }
+  });
+
 
   function send() {
     var option ={
@@ -147,30 +171,4 @@
     $('#chatting').val("");
   }
 </script>
-<body>
-<div id="container" class="container">
-  <div class="header" th:text="*{roomName}"></div>
-  <input type="hidden" id="sessionId" value="">
-  <input type="hidden" id="roomNumber" th:value="*{roomNumber}">
-
-  <div id="chating" class="chating">
-  </div>
-
-  <div id="yourName">
-    <table class="inputTable">
-      <tr>
-        <th><input type="text" name="userName" id="userName"></th>
-        <th><button onclick="chatName()" id="startBtn">이름 등록</button></th>
-      </tr>
-    </table>
-  </div>
-  <div id="yourMsg">
-    <table class="inputTable">
-      <tr>
-        <th><input id="chatting" placeholder="보내실 메시지를 입력하세요."></th>
-      </tr>
-    </table>
-  </div>
-</div>
-</body>
 </html>
