@@ -21,8 +21,7 @@ public class PostRecommend extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 추천 클릭 유무
-    private int recommendsCount;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -31,6 +30,11 @@ public class PostRecommend extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @Column(columnDefinition = "Integer default 0")
+    private Integer recommendCnt;
+
+    private String userName;
 
 
 }

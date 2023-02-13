@@ -49,6 +49,13 @@ public class PartyMvcController {
     private final PartyRepository partyRepository;
     private final UserRepository userRepository;
 
+    //    @GetMapping("/chat")
+//    public String chat(){
+//        return "chatting/chatting";
+//    }
+
+
+
     /**파티 리스트 페이지**/
     @GetMapping("/list")
     public String getPartyList(@PageableDefault(page = 0, size = 8, sort = "createdAt",
