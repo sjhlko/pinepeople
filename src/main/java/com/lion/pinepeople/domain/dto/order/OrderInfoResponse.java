@@ -33,6 +33,7 @@ public class OrderInfoResponse {
     private String impUid;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp updatedAt;
+    private String partyImg;
 
     /* Entity -> Dto 변환 */
     public static OrderInfoResponse toDto(Order order) {
@@ -66,6 +67,7 @@ public class OrderInfoResponse {
                 .orderStatus(o.getOrderStatus())
                 .totalCost(o.getTotalCost())
                 .updatedAt(o.getUpdatedAt())
+                .partyImg(o.getParty().getPartyImg())
                 .build());
         return orderDtoList;
     }
