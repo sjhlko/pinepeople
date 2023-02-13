@@ -106,15 +106,9 @@
   <input type="hidden" id="userName" th:value="*{user.name}">
 
   <div id="chating" class="chating">
+<!--    채팅이 들어갈 공간-->
   </div>
 
-  <div id="confirm">
-    <table class="inputTable">
-      <tr>
-        <th><button id="startBtn">시작</button></th>
-      </tr>
-    </table>
-  </div>
   <div id="yourMsg">
     <table class="inputTable">
       <tr>
@@ -173,7 +167,8 @@
     });
   }
 
-  $('#startBtn').on("click", function (e) {
+  window.onload=function(){
+    //실행할 내용
     const name = [[${user.name}]];
     console.log(name);
       wsOpen();
@@ -197,12 +192,13 @@
             $("#chating").append("<div class='othersTime' id='othersTime'>" +datum.createdAt + "</div>");
           }
         }
+        $('#chating').scrollTop($('#chating')[0].scrollHeight);
       },
       error:function (data){
         console.log("error")
       }
     })
-  });
+  };
 
 
   function send() {
