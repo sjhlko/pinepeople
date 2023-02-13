@@ -1,10 +1,14 @@
 package com.lion.pinepeople.mvc;
 
+import com.lion.pinepeople.domain.dto.chatting.ChattingRoomDto;
 import com.lion.pinepeople.domain.dto.chatting.Room;
+import com.lion.pinepeople.domain.entity.ChattingRoom;
 import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.UserRepository;
+import com.lion.pinepeople.service.ChattingRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -23,6 +27,7 @@ import java.util.stream.Collectors;
 @RequestMapping("pinepeople")
 public class ChattingMainController {
     private final UserRepository userRepository;
+    private final ChattingRoomService chattingRoomService;
     List<Room> roomList = new ArrayList<Room>();
     static int roomNumber = 0;
 
@@ -62,6 +67,17 @@ public class ChattingMainController {
         return roomList;
     }
 
+//    /**
+//     * 방 정보 가져오기
+//     * @param userId
+//     * @return
+//     */
+//    @PostMapping("/get-room")
+//    public Response<ChattingRoomDto> createRoom(@RequestParam Long userId, Authentication authentication){
+//        ChattingRoom chattingRoom = chattingRoomService.getChattingRoom(authentication.getName(), userId);
+//        return Response.success(ChattingRoomDto.builder().chattingRoomId(chattingRoom.getId()).build());
+//    }
+
     /**
      * 방 정보가져오기
      * @param params
@@ -77,7 +93,29 @@ public class ChattingMainController {
      * 채팅방
      * @return
      */
-    @GetMapping("/moveChating")
+//    @GetMapping("/moveChating")
+//    public ModelAndView chating(@RequestParam HashMap<Object, Object> params, Authentication authentication) {
+//        ModelAndView mv = new ModelAndView();
+//        int roomNumber = Integer.parseInt((String) params.get("roomNumber"));
+//
+//        List<Room> new_list = roomList.stream().filter(o->o.getRoomNumber()==roomNumber).collect(Collectors.toList());
+//        if(new_list != null && new_list.size() > 0) {
+//            mv.addObject("roomName", params.get("roomName"));
+//            mv.addObject("roomNumber", params.get("roomNumber"));
+//            mv.addObject("user",getUser(authentication));
+//            System.out.println(getUser(authentication).getName());
+//            mv.setViewName("chatting/chat");
+//        }else {
+//            mv.setViewName("chatting/room");
+//        }
+//        return mv;
+//    }
+
+    /**
+     * 채팅방
+     * @return
+     */
+    @GetMapping("/move-chatting")
     public ModelAndView chating(@RequestParam HashMap<Object, Object> params, Authentication authentication) {
         ModelAndView mv = new ModelAndView();
         int roomNumber = Integer.parseInt((String) params.get("roomNumber"));

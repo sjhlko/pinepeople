@@ -17,7 +17,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE chatting_room SET deleted_at = current_timestamp WHERE chatting_room_id = ? ")
-public class ChattingRoom {
+public class ChattingRoom extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chatting_room_id")

@@ -28,5 +28,10 @@ public class Chat extends BaseEntity {
     @JsonIgnore
     private User sender;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chatting_room_id")
+    @JsonIgnore
+    private ChattingRoom chattingRoom;
+
 
 }

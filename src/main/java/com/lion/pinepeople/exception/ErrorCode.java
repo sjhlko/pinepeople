@@ -24,6 +24,7 @@ public enum ErrorCode {
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "DB에러"),
     USER_ROLE_NOT_FOUND(HttpStatus.NOT_ACCEPTABLE, "해당 UserRole은 존재하지 않습니다."),
     PARTY_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 파티 댓글이 없습니다."),
+    CHATTING_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 채팅방이 없습니다."),
     PARTY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 파티가 없습니다."),
     DUPLICATED_REPORT(HttpStatus.CONFLICT, "중복된 신고입니다."),
     EXPIRE_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "로그인을 다시 해주세요."),
