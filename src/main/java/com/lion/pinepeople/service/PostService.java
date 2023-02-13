@@ -1,15 +1,13 @@
 package com.lion.pinepeople.service;
 
 
-import com.lion.pinepeople.domain.dto.post.PostReadResponse;
-import com.lion.pinepeople.domain.dto.post.PostResponse;
+import com.lion.pinepeople.domain.dto.post.*;
 import com.lion.pinepeople.domain.entity.Post;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.PostRepository;
 import com.lion.pinepeople.repository.UserRepository;
-import com.lion.pinepeople.utils.AppUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,136 +15,165 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 @Service
 @RequiredArgsConstructor
-@Transactional // 트랜젝션
 @Slf4j
 public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
+    //private final static String VIEWCOOKIENAME = "alreadyViewCookie";
 
-    /****
-     * create 게시물 작성
-     * @param id
-     * @param title
-     * @param body
-     * @return PostResponse(DTO)
-     */
-    public PostResponse create(String id, String title, String body) {
+    @Transactional
+    public PostCreateResponse create(PostCreateRequest postCreateRequest, String userId) {
 
-        // 회원 아이디(인증) 확인
-        log.info("id:{}", id);
-        User findUser = AppUtil.findUser(userRepository, Long.parseLong(id)); // Long 형변환
+        User findUser = validateUser(userId);
 
-        // 게시물 저장
-        Post savePost = Post.convertToEntity(title, body, findUser);
-        savePost = postRepository.save(savePost);
+        Post savedPost = postRepository.save(postCreateRequest.of(findUser));
 
-        // Entity -> DTO 변환하여 반환
-        return PostResponse.convertToDto("포스트 등록 성공", savePost.getId());
-    }
-
-
-    /****
-     * getPost 게시물 단건 조회
-     * @param id
-     * @return
-     */
-    public PostReadResponse getPost(Long id) {
-
-        // 게시물 id로 게시물 검색
-        Post findPost = AppUtil.findPost(postRepository, id);
-
-        // Post entity -> DTO로 변환 후 반환
-        return PostReadResponse.convertToDto(findPost);
+        return PostCreateResponse.of(savedPost);
 
     }
 
 
-    /***
-     * getPostList 게시물 목록 조회
-     * @param pageable
-     * @return posts(Dto)
-     */
+    public PostReadResponse getPost(Long postId, HttpServletRequest request, HttpServletResponse response) {
+
+        validatePost(postId);
+
+        postRepository.findById(postId);
+        Post post = validatePost(postId);
+
+        countHits(postId, request, response);
+        post.updateHits(post.getHits()); // 변경 방지 ++1
+
+
+        return PostReadResponse.of(postRepository.findById(postId));
+
+    }
+
+
+
+
+
     public Page<PostReadResponse> getPostList(Pageable pageable) {
 
-        Page<Post> posts = postRepository.findAll(pageable);
-        return PostReadResponse.convertListToDto(posts);
+        return PostReadResponse.of(postRepository.findAll(pageable));
 
     }
 
 
-    /***
-     * getMyPosts 내 게시물 조회
-     * @param pageable
-     * @param id
-     * @return
-     */
-    public Page<PostReadResponse> getMyPosts(Pageable pageable, Long id) {
+    public Page<PostReadResponse> getMyPosts(Pageable pageable, String userId) {
 
-        // 회원 확인
-        User findUser = AppUtil.findUser(userRepository, id);
-
-        // 내가 쓴 게시물 불러오기
-        Page<Post> myPosts = postRepository.findByUser(pageable, findUser);
-
-        return PostReadResponse.convertListToDto(myPosts);
-    }
-
-
-    /***
-     * update 게시물 수정
-     * @param postId
-     * @param userId
-     * @param title
-     * @param body
-     * @return
-     */
-    public PostResponse update(Long postId, String userId, String title, String body) {
-
-        // 게시물 아이디 확인
-        log.info("postId:{}", postId);
-        Post updatePost = AppUtil.findPost(postRepository, postId);
-
-        //회원 아이디(인증) 확인
-        log.info("id:{}", userId);
-        User findByUser = AppUtil.findUser(userRepository, Long.parseLong(userId));
-
-        User findUser = userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> {
-            throw new AppException(ErrorCode.USER_NOT_FOUND, "해당 회원이 없습니다.");
-                });
-
-
-        // 게시물 작성자 비교
-        AppUtil.checkUser(updatePost.getUser().getId(), findUser.getId());
-
-
-        updatePost.update(title, body);
-        return PostResponse.convertToDto("게시물 수정 완료", updatePost.getId());
+        return PostReadResponse.of(postRepository.findByUser(pageable, validateUser(userId)));
 
     }
 
 
 
-    /***
-     * 게시물 삭제
-     * @param postId
-     * @param userId
-     * @return
-     */
-    public PostResponse delete(Long postId, String userId) {
+    public PostUpdateResponse update(Long postId, String userId, PostUpdateRequest postUpdateRequest) {
 
-        Post deletePost = AppUtil.findPost(postRepository, postId);
-        User findUser = AppUtil.findUser(userRepository, Long.parseLong(userId));
-        AppUtil.checkUser(deletePost.getUser().getId(), findUser.getId()); // 메소드 이름 수정
+        validatePost(postId);
+        validateUser(userId);
+        verifyPostAuthor(userId, postId);
 
-        postRepository.delete(deletePost);
-        return PostResponse.convertToDto("게시물 삭제 완료", deletePost.getId());
+        Post updatedPost = validatePost(postId);
+
+        updatedPost.updatePost(postUpdateRequest.getTitle(), postUpdateRequest.getBody());
+        postRepository.saveAndFlush(updatedPost);
+
+
+        return PostUpdateResponse.of(updatedPost);
 
     }
 
+
+    public PostDeleteResponse delete(Long postId, String userId) {
+
+
+        validatePost(postId);
+        log.info("postId: {}", postId);
+        validateUser(userId);
+        log.info("userId: {}", userId);
+        verifyPostAuthor(userId, postId);
+
+        postRepository.deleteById(postId);
+
+        return PostDeleteResponse.of(postId);
+
+    }
+
+
+    // 제목으로 게시물 검색
+    public Page<PostReadResponse> searchByTitle(Pageable pageable, String keyword) {
+
+        if (keyword == null) {
+            searchByTitle(pageable, null);
+        } else {
+            searchByTitle(pageable, keyword);
+        }
+
+
+        return PostReadResponse.of(postRepository.findByTitleContaining(keyword, pageable));
+
+    }
+
+
+    public User validateUser(String userId) {
+        return userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> {
+            throw new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage());
+        });
+    }
+
+    public Post validatePost(Long postId) {
+        return postRepository.findById(postId).orElseThrow(() -> {
+            throw new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage());
+        });
+    }
+
+
+    public void verifyPostAuthor(String userId, Long postId) {
+        if (userRepository.findById(Long.parseLong(userId)).get().getId() != postRepository.findById(postId).get().getUser().getId()) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
+        };
+    }
+
+
+    private void countHits(Long postId, HttpServletRequest request, HttpServletResponse response) {
+
+        Cookie oldCookie = null;
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("views")) {
+                    oldCookie = cookie;
+                }
+            }
+        }
+
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("[" + postId.toString() + "]")) {
+                Post post = validatePost(postId);
+                post.updateHits(post.getHits());
+                oldCookie.setValue(oldCookie.getValue() + "_[" + postId + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60 * 60 * 24);
+                response.addCookie(oldCookie);
+            }
+        } else {
+            Post post = validatePost(postId);
+            post.updateHits(post.getHits());
+            Cookie newCookie = new Cookie("views","[" + postId + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24);
+            response.addCookie(newCookie);
+        }
+    }
 
 }

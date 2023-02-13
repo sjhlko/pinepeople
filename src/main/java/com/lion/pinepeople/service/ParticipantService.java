@@ -190,7 +190,7 @@ public class ParticipantService {
         Party party = validateParty(partyId);
         Participant participant = validateParticipant(id);
         Timestamp createdAt = participant.getCreatedAt();
-        validateHost(participant.getParty(),user);
+        validateHost(party,user);
         Participant updatedParticipant = participantRepository.save(participantUpdateRequest.toEntity(participant));
 
         //파티 상태 변경(파티원 모집중인지, 마감되었는지)

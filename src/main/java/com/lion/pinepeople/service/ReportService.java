@@ -40,6 +40,10 @@ public class ReportService {
         //신고할 유저 확인
         User targetUser = userRepository.findById(userId)
                 .orElseThrow( () -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
+        //본인을 신고할 경우 에러 발생
+        if(loginUser == userId){
+            throw new AppException(ErrorCode.INVALID_PERMISSION, "본인은 신고하실 수 없습니다.");
+        }
 
         // 신고 중복 확인 후 저장
         Optional<Report> confirmReport = reportRepository.findByFromUserIdAndUser(loginUser, targetUser);

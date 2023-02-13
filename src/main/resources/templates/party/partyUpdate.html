@@ -3,28 +3,19 @@
 <head>
   <head>
     <div th:replace="base :: base-head"></div>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="🍍파인 피플🍍" />
-    <meta name="author" content="" />
-    <title>파인 피플 하나가 여럿이 되는 공간</title>
-    <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="/static/image/icon.png" />
     <!-- Bootstrap icons-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link rel="stylesheet" href="css/styles.css"/>
-    <link rel="stylesheet"  th:href="@{/static/assets/css/styles.css}"/>
   </head>
 </head>
 <body>
 <!-- Navigation-->
 <div th:insert="~{base :: pinepeople-nav}"></div>
 <article>
-  <form th:action th:object="${partyUpdateRequest}" method="post">
+<!--  <form th:action="@{/pinepeople/party/update/${partyId}}" th:object="${partyUpdateRequest}" method="post">-->
+  <form th:action="@{/pinepeople/party/update/{partyId}(partyId=${partyId})}" th:object="${partyUpdateRequest}" method="post" enctype="multipart/form-data">
   <div class="container" role="main">
     <h2>파티 수정하기✒</h2>
-    <form name="form" id="form" role="form" method="post" action="${pageContext.request.contextPath}/board/saveBoard">
+<!--    <form name="form" id="form" role="form" method="post" action="${pageContext.request.contextPath}/board/saveBoard">-->
       <div class="mb-3">
         <label for="title">카테고리</label>
         <select class="form-select" aria-label="Default select example" id="branch" th:name="branch" required="required"
@@ -94,11 +85,17 @@
                   th:field="*{partyContent}" th:errorclass="field-error" ></textarea>
         <div class="field-error" th:errors="*{partyContent}">내용 오류</div>
       </div>
+      <div class="mb-3">
+        <label for="partyImg">파티이미지</label><br>
+        <img  class="border rounded h-50 w-50" id="party-img" src="#"  alt="partyImg"/>
+        <input type="file" name="file" id="partyImg" />
+        <div class="field-error" th:errors="*{partyContent}">이미지 오류</div>
+      </div>
     <div >
       <button type="submit" class="btn btn-sm btn-primary" id="btnSave">파티 수정하기✒</button>
       <button type="button" class="btn btn-sm btn-primary" id="btnList" onclick="location.href='/pinepeople/party/list'"> 파티 목록으로 가기📜 </button>
     </div>
-    </form>
+<!--    </form>-->
   </div>
   </form>
   <!-- Footer-->
@@ -136,7 +133,6 @@
     else {
       $("#category2").val(selectedCode);
     }
-    changeCategoryByBranch();
     $("#address").val([[${beforeParty.address}]]);
     $("#cost").val([[${beforeParty.partyCost}]]);
     $("#startDate").val([[${beforeParty.startDate}]]);
@@ -144,6 +140,8 @@
     $("#size").val([[${beforeParty.partySize}]]);
     $("#title").val([[${beforeParty.partyTitle}]]);
     $("#content").val([[${beforeParty.partyContent}]]);
+    $("#party-img").attr("src",[[${beforeParty.partyImg}]]);
+    changeCategoryByBranch();
   })();
 
 

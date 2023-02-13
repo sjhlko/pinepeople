@@ -9,6 +9,7 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -21,33 +22,24 @@ public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 600)
     private String body;
 
+    @Column(columnDefinition = "int default 0")
+    private int commentsCount;
+
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
+    @JoinColumn(name = "post_id")
     private Post post;
 
-
-    /***
-     * convertToEntity
-     * @param body
-     * @param user
-     * @param post
-     * @return
-     */
-    public static Comment convertToEntity (String body, User user, Post post) {
-        return Comment.builder()
-                .body(body)
-                .user(user)
-                .post(post)
-                .build();
-    }
-
-
-    public void update(String body) {
+    public void updateComment(String body) {
         this.body = body;
     }
+
 
 }

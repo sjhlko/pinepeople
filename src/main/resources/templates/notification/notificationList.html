@@ -8,13 +8,25 @@
 
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://demo.plantpot.works/assets/css/normalize.css">
+    <style>
+        .clickColor:hover{
+            color: #0f5132;
+        }
+        .clickColor:active{
+            color: #a94442;
+        }
+        span.notification-badge {
+            position: relative;
+            top: -10px;
+            right: 10px;
+            border: white 1px solid;
+        }
+
+    </style>
 
 </head>
 <body>
-<!-- swal 적용 -->
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <!--    nav-bar-->
 <div th:insert="~{base :: pinepeople-nav}"></div>
@@ -38,26 +50,29 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr class="alarm-list" th:each="notification : ${notifications}">
-                            <th scope="row" th:text="${notifications.getTotalElements() - (notifications.number * notifications.size) - notificationStat.index}"></th>
+                        <tr class="alert" th:each="notification : ${notifications}">
+                            <th scope="row"
+                                th:text="${notifications.getTotalElements() - (notifications.number * notifications.size) - notificationStat.index}">
+                            </th>
                             <td>
-                                <a th:href="${notification.url}">
-                                    <span id="isRead"  th:text="${userInfo.userName} + '님이 ' + ${notification.notificationType}"></span>
+                                <a class="clickColor" th:onclick="'javascript:isRead(' + ${notification.id} +')'"
+                                   th:href="${notification.url}" >
+                                    <span th:text="${notification.content}"></span>
                                 </a>
                             </td>
-                            <td id="alarmRead" style="font-size: 25px">
+                            <td id="alarmRead" style="font-size: 20px">
                                 <p th:if="${notification.isRead} == false" th:text="'✉️'"></p>
                                 <p th:if="${notification.isRead} == true" th:text="'📨'"></p>
                             </td>
                             <td th:text="${#dates.format(notification.getCreatedAt(), 'yyyy-MM-dd HH:mm')}"></td>
-                            <div id="notificationId" style="display: none" th:text="${notification.id}"> </div>
-                            <div id="notificationUrl" style="display: none" th:text="${notification.isRead}"> </div>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="pagingNum">
+            <br>
+            <br>
+            <div class="pagingNum" style="font-size: 20px">
                 <th:block th:each="page:${#numbers.sequence(startPage,endPage)}">
                     <a class="page-item" th:if="${page != nowPage}"
                        th:href="@{/pinepeople/notification/my(page=${page-1})}" th:text="${page}"></a>
@@ -70,29 +85,17 @@
 <!--footer-->
 <div th:insert="~{base :: pinepeople-footer}"></div>
 
-
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </body>
 </html>
 <script th:inline="javascript">
-
-    let innerText = document.getElementById('notificationId').innerText;
-    console.log(innerText);
-    $('.isRead').on("click", function(){
-    })
-
-    // function isRead() {
-    //     const data = {
-    //         id: document.getElementById('notificationId').innerText,
-    //         url: document.getElementById('notificationUrl').innerText,
-    //     }
-    //     console.log(data.id);
-    //     $.ajax({
-    //         url: '/notification/read-ture/' + data.id,
-    //         type: 'GET',
-    //         datatype: 'application/json',
-    //         success: function (data) {
-    //             location.replace(data.url)
-    //         }
-    //     });
-    // });
+    function isRead(notificationId) {
+        $.ajax({
+            url: '/pinepeople/api/notifications/' + notificationId,
+            type: 'GET',
+            success: function () {
+            }
+        });
+    }
 </script>

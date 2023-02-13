@@ -5,7 +5,8 @@ import com.lion.pinepeople.domain.entity.Post;
 import lombok.*;
 import org.springframework.data.domain.Page;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.util.Optional;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,50 +16,49 @@ import java.time.LocalDateTime;
 public class PostReadResponse {
 
 
+
     private Long id;
     private String title;
     private String body;
     private String userName;
+    private int hits;
+    private Integer commentsCount;
+    private Integer recommendsCount;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime createdAt;
+    private Timestamp createdAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime updatedAt;
+    private Timestamp updatedAt;
 
+    public static PostReadResponse of (Optional<Post> post) {
 
-    /***
-     * convertToDto entity를 dto로 변환
-     * @param post
-     * @return
-     */
-    public static PostReadResponse convertToDto(Post post) {
         return PostReadResponse.builder()
-                .id(post.getId())
-                .userName(post.getUser().getName())
-                .title(post.getTitle())
-                .body(post.getBody())
-                .createdAt(post.getCreatedAt().toLocalDateTime()) // () timestamp -> LocalDateTime
-                .updatedAt(post.getUpdatedAt().toLocalDateTime())
+                .id(post.get().getId())
+                .userName(post.get().getUser().getName())
+                .title(post.get().getTitle())
+                .body(post.get().getBody())
+                .commentsCount(post.get().getCommentsCount())
+                .recommendsCount(post.get().getRecommendsCount())
+                .hits(post.get().getHits())
+                .createdAt(post.get().getCreatedAt())
+                .updatedAt(post.get().getUpdatedAt())
                 .build();
     }
 
-    /***
-     * convertListToDto
-     * @param posts
-     * @return
-     */
-    public static Page<PostReadResponse> convertListToDto(Page<Post> posts) {
 
-        return posts.map(post -> PostReadResponse.builder()
-                .id(post.getId())
-                .userName(post.getUser().getName())
-                .title(post.getTitle())
-                .body(post.getBody())
-                .createdAt(post.getCreatedAt().toLocalDateTime()) // () timestamp -> LocalDateTime
-                .updatedAt(post.getUpdatedAt().toLocalDateTime())
+    public static Page<PostReadResponse> of (Page<Post> posts) {
+
+        return posts.map(map -> PostReadResponse.builder()
+                .id(map.getId())
+                .title(map.getTitle())
+                .body(map.getBody())
+                .commentsCount(map.getCommentsCount())
+                .recommendsCount(map.getRecommendsCount())
+                .hits(map.getHits())
+                .userName(map.getUser().getName())
                 .build()
         );
-
     }
+
 }

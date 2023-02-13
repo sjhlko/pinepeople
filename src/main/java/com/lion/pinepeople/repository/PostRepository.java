@@ -10,5 +10,20 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByUser (Pageable pageable, User user);
 
+    // 조회수 순으로 정렬
+//    @Modifying
+//    @Query("update Post post set post.hits = post.hits + 1 where post.id = :id")
+//    void countUpHits(Long id);
+
+//    @Modifying
+//    @Query("update Post set hits = hits + 1 where post.post_id = :post_id")
+    //int updateHits(@Param(value = "postId") Long postId);
+
+
+    // 검색
+    Page<Post> findByTitleContaining(String keyword, Pageable pageable);
+
+
+
 
 }

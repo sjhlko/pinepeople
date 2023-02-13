@@ -8,14 +8,16 @@ import lombok.*;
 @Getter
 @Setter
 public class CommentDeleteResponse {
-    private String body;
+
+
     private Long id;
 
-    public static CommentDeleteResponse ConvertToDto(String body, Long id) {
+
+    public static CommentDeleteResponse of (Long id) {
         return CommentDeleteResponse.builder()
-                .body(body)
                 .id(id)
                 .build();
     }
+
 
 }

@@ -1,6 +1,7 @@
 package com.lion.pinepeople.mvc;
 
 import com.lion.pinepeople.domain.dto.participant.ParticipantCreateResponse;
+import com.lion.pinepeople.domain.dto.participant.ParticipantInfoResponse;
 import com.lion.pinepeople.domain.dto.party.PartyCategoryRequest;
 import com.lion.pinepeople.domain.dto.party.PartyCreateRequest;
 import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
@@ -73,10 +74,13 @@ public class PartyMvcController {
 
     /**파티 상세보기**/
     @GetMapping("/detail/{id}")
-    public String getPartyDetail(@PathVariable Long id, Model model, Authentication authentication) {
+    public String getPartyDetail(@PageableDefault(page = 0, size = 8, sort = "createdAt",
+            direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long id, Model model, Authentication authentication) {
         log.info("로그인 파트-----------------------");
         log.info("id:{}", id);
         List<PartyComment> comments = partyCommentService.getCommentList(id);
+        Page<ParticipantInfoResponse> approvedParticipant = participantService.getApprovedParticipant(pageable, id);
+        model.addAttribute("approvedParticipant", approvedParticipant);
         if (authentication == null) {
             PartyInfoResponse party = partyService.getParty(id);
             log.info(party.getPartyImg());
@@ -184,6 +188,9 @@ public class PartyMvcController {
             model.addAttribute("partyUpdateRequest", new PartyUpdateRequest());
             model.addAttribute("rightNowCategory", categoryService.getCategorySteadily("RightNow",1));
             model.addAttribute("steadilyCategory", categoryService.getCategorySteadily("Steadily",1));
+            PartyInfoResponse party = partyService.getParty(id);
+            model.addAttribute("beforeParty", party);
+
             partyService.validateHost(authentication.getName(),id);
         } catch (AppException e){
             printMessage(e.getMessage(),response);
@@ -195,7 +202,7 @@ public class PartyMvcController {
      * 파티 글 수정 메소드
      * */
     @PostMapping ("/update/{id}")
-    public String updateParty(Authentication authentication, @Validated @ModelAttribute PartyUpdateRequest partyUpdateRequest,
+    public String updateParty(Authentication authentication, @Validated @ModelAttribute PartyUpdateRequest partyUpdateRequest,  @RequestPart(value = "file") MultipartFile file,
                               @PathVariable Long id, @RequestParam String branch, @RequestParam String code, HttpServletResponse response) throws IOException {
         try {
             PartyUpdateRequest request = PartyUpdateRequest.of(partyUpdateRequest,branch,code.split(",")[0]);
@@ -203,7 +210,7 @@ public class PartyMvcController {
                 request = PartyUpdateRequest.of(partyUpdateRequest,branch,code.split(",")[1]);
             }
             System.out.println(request.getBranch());
-            partyService.updateParty(id,request,authentication.getName());
+            partyService.updateParty(id,request,authentication.getName(), file);
         } catch (AppException e){
             printMessage(e.getMessage(),response);
         }
