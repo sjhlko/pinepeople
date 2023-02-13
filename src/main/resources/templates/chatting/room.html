@@ -97,7 +97,8 @@
   }
 
   function goRoom(number, name){
-    location.href="/moveChating?roomName="+name+"&"+"roomNumber="+number;
+    window.open("/moveChating?roomName="+name+"&"+"roomNumber="+number, "chat", "width=500, height=800, top=200, left=200");
+    //location.href="/moveChating?roomName="+name+"&"+"roomNumber="+number;
   }
 
   function createChatingRoom(res){
@@ -115,6 +116,14 @@
       $("#roomList").empty().append(tag);
     }
   }
+  $(document).ready(function() {
+    $("#test").on('click', function (e) {
+      e.preventDefault();
+      window.open("/chat", "chat", "width=500, height=800, top=200, left=200");
+      // 경로, 파일, 너비, 높이, 위치 지정
+    })
+  })
+
 
   function commonAjax(url, parameter, type, calbak, contentType){
     $.ajax({
