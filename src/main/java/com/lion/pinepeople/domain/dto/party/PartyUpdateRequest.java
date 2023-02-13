@@ -22,8 +22,9 @@ public class PartyUpdateRequest {
     private String announcement;
     private String branch; // 카테고리 대분류
     private String code; // 카테고리 소분류
+    private String partyImg;
 
-    public Party toEntity(Party party, Category category){
+    public Party toEntity(Party party, Category category, String partyImg){
         return Party.builder()
                 .id(party.getId())
                 .partyContent(this.partyContent)
@@ -38,6 +39,7 @@ public class PartyUpdateRequest {
                 .category(category)
                 .partyStatus(party.getPartyStatus())
                 .user(party.getUser())
+                .partyImg(partyImg)
                 .build();
     }
 

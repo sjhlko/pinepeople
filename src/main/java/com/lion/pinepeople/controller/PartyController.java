@@ -69,13 +69,13 @@ public class PartyController {
      * @param authentication 로그인한 회원이면서 자신의 파티를 수정하는 경우만 가능
      * @return  수정 후 파티 상세정보
      */
-    @PatchMapping("/{id}")
-    @ApiOperation(value = "파티 수정")
-    public Response<PartyUpdateResponse> modifyParty(@PathVariable Long id, @RequestBody PartyUpdateRequest partyUpdateRequest, Authentication authentication){
-        PartyUpdateResponse partyUpdateResponse = partyService.updateParty(id, partyUpdateRequest, authentication.getName());
-        return Response.success(partyUpdateResponse);
-
-    }
+//    @PatchMapping("/{id}")
+//    @ApiOperation(value = "파티 수정")
+//    public Response<PartyUpdateResponse> modifyParty(@PathVariable Long id, @RequestBody PartyUpdateRequest partyUpdateRequest, Authentication authentication){
+//        PartyUpdateResponse partyUpdateResponse = partyService.updateParty(id, partyUpdateRequest, authentication.getName());
+//        return Response.success(partyUpdateResponse);
+//
+//    }
 
     /**
      * 파티 id를 통해 파티를 삭제한다.

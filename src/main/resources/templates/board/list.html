@@ -20,7 +20,8 @@
             align-items: center;
             justify-content: center;
         }
-        .list-layout{
+
+        .list-layout {
             width: 70%;
             display: flex;
             flex-direction: column;
@@ -36,22 +37,31 @@
             <thead>
             <tr>
                 <th scope="col">글번호</th>
-                <th scope="col">Title</th>
-                <th scope="col">Writer</th>
+                <th scope="col">조회수</th>
+                <th scope="col">제목</th>
+                <th scope="col">댓글수</th>
+                <th scope="col">추천수</th>
+                <th scope="col">작성자</th>
             </tr>
             </thead>
             <tbody>
             <th:block th:each="post:${posts}">
                 <tr>
                     <th scope="row" th:text="${post.id}">1</th>
+                    <td th:text="${post.hits}">0</td>
                     <td th:text="${post.title}" style="cursor:pointer;"
                         th:onclick="|location.href='/pinepeople/board/'+${post.id}|">Mark
                     </td>
+                    <td th:text="${post.commentsCount}">0</td>
+                    <td th:text="${post.recommendsCount}">0</td>
                     <td th:text="${post.userName}">Otto</td>
                 </tr>
             </th:block>
             </tbody>
         </table>
+        <div style="width: 100%">
+            <a th:href="@{/pinepeople/board/register}">글작성</a>
+        </div>
         <div>
             <th:block th:each="page:${#numbers.sequence(startPage,endPage)}">
                 <a class="page-item" th:if="${page != nowPage}" th:href="@{list(page=${page-1},title=${param.title})}"

@@ -73,8 +73,7 @@
                                 <span th:text="'금액 : ' + ${party.partyCost}"></span>
                                 <span th:text="'/ 인원 : ' + ${party.partySize}"></span>
                             </div>
-                            <a th:href="@{/pinepeople/party/detail/{id}(id=${party.partyId})}" class="btn btn-primary">Go
-                                somewhere</a>
+                            <a th:href="@{/pinepeople/party/detail/{id}(id=${party.partyId})}" class="btn btn-warning m-1">자세히</a>
                         </div>
                         <div class="card-footer text-muted"
                              th:text="'마감일 : ' +${party.endDate}">
