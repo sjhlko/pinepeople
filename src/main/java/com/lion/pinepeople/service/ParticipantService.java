@@ -190,7 +190,7 @@ public class ParticipantService {
         Party party = validateParty(partyId);
         Participant participant = validateParticipant(id);
         Timestamp createdAt = participant.getCreatedAt();
-        validateHost(party,user);
+        validateHost(participant.getParty(),user);
         Participant updatedParticipant = participantRepository.save(participantUpdateRequest.toEntity(participant));
 
         //파티 상태 변경(파티원 모집중인지, 마감되었는지)
@@ -224,7 +224,7 @@ public class ParticipantService {
      */
     public PartyStatus checkPartyStatus(Long partyId){
         Party party = validateParty(partyId);
-        Long count = participantRepository.countByApprovalStatus(ApprovalStatus.APPROVED,partyId);
+        Long count = participantRepository.countByApprovalStatus(ApprovalStatus.APPROVED.name(),partyId);
         if(count.intValue()<party.getPartySize()){
             return PartyStatus.RECRUITING;
         }
