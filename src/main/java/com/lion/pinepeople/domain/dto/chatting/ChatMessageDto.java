@@ -8,6 +8,7 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
+@ToString
 public class ChatMessageDto {
     private MessageType type;
     private String content;
