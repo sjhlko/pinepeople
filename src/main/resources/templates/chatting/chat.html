@@ -41,6 +41,16 @@
       border-radius: 10px;
       word-break:break-all;
     }
+
+    .meTime{
+      float: right;
+      clear: both;
+      width: auto;
+      padding:1px;
+      margin: 1px;
+      font-size: 5px;
+      color: gray;
+    }
     .others{
       float: left;
       clear: both;
@@ -51,6 +61,17 @@
       background-color: rgba(255, 192, 203, 0.5);
       border-radius: 10px;
     }
+
+    .othersTime{
+      float: left;
+      clear: both;
+      width: auto;
+      padding:1px;
+      margin: 1px;
+      font-size: 5px;
+      color: gray;
+    }
+
     input{
       width: 99.5%;
       height: 50px;
@@ -130,8 +151,11 @@
         }else if(d.type === "message"&& d.msg!==""){
           if(d.sessionId === $("#sessionId").val()){
             $("#chating").append("<div class='me' id='me'>" + d.msg + "</div>");
+            $("#chating").append("<div class='meTime' id='meTime'>" +getCurrentDate() + "</div>");
           }else{
             $("#chating").append("<div class='others' id='others'>" + d.msg + "</div>");
+            $("#chating").append("<div class='othersTime' id='othersTime'>" +getCurrentDate() + "</div>");
+
           }
 
         }else{
@@ -167,8 +191,10 @@
           console.log(datum);
           if(datum.userId === [[${user.id}]]){
             $("#chating").append("<div class='me' id='me'>" + datum.message + "</div>");
+            $("#chating").append("<div class='meTime' id='meTime'>" +datum.createdAt + "</div>");
           }else{
             $("#chating").append("<div class='others' id='others'>" + datum.message + "</div>");
+            $("#chating").append("<div class='othersTime' id='othersTime'>" +datum.createdAt + "</div>");
           }
         }
       },
@@ -216,6 +242,30 @@
     ws.send(JSON.stringify(option));
     console.log($("#chatting").val());
     $('#chatting').val("");
+  }
+
+
+  function getCurrentDate()
+  {
+    var date = new Date();
+    var year = date.getFullYear().toString();
+
+    var month = date.getMonth() + 1;
+    month = month < 10 ? '0' + month.toString() : month.toString();
+
+    var day = date.getDate();
+    day = day < 10 ? '0' + day.toString() : day.toString();
+
+    var hour = date.getHours();
+    hour = hour < 10 ? '0' + hour.toString() : hour.toString();
+
+    var minites = date.getMinutes();
+    minites = minites < 10 ? '0' + minites.toString() : minites.toString();
+
+    var seconds = date.getSeconds();
+    seconds = seconds < 10 ? '0' + seconds.toString() : seconds.toString();
+
+    return year + '-'+ month + '-'+ day+ ' ' + hour + ':' + minites + ':' + seconds;
   }
 </script>
 </html>

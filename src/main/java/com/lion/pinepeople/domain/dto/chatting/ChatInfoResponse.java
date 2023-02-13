@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 public class ChatInfoResponse {
     private Long userId;
     private String message;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd- hh:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private Timestamp createdAt;
 
     public static ChatInfoResponse of(Chat chat){
