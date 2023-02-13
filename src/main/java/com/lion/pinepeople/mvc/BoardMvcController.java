@@ -5,10 +5,14 @@ import com.lion.pinepeople.domain.dto.comment.CommentCreateRequest;
 import com.lion.pinepeople.domain.dto.comment.CommentReadResponse;
 import com.lion.pinepeople.domain.dto.comment.CommentUpdateRequest;
 import com.lion.pinepeople.domain.dto.post.*;
+import com.lion.pinepeople.domain.dto.postRecommend.PostRecommendRequest;
+import com.lion.pinepeople.domain.dto.postRecommend.PostRecommendResponse;
+import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.service.CommentService;
 import com.lion.pinepeople.service.PostRecommendService;
 import com.lion.pinepeople.service.PostService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -75,6 +79,9 @@ public class BoardMvcController {
     public String getPostDetail(@PageableDefault(sort = "createdAt", direction = Sort.Direction.ASC) @ApiIgnore Pageable pageable, @PathVariable Long postId, Model model, HttpServletRequest request, HttpServletResponse response) {
 
         PostReadResponse postReadResponse = postService.getPost(postId, request, response);
+
+        //postService.countHits(Long postId, HttpServletRequest request, HttpServletResponse response);
+
         Page<CommentReadResponse> commentReadResponses = commentService.readCommentPage(pageable, postId);
         model.addAttribute("postReadResponse", postReadResponse);
         model.addAttribute("commentCreateRequest", new CommentCreateRequest());
@@ -86,9 +93,9 @@ public class BoardMvcController {
 
 
     @GetMapping("/list")
-    public String getPostList(@PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
+    public String getPostList(@PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, Model model, @RequestParam(required = false) String keyword) {
         Page<PostReadResponse> posts = null;
-        posts = postService.getPostList(pageable);
+        posts = postService.getPostList(pageable, keyword);
         model.addAttribute("posts", posts);
         doPage(model, posts);
         return "board/list";
@@ -154,17 +161,17 @@ public class BoardMvcController {
         return "redirect:/pinepeople/board/list";
     }
 
-//
-//    @ApiOperation(value = "게시물 추천")
-//    @ResponseBody
-//    @PostMapping("/recommend")
-//    public Response<PostRecommendResponse> recommend(@RequestBody PostRecommendRequest postRecommendRequest) {
-//
-//        PostRecommendResponse postRecommendResponse = postRecommendService.recommend(postRecommendRequest.getId());
-//
-//        return Response.success(postRecommendResponse);
-//
-//    }
+
+    @ApiOperation(value = "게시물 추천")
+    @PostMapping("/recommend/{postId}")
+    @ResponseBody
+    public Response<PostRecommendResponse> addRecommend(@PathVariable Long postId, Authentication authentication, PostRecommendRequest postRecommendRequest) {
+
+        postRecommendService.addRecommend(postId, authentication.getName(), postRecommendRequest);
+
+        return Response.success(postRecommendService.addRecommend(postId, authentication.getName(), postRecommendRequest));
+
+    }
 
 
 }
