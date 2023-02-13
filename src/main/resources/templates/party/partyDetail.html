@@ -3,6 +3,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <div th:replace="base :: base-head"></div>
+    <meta charset="utf-8">
     <!-- Bootstrap icons-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <link   rel="stylesheet"  href="https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/css/css/styles.css"/>
@@ -55,7 +56,7 @@
     <div class="row h-100">
         <div class="col-2" th:each="participant:${approvedParticipant}">
             <div class="m-3">
-                <img class="rounded" th:src="${participant.userProfileImg}"/>
+                <a th:href="@{/pinepeople/profile/profilePage/{userId}(userId=${participant.userId})}"><img class="rounded" th:src="${participant.userProfileImg}"/></a>
             </div>
             <div class="text-center">
                 <div th:text="${participant.userName}"></div>
@@ -132,7 +133,7 @@
 <!-- Core theme JS-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </body>
-<script>
+<script charset="UTF-8">
     $('#waitingBtn').on("click", function(){
         var partyId = [[${party.partyId}]];
         let url = `/pinepeople/api/partys/`+partyId+`/participants/waits`
@@ -148,7 +149,7 @@
                 for(var i=0; i<data.result.content.length; i++){
                     body += '<div class="col-2">';
                     body += '<div class="m-3">';
-                    body +=  '<img class="rounded" src="'+data.result.content[i].userProfileImg+'"/>';
+                    body +=  '<a href="/pinepeople/profile/profilePage/'+ data.result.content[i].userId +'"><img class="rounded" src="'+data.result.content[i].userProfileImg+'"/></a>';
                     body += '</div>';
                     body += '<div class="text-center">';
                     body +=  '<div>'+ data.result.content[i].userName +'</div>';
@@ -158,9 +159,9 @@
                     body += '<button class="btn btn-warning" id="reject" value="'+data.result.content[i].userId+'">거절</button>';
                     body += '</div>';
                     body += '</div>';
-                    body += '</div>';
-                    $('#waiting-body').append(body)
                 }
+                body += '</div>';
+                $('#waiting-body').append(body)
 
             }
         })
@@ -187,7 +188,7 @@
         var partyId = [[${party.partyId}]];
         let url = `/pinepeople/api/partys/`+partyId+`/participants/`+this.value
         let sendData = JSON.stringify({
-            approvalStatus: "REJECTED"
+            "approvalStatus": "REJECTED"
         })
 
         $.ajax({
@@ -211,7 +212,7 @@
         var partyId = [[${party.partyId}]];
         let url = `/pinepeople/api/partys/`+partyId+`/participants/`+this.value
         let sendData = JSON.stringify({
-            approvalStatus: "APPROVED"
+            "approvalStatus": "APPROVED"
         })
         $.ajax({
             url: url,
