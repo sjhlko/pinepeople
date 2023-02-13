@@ -3,7 +3,9 @@
 <head>
     <div th:replace="base.html :: base-head"></div>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/css/css/orderDetailStyles.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/css/css/orderDetailStyles.css"/>
+<!--    <link rel="stylesheet" th:href="@{/assets/css/orderDetailStyles.css}"/>-->
 </head>
 <body>
 <!-- jQuery -->
@@ -17,8 +19,8 @@
 <order>
     <main>
         <div class="container" role="main">
-            <div class="detailOrder">주문 상세</div>
-            <div class="container2">
+            <div class="order_detail" style="text-align: center">ORDER DETAIL</div>
+            <div class="orderInfo">
                 <div class="orderDate">주문 시간 <span id="formatDate"
                                                    th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span>
                 </div>
@@ -31,34 +33,33 @@
                 </table>
                 <br>
                 <div>
-                    <div class="paymentInfoTitle">결제 정보</div>
+                    <div class="paymentInfoTitle" style="font-size: 19px">🧾&nbsp;결제 정보</div>
                     <table class="paymentInfo">
-                        <br>
                         <tr>
-                            <th>ㆍ 상품 금액</th>
+                            <th> 상품 금액</th>
                             <td><span id="cost" class="cost" th:text="${order.cost}"></span>원</td>
                         </tr>
                         <tr>
-                            <th>ㆍ 수수료(10%)</th>
+                            <th> 수수료(10%)</th>
                             <td><span id="commission" class="commission"
                                       th:text="${#numbers.formatInteger(order.cost * 0.1,1,'COMMA')}"></span>원
                             </td>
                         </tr>
                         <tr>
-                            <th>ㆍ 사용 포인트</th>
-                            <td><span id="usePoint" th:text="${order.discountPoint}"></span>원</td>
+                            <th> 사용 포인트</th>
+                            <td><span id="usePoint" th:text="${order.discountPoint}"></span>p</td>
                         </tr>
                         <tr>
-                            <th>ㆍ 결제 수단</th>
+                            <th> 결제 수단</th>
                             <td>
-                                <div th:switch="${#strings.toString(order.paymentType)}">
+                                <div class="orderType" th:switch="${#strings.toString(order.paymentType)}">
                                     <span th:case="CONTACT_PAYMENT" th:text="'만나서 결제'"></span>
                                     <span th:case="CREDIT_CARD" th:text='카드'></span>
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <th>ㆍ 총 결제 금액</th>
+                            <th> 총 결제 금액</th>
                             <td><span id="sum" th:text="${order.totalCost}"></span>원</td>
                         </tr>
 
@@ -68,27 +69,31 @@
                 <br>
                 <div>
                     <table class="accumulatePoint">
-                        <tr>
-                            <th class="plusPoint">ㆍ 적립 포인트(5%)</th>
-                            <td class="plusPointChild"><span id="total" th:text="${order.accumulatePoint}"></span>p
-                            </td>
-                        </tr>
+                        <div>
+                            <tr class="accumulatePoint2">
+                                <th class="plusPoint"> 적립 포인트(5%)</th>
+                                <td class="plusPointChild"><span id="total" th:text="${order.accumulatePoint}"></span>p
+                                </td>
+                            </tr>
+                        </div>
                     </table>
                 </div>
-                <div class="frame">
-                    <button class="button_2" onclick="cancel()">주문 취소하기</button>
+                <div class="button-container d-flex">
+                    <div class="GetOrderList">
+                        <button class="btn btn-primary" type="button" th:onclick="|location.href= '@{/pinepeople/party/order-list}'|"> < 주문 목록으로 가기</button>
+                    </div>
+                    <div class="cancelButton">
+                        <button class="button_2" onclick="cancel()">주문 취소하기</button>
+                    </div>
                 </div>
             </div>
-            <br>
-            <button class="orderListBtn" type="button"
-                    th:onclick="|location.href= '@{/pinepeople/party/order-list}'|"> < 주문 목록으로 가기
-            </button>
         </div>
     </main>
 </order>
+
 <!--footer-->
 <div th:insert="~{base :: pinepeople-footer}"></div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 </html>
 
