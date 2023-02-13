@@ -6,9 +6,6 @@ import com.lion.pinepeople.domain.entity.PostRecommend;
 import com.lion.pinepeople.domain.entity.User;
 import lombok.*;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 @Builder
 @Setter
 @Getter
@@ -19,22 +16,21 @@ public class PostRecommendRequest {
 
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
-
-
-
-    public PostRecommend of (Post post, User user) {
+     public PostRecommend of (User user, Post post) {
         return PostRecommend.builder()
                 .id(this.id)
                 .user(user)
                 .post(post)
                 .build();
     }
+
+//    public PostRecommend of (PostRecommend postRecommend) {
+//                return PostRecommend.builder()
+//                .id(postRecommend.getId())
+//                .user(postRecommend.getUser())
+//                .post(postRecommend.getPost())
+//                .build();
+//    }
 
 }
