@@ -97,10 +97,11 @@ public class ChattingMainController {
     public ModelAndView moveChating(@RequestParam Long roomNumber, Authentication authentication) {
         ModelAndView mv = new ModelAndView();
         User user = chattingRoomService.getChattingUser(roomNumber,authentication.getName());
+        ChattingRoom chattingRoom = chattingRoomService.getChattingRoomById(roomNumber);
+        mv.addObject("chattingRoom", chattingRoom);
         mv.addObject("roomName", user.getName());
         mv.addObject("roomNumber", roomNumber);
         mv.addObject("user",getUser(authentication));
-        System.out.println(getUser(authentication).getName());
         mv.setViewName("chatting/chat");
         return mv;
     }

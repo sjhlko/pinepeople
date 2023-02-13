@@ -166,8 +166,31 @@
       userName : $("#userName").val(),
       msg : $("#chatting").val()
     }
-    console.log(option)
-    ws.send(JSON.stringify(option))
+    console.log(option);
+
+    let url = `/pinepeople/chat-save/`+ [[${chattingRoom.id}]];
+    let sendData = JSON.stringify({
+      message: $("#chatting").val(),
+      user: [[${user}]],
+      chattingRoom : [[${chattingRoom}]]
+    })
+    console.log(url);
+    console.log(sendData);
+    $.ajax({
+      url: url,
+      data: sendData ,
+      contentType: 'application/json',
+      type:'POST',
+      success:function(data){
+        console.log(data);
+      },
+      error:function (data){
+        console.log("error")
+      }
+    })
+
+    ws.send(JSON.stringify(option));
+    console.log($("#chatting").val());
     $('#chatting').val("");
   }
 </script>

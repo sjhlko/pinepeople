@@ -1,5 +1,7 @@
 package com.lion.pinepeople.service;
 
+import com.lion.pinepeople.domain.dto.chatting.ChatMessageDto;
+import com.lion.pinepeople.domain.dto.participant.ParticipantInfoResponse;
 import com.lion.pinepeople.domain.entity.Chat;
 import com.lion.pinepeople.domain.entity.ChattingRoom;
 import com.lion.pinepeople.domain.entity.User;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,13 +36,14 @@ public class ChatService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
     }
 
-    List<Chat> getChat(Long chattingRoomId){
+    public List<ChatMessageDto> getChat(Long chattingRoomId){
         ChattingRoom chattingRoom = chattingRoomRepository.findById(chattingRoomId)
                 .orElseThrow(() -> new AppException(ErrorCode.CHATTING_ROOM_NOT_FOUND, ErrorCode.CHATTING_ROOM_NOT_FOUND.getMessage()));
-        return chatRepository.findAllByChattingRoom(chattingRoom);
+        List<Chat> chats = chatRepository.findAllByChattingRoom(chattingRoom);
+        return chats.stream().map(ChatMessageDto::of).collect(Collectors.toList());
     }
 
-//    Chat saveChat(){
-//
-//    }
+    public Chat saveChat(ChatMessageDto chatMessageDto){
+        return chatRepository.save(chatMessageDto.toEntity());
+    }
 }

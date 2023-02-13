@@ -52,4 +52,9 @@ public class ChattingRoomService {
         }
         return chattingRoom.getReceiver();
     }
+
+    public ChattingRoom getChattingRoomById(Long chattingRoomId){
+        return chattingRoomRepository.findById(chattingRoomId)
+                .orElseThrow(()->new AppException(ErrorCode.CHATTING_ROOM_NOT_FOUND,ErrorCode.CHATTING_ROOM_NOT_FOUND.getMessage()));
+    }
 }
