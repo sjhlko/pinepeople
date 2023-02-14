@@ -25,6 +25,9 @@ public class NotificationMvcController {
 
     @GetMapping("/notification/my")
     public String alarmList(@PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, Model model, Authentication authentication) {
+        if (authentication == null) {
+            return "redirect:/pinepeople";
+        }
         MyInfoResponse userInfo = userService.getMyInfo(authentication.getName());
         Page<NotificationDto> notifications = notificationService.findAllNotifications(userInfo.getUserId(), pageable);
         /**페이징 처리**/
