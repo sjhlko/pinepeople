@@ -1,14 +1,8 @@
-/*body {*/
-/*    margin: 0;*/
-/*}*/
-
+.order{
+    color: #0b0b0b;
+}
 * {
     box-sizing: border-box;
-}
-
-p,
-span {
-    margin: 0;
 }
 
 a {
@@ -16,7 +10,9 @@ a {
 }
 
 .orderTable {
-    background-color: #c1e2b3;
+    background-color: #cbccce;
+    border-bottom: 1px solid #444444;
+    border-width: 0;
 }
 .form-group mb2{
     text-align: center;
@@ -26,17 +22,13 @@ a {
 .form-control {
     text-align: center;
 }
+.order__list{
+    text-align: center;
+}
 
 
 .btn-btn-primary {
 }
-
-/*img {*/
-/*    display: block;*/
-/*    width: 80%;*/
-/*    height: 80px;*/
-/*    margin: auto;*/
-/*}*/
 
 .order {
     width: 90%;
@@ -53,10 +45,13 @@ a {
     font-size: 13px;
     font-weight: 300;
 }
-
-.order ul :first-child {
-    /*color: limegreen;*/
+.order__list__detail2 {
+    border-bottom: whitesmoke solid 1px;
 }
+.tbody tr{
+    border-bottom: 1px solid #444444;
+}
+
 
 table {
     border-top: solid 1.5px black;
@@ -69,19 +64,16 @@ thead {
     text-align: center;
     font-weight: bold;
 }
-
-tbody {
-    font-size: 12px;
+.partyLink{
+    text-decoration-line: none;
 }
+
 
 td {
-    padding: 15px 10px 0px;
-    border-bottom: 1px solid lightgrey;
+    height: 40px;
 }
 
-.order__list__detail :nth-child(3) {
-    vertical-align: top;
-}
+
 
 .order__list__detail :nth-child(3) a {
     font-size: 20px;
@@ -93,44 +85,36 @@ td {
 }
 
 .order__list__title {
-    font-size: 20px;
+    font-size: 18.5px;
     color: gray;
+}
+td{
+    border: black solid 1px;
+}
+tr{
+    border-bottom: black solid 1px;
 }
 
 .order__list__option {
-    vertical-align: top;
+    vertical-align: middle;
     font-size: 15px;
-    padding: 20px;
 }
 
 .order__list__option p::after {
     content: "";
     width: 90%;
     height: 1px;
-    background-color: lightgrey;
     left: 0px;
     top: 25px;
     position: absolute;
 }
-
-.order__list__optionBtn {
-    background-color: #ffecb5;
-    font-size: 11px;
-    border: lightgrey solid 1px;
-    padding: 6px;
-}
-
-.order__list__optionBtn2 {
-    background-color: #909090;
-    font-size: 7px;
-    border: lightgrey solid 1px;
-    padding: 5px;
+.order__list__detail{
+    border-bottom: #adadad solid 1px;
 }
 
 .order__list__detail :nth-child(4),
 .order__list__detail :nth-child(5),
 .order__list__detail :nth-child(6) {
-    border-left: 2px solid whitesmoke;
 }
 
 .order__list__detail :nth-child(5),
@@ -141,7 +125,6 @@ td {
 .order__list__detail :nth-child(5) button {
     background-color: limegreen;
     color: white;
-    border: none;
     border-radius: 5px;
     padding: 4px 8px;
     font-size: 12px;
@@ -149,8 +132,7 @@ td {
 }
 
 .price {
-    font-weight: bold;
-    font-size: 18px;
+    font-size: 15px;
     padding: 0 0px 0 0px;
 }
 
