@@ -151,15 +151,15 @@
 <nav th:fragment="pinepeople-nav" class="navbar navbar-expand-lg navbar-light bg-white" style="margin-bottom: 0px;">
     <div class="container-fluid">
         <img src="https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/static/logo.png" alt="" width="50" height="60" class="d-inline-block align-text-center">
-        <a class="navbar-brand bold mt-3 pt-3" th:href="@{/pinepeople}">Pine People</a>
+        <a class="navbar-brand bold" th:href="@{/pinepeople}">Pine People</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse mt-3" id="navbarNavDropdown">
-            <ul class="navbar-nav text-center">
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNavDropdown">
+            <ul class="navbar-nav">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false">
@@ -176,6 +176,8 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/pinepeople/board/list}">커뮤니티</a>
                 </li>
+            </ul>
+            <ul class="navbar-nav navbar-right mr-auto">
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
 
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
@@ -202,7 +204,7 @@
                     <a class="nav-link" th:href="@{/pinepeople/login}">로그인</a>
                 </li>
                 <div class="alarmIcon">
-                <li class="nav-item">
+                <li class="nav-item" sec:authorize="isAuthenticated()">
                     <button type="button" class="icon-button" onclick="location.href='/pinepeople/notification/my'">
                         <span class="material-symbols-outlined">notifications</span>
                         <span class="icon-button__badge" id="totalCount"> </span>
