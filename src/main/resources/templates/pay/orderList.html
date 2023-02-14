@@ -49,15 +49,12 @@
                 <tbody class="order__list__detail2">
                 <tr class="order__list__detail" th:each="orderLists : ${orderList}">
                     <td>
-                        <img class="border p-1 rounded h-100 w-100" th:icon="${orderLists.partyImg}" alt="partyImg">
+                        <img class="border p-1 rounded h-100 w-100" th:src="${orderLists.partyImg}" alt="partyImg">
                     </td>
                     <td>
                         <a class="partyLink" th:href="@{/pinepeople/party/detail/{id}(id=${orderLists.getPartyId()})}">
-                        [<span style="color: black" class="order__list__title" th:text="${orderLists.partyTitle}"></span>]</a>
-<!--                        <div><sapn class="price" th:text="${orderLists}"></sapn>원</div>-->
-<!--                        <span id="totalCost22" style=" color: #6c757d;" th:text="${orderLists.cost} + ${#numbers.formatInteger(orderLists.cost * 0.1 ,1,0)}"></span>(수수료 포함 금액)-->
-<!--                        <span style=" color: #6c757d;" th:text="${#numbers.formatInteger(orderLists.cost * 0.1 ,1)}"></span>(수수료 포함 금액)-->
-                        <span id="totalCost22" th:text="${orderLists.cost} + ${#numbers.formatInteger(orderLists.cost * 0.1,1,'COMMA')}"></span>원
+                        <span style="color: black" class="order__list__title" th:text="'['+${orderLists.partyTitle} + ']'"></span></a>
+                        <span style="font-size: 15px" th:text="${orderLists.cost} + ${#numbers.formatInteger((orderLists.cost * 0.1),1)}"></span>원
                     </td>
                     <td class="order__list__option">
                         <div th:switch="${#strings.toString(orderLists.paymentType)}">
@@ -90,6 +87,7 @@
                 </tbody>
             </form>
         </table>
+        <div style="font-size: 12px">* 수수료 10%가 포함된 금액입니다.</div>
         <div class="pagingNum" >
             <th:block th:each="page:${#numbers.sequence(startPage,endPage)}">
                 <a lass="page-item" th:if="${page != nowPage}" th:href="@{/pinepeople/party/order-list(page=${page-1})}" th:text="${page}"></a>
@@ -102,13 +100,3 @@
 <div th:insert="~{base :: pinepeople-footer}"></div>
 </body>
 </html>
-
-<script th:inline="javascript">
-    // let elementsByClassName = document.getElementsByClassName('order__list');
-    //
-    //
-    // let innerText = document.getElementById('totalCost22').innerText;
-    // console.log(innerText);
-    // let string = innerText.split('\.')[0];
-    // $('#totalCost22').text(string);
-</script>
