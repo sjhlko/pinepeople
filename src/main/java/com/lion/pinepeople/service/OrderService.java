@@ -5,6 +5,7 @@ import com.lion.pinepeople.domain.dto.order.*;
 import com.lion.pinepeople.domain.entity.Order;
 import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.enums.OrderStatus;
 import com.lion.pinepeople.enums.PaymentType;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
@@ -44,6 +45,7 @@ public class OrderService {
         Party findParty = getParty(partyId);
 
         Integer userOneCost = userOneCost(findParty);
+        checkOrderExist(findUser.getId(), findParty.getId());
 
         // 총 결제 금액
         Integer totalCost = 0;
@@ -151,6 +153,17 @@ public class OrderService {
     }
 
     /**
+     * 결제 완료한 파티인지 확인 -> 결제 완료 상태에서 재결제 시 에러
+     * @param userId 주문한 회원
+     * @param partyId 주문한 파티
+     */
+    public void checkOrderExist(Long userId, Long partyId){
+        if(orderRepository.findOrderByUserIdAndPartyIdAndOrderStatus(userId,partyId,OrderStatus.ORDER_COMPLETE).isPresent()){
+            throw new AppException(ErrorCode.DUPLICATED_ORDER,ErrorCode.DUPLICATED_ORDER.getMessage());
+        }
+    }
+
+    /**
      * 주문자와 로그인한 회원이 일치하는지 체크
      **/
     public static void validateUser(User findUser, Order order) {
@@ -222,6 +235,7 @@ public class OrderService {
         log.info("findUser={}", findUser);
         Party findParty = getParty(partyId);
         log.info("findParty={}", findParty);
+        checkOrderExist(findUser.getId(),findParty.getId());
 
         // 한명의 파티 참가 비용
         Integer userOneCost = userOneCost(findParty);
