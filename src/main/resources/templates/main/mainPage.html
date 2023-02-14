@@ -1,14 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
-<!--    <meta charset="utf-8">-->
-<!--    <title>Made Three</title>-->
-<!--    <meta name="description" content="">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <div th:replace="base :: base-head"></div>
     <link rel="icon" type="img/logo" href="https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/static/logo.png">
-
-
-
 <!--    <link rel="stylesheet" th:href="@{/static/assets/css/main/slick.css}">-->
 <!--    <link rel="stylesheet" th:href="@{/static/assets/css/main/slick-theme.css}">-->
 <!--    <link rel="stylesheet" th:href="@{/static/assets/css/main/animate.css}">-->
@@ -51,8 +45,6 @@
 
     <script href="https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/css/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
 
-
-    <div th:replace="base.html :: base-head"></div>
     <style>
         h1, h2, h3, h4, h5, h6, p {
             font-family: 'Noto Sans KR', sans-serif;

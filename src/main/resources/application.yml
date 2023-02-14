@@ -3,6 +3,11 @@ server:
   servlet:
     encoding:
       force-response: true
+      #JSP to Modify Not Restart Server
+    jsp:
+      init-parameters:
+        development: true
+
 spring:
   mvc:
     pathmatch:
@@ -46,8 +51,9 @@ spring:
   redis:
     host: ${REDIS_HOST}
     port: 6379
+    password: ${REDIS_PASSWORD}
 
-#multipart 설정
+  #multipart 설정
   servlet:
     multipart:
       max-request-size: 100MB

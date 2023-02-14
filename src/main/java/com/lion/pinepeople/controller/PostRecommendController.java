@@ -18,7 +18,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @Transactional
 @RestController
-@RequestMapping("/pinepeople/api/posts/{postId}/recommends")
+@RequestMapping("/pinepeople/api/posts")
 @RequiredArgsConstructor
 @Api(tags = "Recommend API")
 public class PostRecommendController {
@@ -26,12 +26,14 @@ public class PostRecommendController {
 
     private final PostRecommendService postRecommendService;
 
-    @PostMapping
+    @PostMapping("/{postId}/recommend")
     @ApiOperation(value = "게시물 추천 추가")
     public Response<PostRecommendResponse> recommend(@PathVariable Long postId, @ApiIgnore Authentication authentication, PostRecommendRequest postRecommendRequest){
 
-        return Response.success(postRecommendService.recommend(postId, authentication.getName(), postRecommendRequest));
+        return Response.success(postRecommendService.addRecommend(postId, authentication.getName(), postRecommendRequest));
     }
+
+
 
 
 //    @PostMapping
@@ -44,12 +46,13 @@ public class PostRecommendController {
 //    }
 //
 //
-//    @GetMapping("/{postId}")
-//    @ApiOperation(value = "북마크 개수 조회")
-//    public Response<Long> recommendCount(@PathVariable Long postId) {
-//
-//        return Response.success(postRecommendService.countRecommend(postId));
-//    }
+    @GetMapping("/{postId}/recommends")
+    @ApiOperation(value = "해당 게시물의 추천수 조회")
+    public Response<Integer> getRecommendsCount(@PathVariable Long postId) {
+
+        return Response.success(postRecommendService.getRecommendsCount(postId));
+    }
+
 //
 //
 //    @GetMapping("/my")

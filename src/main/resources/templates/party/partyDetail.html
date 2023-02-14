@@ -42,6 +42,14 @@
                             파티 참여하기
                         </button>
                     </form>
+                    <div th:each="participant:${approvedParticipant}">
+                        <th:block th:if="${#strings.toString(participant.approvalStatus)} == 'APPROVED' and ${participant.userName == user.name} and ${#strings.toString(participant.getParticipantRole())}=='GUEST'">
+                            <button class="btn btn-outline-dark flex-shrink-0"  type="button" th:onclick="|location.href='@{/pinepeople/party/{partyId}/order(partyId=${party.partyId})}'|">
+                                <i class="bi bi-wallet-fill"></i>
+                                결제하기
+                            </button>
+                        </th:block>
+                    </div>
                     <!--                            <form style="display: inline;">-->
                     <!--                                <a href="#" style="margin-left: 15px" class="btn btn-primary" th:href="@{/pinepeople/party/update/{id}(id=${party.partyId})}" >파티 수정하기</a>-->
                     <!--                            </form>-->
@@ -155,8 +163,8 @@
                     body +=  '<div>'+ data.result.content[i].userName +'</div>';
                     body += '</div>';
                     body += '<div class="text-center">';
-                    body += '<button class="btn btn-secondary" id="okay" value="'+data.result.content[i].userId+'">승인</button>';
-                    body += '<button class="btn btn-warning" id="reject" value="'+data.result.content[i].userId+'">거절</button>';
+                    body += '<button class="btn btn-secondary" id="okay" value="'+data.result.content[i].id+'">승인</button>';
+                    body += '<button class="btn btn-warning" id="reject" value="'+data.result.content[i].id+'">거절</button>';
                     body += '</div>';
                     body += '</div>';
                 }
@@ -221,7 +229,6 @@
             type:'PATCH',
             success:function(data){
                 console.log(data)
-
             },
             error: function(data){
                 console.log(data)

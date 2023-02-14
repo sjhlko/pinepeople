@@ -5,12 +5,14 @@ import com.lion.pinepeople.domain.response.Response;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.ErrorResponse;
 import com.lion.pinepeople.service.UserService;
+import com.lion.pinepeople.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,15 +35,13 @@ public class AuthenticationManager implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         String exception = String.valueOf(request.getAttribute("exception"));
+        CookieUtil.initCookie(response,"token");
+        //log.info("exception : {}", exception);
         if (exception.equals(ErrorCode.EXPIRE_TOKEN.name())) {
-            if (userService.isReissueable(request, response)) {
-                response.sendRedirect(request.getRequestURL().toString());
-            } else {
-                if (request.getRequestURL().toString().contains("api")) {
-                    log.error(ErrorCode.EXPIRE_TOKEN.getMessage());
-                    setResponse(ErrorCode.EXPIRE_TOKEN, response);
-                } else response.sendRedirect("/pinepeople/login");
-            }
+            if (request.getRequestURL().toString().contains("api")) {
+                log.error(ErrorCode.EXPIRE_TOKEN.getMessage());
+                setResponse(ErrorCode.EXPIRE_TOKEN, response);
+            } else response.sendRedirect("/pinepeople/login");
         } else {
             if (request.getRequestURL().toString().contains("api")) {
                 log.error(ErrorCode.INVALID_TOKEN.getMessage());

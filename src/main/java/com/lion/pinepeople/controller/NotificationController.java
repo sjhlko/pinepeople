@@ -40,13 +40,17 @@ public class NotificationController {
     public SseEmitter subscribe( Authentication authentication,
                                 @RequestHeader(value= "Last-Event-ID", required = false, defaultValue = "") String lastEventId) throws IOException {
         log.info("구독 요청 들어옴");
-        return notificationService.subscribe(Long.parseLong(authentication.getName()), lastEventId);
+        if (authentication == null) {
+            return null;
+        }else {
+            return notificationService.subscribe(Long.parseLong(authentication.getName()), lastEventId);
+        }
     }
 
     /**
-     *
-     * @param pageable
-     * @param authentication
+     * 알림 전체 조회
+     * @param pageable 페이징 처리
+     * @param authentication 로그인한 본인의 알람만 조회가능
      * @return
      */
     @GetMapping("/notifications")
@@ -57,7 +61,13 @@ public class NotificationController {
         return Response.success(findAll);
     }
 
-    // 알람 단건조회(읽음 처리)
+
+    /**
+     * 알람 단건 조회(읽음 처리)
+     * @param notificationId 알림 아이디
+     * @param authentication 로그인한 본인의 알람만 조회가능
+     * @return
+     */
     @GetMapping("/notifications/{notificationId}")
     public Response<NotificationReadResponse> findOne(@PathVariable Long notificationId,Authentication authentication) {
         String name = authentication.getName();
@@ -66,11 +76,20 @@ public class NotificationController {
         return Response.success(notification);
     }
 
-    //알림 조회 - 현재 읽지않은 알림 갯수
+
+    /**
+     * 읽지 않은 알람의 개수 조회
+     * @param authentication 로그인한 본인의 알람만 조회가능
+     * @return 읽지 않은 알람 개수 반환
+     */
     @GetMapping(value = "/notifications/count")
     public Response countUnReadNotifications(Authentication authentication) {
-        Integer integer = notificationService.countUnReadNotifications(Long.parseLong(authentication.getName()));
-        return Response.success(integer);
+        if (authentication == null) {
+            return null;
+        }else {
+            Integer integer = notificationService.countUnReadNotifications(Long.parseLong(authentication.getName()));
+            return Response.success(integer);
+        }
     }
 
 }

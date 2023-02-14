@@ -34,7 +34,8 @@ public class SecurityConfig {
             "/pinepeople/logout",
             "/pinepeople/join",
             "/pinepeople/change-password",
-            "/pinepeople/upload"
+            "/pinepeople/upload",
+
     };
 
     private final String[] GET_AUTHENTICATED = {
@@ -71,7 +72,9 @@ public class SecurityConfig {
             "/pinepeople/profile/profilePage/*",
             /* UserMvcContorller */
             "/pinepeople/profile/myPage/update",
-            "/pinepeople/myInfo"
+            "/pinepeople/myInfo",
+            "/pinepeople/room"
+
     };
 
     @Bean
