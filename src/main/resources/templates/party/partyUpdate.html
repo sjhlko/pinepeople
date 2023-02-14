@@ -12,10 +12,10 @@
 <div th:insert="~{base :: pinepeople-nav}"></div>
 <article>
 <!--  <form th:action="@{/pinepeople/party/update/${partyId}}" th:object="${partyUpdateRequest}" method="post">-->
-  <form th:action th:object="${partyUpdateRequest}" method="post">
+  <form th:action="@{/pinepeople/party/update/{partyId}(partyId=${partyId})}" th:object="${partyUpdateRequest}" method="post" enctype="multipart/form-data">
   <div class="container" role="main">
     <h2>파티 수정하기✒</h2>
-    <form name="form" id="form" role="form" method="post" action="${pageContext.request.contextPath}/board/saveBoard">
+<!--    <form name="form" id="form" role="form" method="post" action="${pageContext.request.contextPath}/board/saveBoard">-->
       <div class="mb-3">
         <label for="title">카테고리</label>
         <select class="form-select" aria-label="Default select example" id="branch" th:name="branch" required="required"
@@ -85,11 +85,17 @@
                   th:field="*{partyContent}" th:errorclass="field-error" ></textarea>
         <div class="field-error" th:errors="*{partyContent}">내용 오류</div>
       </div>
+      <div class="mb-3">
+        <label for="partyImg">파티이미지</label><br>
+        <img  class="border rounded h-50 w-50" id="party-img" src="#"  alt="partyImg"/>
+        <input type="file" name="file" id="partyImg" />
+        <div class="field-error" th:errors="*{partyContent}">이미지 오류</div>
+      </div>
     <div >
       <button type="submit" class="btn btn-sm btn-primary" id="btnSave">파티 수정하기✒</button>
       <button type="button" class="btn btn-sm btn-primary" id="btnList" onclick="location.href='/pinepeople/party/list'"> 파티 목록으로 가기📜 </button>
     </div>
-    </form>
+<!--    </form>-->
   </div>
   </form>
   <!-- Footer-->
@@ -117,7 +123,6 @@
   (function() {
     const selectedBranch = [[${beforeParty.branch}]];
     const selectedCode = [[${beforeParty.code}]];
-    console.log(beforeParty)
     for (const branch of document.getElementById("branch").options) {
       if(branch.value===selectedBranch)
         $("#branch").val(selectedBranch);
@@ -128,7 +133,6 @@
     else {
       $("#category2").val(selectedCode);
     }
-    changeCategoryByBranch();
     $("#address").val([[${beforeParty.address}]]);
     $("#cost").val([[${beforeParty.partyCost}]]);
     $("#startDate").val([[${beforeParty.startDate}]]);
@@ -136,6 +140,8 @@
     $("#size").val([[${beforeParty.partySize}]]);
     $("#title").val([[${beforeParty.partyTitle}]]);
     $("#content").val([[${beforeParty.partyContent}]]);
+    $("#party-img").attr("src",[[${beforeParty.partyImg}]]);
+    changeCategoryByBranch();
   })();
 
 

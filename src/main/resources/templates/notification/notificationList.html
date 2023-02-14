@@ -57,7 +57,7 @@
                             <td>
                                 <a class="clickColor" th:onclick="'javascript:isRead(' + ${notification.id} +')'"
                                    th:href="${notification.url}" >
-                                    <span th:text="${userInfo.userName} + '님이 ' + ${notification.notificationType}"></span>
+                                    <span th:text="${notification.content}"></span>
                                 </a>
                             </td>
                             <td id="alarmRead" style="font-size: 20px">

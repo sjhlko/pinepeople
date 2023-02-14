@@ -37,7 +37,7 @@ public class Party extends BaseEntity{
     private String announcement;
     private String partyImg;
 
-    @Enumerated(STRING)
+    @Enumerated(EnumType.STRING)
     private PartyStatus partyStatus;
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn (name ="user_id")

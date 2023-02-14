@@ -63,6 +63,16 @@ public class ParticipantService {
     }
 
     /**
+     * 특정 파티원이 특정 파티에 존재하는지 확인함
+     * @param participant 존재하는 파티원인지 확인하고픈 파티원
+     * @param party 존재하는지 확인하고픈 파티
+     */
+    public void checkParticipantAndParty(User participant, Party party){
+        participantRepository.findParticipantByUserAndParty(participant, party)
+                .orElseThrow(() -> new AppException(ErrorCode.PARTICIPANT_NOT_FOUND, ErrorCode.PARTICIPANT_NOT_FOUND.getMessage()));
+    }
+
+    /**
      * 특정 유저가 특정 파티의 host인지 확인
      * @param currentUser 현재 로그인된 회원
      * @param party 현재 로그인된 회원이 host 인지 확인할 파티
@@ -127,6 +137,9 @@ public class ParticipantService {
         User user = validateUser(userId);
         Party party = validateParty(partyId);
         checkParticipantExist(party,user);
+        if(party.getPartyStatus().toString().equals("CLOSED")){
+            throw new AppException(ErrorCode.PARTY_CLOSED,ErrorCode.PARTY_CLOSED.getMessage());
+        }
         Participant participant = participantRepository.save(Participant.of(user,party, ParticipantRole.GUEST));
         return ParticipantCreateResponse.of(participant);
     }
@@ -189,8 +202,12 @@ public class ParticipantService {
         User user = validateUser(userId);
         Party party = validateParty(partyId);
         Participant participant = validateParticipant(id);
+        checkParticipantAndParty(participant.getUser(),party);
         Timestamp createdAt = participant.getCreatedAt();
         validateHost(party,user);
+        if(party.getPartyStatus().toString().equals("CLOSED")&& participantUpdateRequest.getApprovalStatus().equals("APPROVED")){
+            throw new AppException(ErrorCode.PARTY_CLOSED,ErrorCode.PARTY_CLOSED.getMessage());
+        }
         Participant updatedParticipant = participantRepository.save(participantUpdateRequest.toEntity(participant));
 
         //파티 상태 변경(파티원 모집중인지, 마감되었는지)
@@ -224,7 +241,7 @@ public class ParticipantService {
      */
     public PartyStatus checkPartyStatus(Long partyId){
         Party party = validateParty(partyId);
-        Long count = participantRepository.countByApprovalStatus(ApprovalStatus.APPROVED,partyId);
+        Long count = participantRepository.countByApprovalStatus(ApprovalStatus.APPROVED.toString(),partyId);
         if(count.intValue()<party.getPartySize()){
             return PartyStatus.RECRUITING;
         }
