@@ -17,20 +17,19 @@ public class PostRecommendResponse {
 
 
     private Long postRecommendId;
-    private Long postId;
+    private Integer recommendsCount;
     private String userName;
-    private int recommendsCount;
+
 
     public static PostRecommendResponse of(PostRecommend savedRecommend, Integer recommendsCount) {
         return PostRecommendResponse.builder()
                 .postRecommendId(savedRecommend.getId())
-                .postId(savedRecommend.getId())
+                .userName(savedRecommend.getUserName())
                 .recommendsCount(recommendsCount)
-                .build();
+                  .build();
     }
 
-//
-//
+
 //    public static Page<PostRecommendResponse> of(Page<PostRecommend> postRecommends) {
 //
 //        return postRecommends.map(map -> PostRecommendResponse.builder()
@@ -38,4 +37,6 @@ public class PostRecommendResponse {
 //                .build()
 //        );
 //    }
+
+
 }

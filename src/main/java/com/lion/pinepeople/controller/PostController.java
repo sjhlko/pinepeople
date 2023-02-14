@@ -52,19 +52,19 @@ public class PostController {
 
     @ApiOperation(value = "게시물 목록 조회")
     @GetMapping
-    public Response<Page<PostReadResponse>> getPostList (@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable) {
+    public Response<Page<PostReadResponse>> getPostList (@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @RequestParam(required = false) String keyword) {
 
-        return Response.success(postService.getPostList(pageable));
-
-    }
-
-
-    @ApiOperation(value = "내가 작성한 게시물 조회")
-    @GetMapping("/my")
-    public Response<Page<PostReadResponse>> getMyPosts (@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @ApiIgnore Authentication authentication) {
-        return Response.success(postService.getMyPosts(pageable, authentication.getName())); // 인증(Authentication) : 보호된 리소스에 접근한 주체가 애플리케이션의 작업을 수행해도 되는 유저인지 확인한다.
+        return Response.success(postService.getPostList(pageable, keyword));
 
     }
+
+
+//    @ApiOperation(value = "내가 작성한 게시물 조회")
+//    @GetMapping("/my")
+//    public Response<Page<PostReadResponse>> getMyPosts (@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @ApiIgnore Authentication authentication) {
+//        return Response.success(postService.getMyPosts(pageable, authentication.getName())); // 인증(Authentication) : 보호된 리소스에 접근한 주체가 애플리케이션의 작업을 수행해도 되는 유저인지 확인한다.
+//
+//    }
 
 
     @ApiOperation(value = "게시물 수정")
@@ -86,12 +86,12 @@ public class PostController {
     }
 
 
-    @ApiOperation(value = "게시물 제목으로 검색")
-    @GetMapping("/title")
-    public Response<Page<PostReadResponse>> searchByTitle (@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @RequestParam String keyword) {
-
-        return Response.success(postService.searchByTitle(pageable, keyword));
-
-    }
+//    @ApiOperation(value = "게시물 제목으로 검색")
+//    @GetMapping("/{title}")
+//    public Response<Page<PostReadResponse>> searchByTitle (@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) @ApiIgnore Pageable pageable, @RequestParam String keyword) {
+//
+//        return Response.success(postService.searchByTitle(pageable, keyword));
+//
+//    }
 
 }

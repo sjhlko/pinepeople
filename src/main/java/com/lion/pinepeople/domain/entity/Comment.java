@@ -26,8 +26,6 @@ public class Comment extends BaseEntity {
     @Column(length = 600)
     private String body;
 
-    @Column(columnDefinition = "int default 0")
-    private int commentsCount;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
