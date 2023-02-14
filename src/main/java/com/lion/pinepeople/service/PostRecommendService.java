@@ -5,6 +5,7 @@ import com.lion.pinepeople.domain.dto.postRecommend.PostRecommendRequest;
 import com.lion.pinepeople.domain.dto.postRecommend.PostRecommendResponse;
 import com.lion.pinepeople.domain.entity.Post;
 import com.lion.pinepeople.domain.entity.User;
+import com.lion.pinepeople.enums.NotificationType;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.PostRecommendRepository;
@@ -26,6 +27,7 @@ public class PostRecommendService {
     private final PostRecommendRepository postRecommendRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final NotificationService notificationService;
 
 
     // 좋아요 수 증가하기
@@ -50,8 +52,9 @@ public class PostRecommendService {
 //        여기 주석
         findPost.addRecommendsCount();
 
-
-
+        String url ="/pinepeople/board/"+findPost.getId();
+        notificationService.send(findPost.getUser(),url,NotificationType.LIKE_ON_POST,
+                findUser.getName() + "님이 " + "\"" + findPost.getTitle() + "\" " + NotificationType.LIKE_ON_POST.getMessage());
 
 //        PostRecommend savedRecommend = postRecommendRepository.save(postRecommendRequest.of(findUser, findPost));
 //
