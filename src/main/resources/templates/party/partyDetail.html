@@ -48,8 +48,13 @@
                                 <i class="bi bi-wallet-fill"></i>
                                 결제하기
                             </button>
+                            <button class="btn btn-outline-dark flex-shrink-0" id="deleteParty"  type="button">
+                                <i class="bi bi-file-excel-fill"></i>
+                                파티 탈퇴하기
+                            </button>
                         </th:block>
                     </div>
+
                     <!--                            <form style="display: inline;">-->
                     <!--                                <a href="#" style="margin-left: 15px" class="btn btn-primary" th:href="@{/pinepeople/party/update/{id}(id=${party.partyId})}" >파티 수정하기</a>-->
                     <!--                            </form>-->
@@ -173,6 +178,28 @@
 
             }
         })
+    })
+    $('#deleteParty').on("click", function(){
+        var partyId = [[${party.partyId}]];
+        let url = '/pinepeople/api/partys/'+ partyId +'/participants'
+
+        if ( confirm("탈퇴하시겠습니까?") ) {
+            $.ajax({
+                url: url,
+                dataType:'json',
+                type:'DELETE',
+                success:function(data){
+                    console.log(data)
+                    alert("해당 파티에서 탈퇴하셨습니다.")
+                    document.location.href = '/pinepeople/party/list';
+                },
+                error:function (data){
+                    alert(data.responseJSON.result.message)
+                }
+            })
+
+        } else {
+        }
     })
 
     $('#deleteBtn').on("click", function(){
