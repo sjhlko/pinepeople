@@ -32,8 +32,11 @@ public class CommentService {
     public CommentCreateResponse createComment(String userId, Long postId, CommentCreateRequest commentCreateRequest) {
 
         Post post = validatePost(postId);
+//        Comment comment = validateComment(postId, commentCreateRequest.getId());
         post.addCommentsCount(post.getCommentsCount());
-        Comment savedComment = commentRepository.save(commentCreateRequest.of(validateUser(userId), validatePost(postId)));
+        postRepository.save(post);
+
+        Comment savedComment = commentRepository.save(commentCreateRequest.of(validateUser(userId), post));
 
         return CommentCreateResponse.of(savedComment);
     }
@@ -47,12 +50,12 @@ public class CommentService {
     }
 
 
-    public Page<CommentReadResponse> getMyComments(String userId, Pageable pageable) {
-
-        Page<Comment> myComments = commentRepository.findByUser(pageable, validateUser(userId));
-
-        return CommentReadResponse.of(myComments);
-    }
+//    public Page<CommentReadResponse> getMyComments(String userId, Pageable pageable) {
+//
+//        Page<Comment> myComments = commentRepository.findByUser(pageable, validateUser(userId));
+//
+//        return CommentReadResponse.of(myComments);
+//    }
 
     //    @Transactional
     public CommentUpdateResponse updateComment(String userId, Long postId, Long commentId, String body) {

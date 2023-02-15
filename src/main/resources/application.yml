@@ -51,8 +51,9 @@ spring:
   redis:
     host: ${REDIS_HOST}
     port: 6379
+    password: ${REDIS_PASSWORD}
 
-#multipart 설정
+  #multipart 설정
   servlet:
     multipart:
       max-request-size: 100MB
