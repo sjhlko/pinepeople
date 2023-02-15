@@ -1,26 +1,24 @@
-//package com.lion.pinepeople.config.webSocket;
-//
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-//import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-//import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-//import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-//
-//@Configuration
-//@EnableWebSocketMessageBroker//@EnableWebSocketMessageBroker is used to enable our WebSocket server
-//public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-//
-//
-//    @Override
-//    public void registerStompEndpoints(StompEndpointRegistry registry) {
-//        registry.addEndpoint("/ws").withSockJS();
-//    }
-//
-//
-//    @Override
-//    public void configureMessageBroker(MessageBrokerRegistry registry) {
-//        registry.setApplicationDestinationPrefixes("/app");
-//        registry.enableSimpleBroker("/topic");
-//    }
-//
-//}
+package com.lion.pinepeople.config.webSocket;
+
+
+import com.lion.pinepeople.mvc.WebSocketHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+
+
+
+@Configuration
+@EnableWebSocket
+public class WebSocketConfig implements WebSocketConfigurer {
+
+    @Autowired
+    WebSocketHandler socketHandler;
+
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(socketHandler, "/pinepeople/chatting/{roomNumber}");
+    }
+}
