@@ -205,11 +205,11 @@
             contentType: 'application/json',
             type:'PATCH',
             success:function(data){
-                console.log(data)
-
+                alert("파티 신청 거절 완료")
+                window.location.href = "/pinepeople/party/detail/"+partyId
             },
             error: function(data){
-                console.log(data)
+                alert(data.responseJSON.result.message)
             }
 
         })
@@ -228,10 +228,11 @@
             contentType: 'application/json',
             type:'PATCH',
             success:function(data){
-                console.log(data)
+                window.location.href = "/pinepeople/party/detail/"+partyId
+                alert("파티 신청 승인 완료")
             },
             error: function(data){
-                console.log(data)
+                alert(data.responseJSON.result.message)
             }
         })
     });
