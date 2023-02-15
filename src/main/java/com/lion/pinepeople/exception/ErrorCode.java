@@ -34,7 +34,7 @@ public enum ErrorCode {
     PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 파티원이 없습니다."),
     EXPIRE_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
     INVALID_ORDER_POINT(HttpStatus.BAD_REQUEST, "잘못된 포인트 사용입니다."),
-
+    DUPLICATED_ORDER(HttpStatus.CONFLICT, "이미 결제완료된 주문입니다."),
     INVALID_ORDER_TOTAL_COST(HttpStatus.BAD_REQUEST, "잘못된 결제 금액입니다."),
     INVALID_ORDER(HttpStatus.BAD_REQUEST, "잘못된 주문입니다."),
     ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 알람입니다"),
