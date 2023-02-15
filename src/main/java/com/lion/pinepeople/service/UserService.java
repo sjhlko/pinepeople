@@ -47,7 +47,7 @@ public class UserService {
     private final RedisService redisService;
     private final FileUploadService fileUploadService;
     private final BlackListRepository blackListRepository;
-    private final long accessTokenExpireTimeMs = 1000 * 60 * 15L;
+    private final long accessTokenExpireTimeMs = 1000 * 60 * 30L;
     private final long refreshTokenExpireTimeMs = 1000 * 60 * 60 * 24L;
     private final String dir = "profile";
 
@@ -151,13 +151,14 @@ public class UserService {
     public UserLogoutResponse logout(HttpServletRequest request, HttpServletResponse response) {
         //redis aceess token logout
         String accessToken = CookieUtil.getCookieValue(request, "token");
+        redisService.deleteData(accessToken);
         redisService.setDataExpire(accessToken, "LOGOUT", accessTokenExpireTimeMs / 1000);
         //쿠키 초기화
         CookieUtil.initCookie(response, "token");
         return new UserLogoutResponse("로그아웃되었습니다.");
     }
 
-    public boolean isReissueable(HttpServletRequest request, HttpServletResponse resoponse) {
+    public boolean isReissueable(HttpServletRequest request, HttpServletResponse response) {
         log.info("토큰 재발급 시도");
         //accessToken 가져옴
         String accessToken = CookieUtil.getCookieValue(request, "token");
@@ -180,8 +181,8 @@ public class UserService {
         redisService.setDataExpire(newAccessToken, newRefreshToken, refreshTokenExpireTimeMs / 1000);
         //accessToken 쿠키에 저장
         if (request.getRequestURL().toString().contains("api"))
-            CookieUtil.saveCookie(resoponse, "token", newAccessToken);
-        else CookieUtil.savePathCookie(resoponse, "token", newAccessToken, "/pinepeople");
+            CookieUtil.saveCookie(response, "token", newAccessToken);
+        else CookieUtil.savePathCookie(response, "token", newAccessToken, "/pinepeople");
         log.info(request.getRequestURL().toString());
         log.info("토큰 재발급 성공");
         return true;
