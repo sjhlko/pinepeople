@@ -192,7 +192,7 @@
                 text: '주문이 완료되었습니다.',
                 closeOnClickOutside: false
             }).then(function () {
-                location.replace("/pinepeople/party/order-list");
+                location.replace("/pinepeople/party/detail/" + [[${party.partyId}]]);
             })
         }).fail(function (result) {
             var responseText = result.responseText;
@@ -253,7 +253,7 @@
                 closeOnClickOutside: false
             }) // 에러 메세지 창 닫으면 실행될 함수
                 .then(function () {
-                    location.replace("/pinepeople/party/" + [[${party.partyId}]] + "/order"); // 주문 내역으로 이동하기
+                    location.replace("/pinepeople/party/detail/" + [[${party.partyId}]] ); // 파티 상세보기 창으로 이동
                 })
         }).fail(function (result) { // 실패 응답 메세지 담아서 view로 보내줌
             // var json = JSON.stringify(result); // 쌍따옴표로 출력
