@@ -34,7 +34,7 @@ public class CommentService {
         Post post = validatePost(postId);
 //        Comment comment = validateComment(postId, commentCreateRequest.getId());
         post.addCommentsCount(post.getCommentsCount());
-//        postRepository.save(post.getCommentsCount());
+        postRepository.save(post);
 
         Comment savedComment = commentRepository.save(commentCreateRequest.of(validateUser(userId), post));
 

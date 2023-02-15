@@ -4,6 +4,7 @@ import com.lion.pinepeople.config.security.userdetail.UserPrinclial;
 import com.lion.pinepeople.domain.entity.User;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.repository.UserRepository;
+import com.lion.pinepeople.service.UserService;
 import com.lion.pinepeople.utils.CookieUtil;
 import com.lion.pinepeople.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import java.util.List;
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
+    private final UserService userService;
     private final UserRepository userRepository;
     @Value("${jwt.token.secret}")
     private String key;
@@ -43,19 +45,27 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        log.info("token : {}", token);
+        //log.info("token : {}", token);
 
         String validTokenCheck = JwtTokenUtil.isValid(token, key);
         if (validTokenCheck.equals(ErrorCode.EXPIRE_TOKEN.name())) {
-            request.setAttribute("exception", ErrorCode.EXPIRE_TOKEN);
-            filterChain.doFilter(request, response);
+            log.info(ErrorCode.EXPIRE_TOKEN.name());
+            if(userService.isReissueable(request,response)){
+                //log.info("토큰 재발급 완료");
+                response.sendRedirect(request.getRequestURL().toString());
+            }else {
+                request.setAttribute("exception", ErrorCode.EXPIRE_TOKEN);
+                filterChain.doFilter(request, response);
+            }
             return;
         } else if (validTokenCheck.equals(ErrorCode.INVALID_TOKEN.name())) {
+            //log.info(ErrorCode.INVALID_TOKEN.name());
             request.setAttribute("exception", ErrorCode.INVALID_TOKEN);
             filterChain.doFilter(request, response);
             return;
         }
 
+        //log.info("파싱 token : {}", token);
         User findUser = userRepository.findById(JwtTokenUtil.getUserId(token, key)).get();
         UserPrinclial userPrinclial = new UserPrinclial(findUser);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrinclial, null, List.of(new SimpleGrantedAuthority("ROLE_" + userPrinclial.getRole())));
