@@ -134,9 +134,9 @@ ADMIN
 
 ### Weekly Log
 
-| 주차 | 위클리 주소 |
-| --- | --- |
-| 1 | https://gitlab.com/GunLABS/pine-people/-/blob/developer/Weekly_Log/%5B1%EC%A3%BC%EC%B0%A8%5D%ED%8C%8C%EC%9D%B8%ED%94%BC%ED%94%8C_7%ED%8C%80_%EC%A7%84%ED%96%89%EC%83%81%ED%99%A9_%EA%B3%B5%EC%9C%A0.md |
-| 2 | https://gitlab.com/GunLABS/pine-people/-/blob/developer/Weekly_Log/%5B2%EC%A3%BC%EC%B0%A8%5D%ED%8C%8C%EC%9D%B8%ED%94%BC%ED%94%8C_7%ED%8C%80_%EC%A7%84%ED%96%89%EC%83%81%ED%99%A9_%EA%B3%B5%EC%9C%A0.md |
-| 3 | https://gitlab.com/GunLABS/pine-people/-/blob/developer/Weekly_Log/%5B3%EC%A3%BC%EC%B0%A8%5D%ED%8C%8C%EC%9D%B8%ED%94%BC%ED%94%8C_7%ED%8C%80_%EC%A7%84%ED%96%89%EC%83%81%ED%99%A9_%EA%B3%B5%EC%9C%A0.md |
-| 4 | https://gitlab.com/GunLABS/pine-people/-/blob/developer/Weekly_Log/%5B4%EC%A3%BC%EC%B0%A8%5D%ED%8C%8C%EC%9D%B8%ED%94%BC%ED%94%8C_7%ED%8C%80_%EC%A7%84%ED%96%89%EC%83%81%ED%99%A9_%EA%B3%B5%EC%9C%A0.md |
+| 주차 | 위클리 주소                                                                                                                                                                                                               |
+| --- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | [1주차 Weekly](https://gitlab.com/GunLABS/pine-people/-/blob/developer/Weekly_Log/%5B1%EC%A3%BC%EC%B0%A8%5D%ED%8C%8C%EC%9D%B8%ED%94%BC%ED%94%8C_7%ED%8C%80_%EC%A7%84%ED%96%89%EC%83%81%ED%99%A9_%EA%B3%B5%EC%9C%A0.md) |
+| 2 | [2주차 Weekly](https://gitlab.com/GunLABS/pine-people/-/blob/developer/Weekly_Log/%5B2%EC%A3%BC%EC%B0%A8%5D%ED%8C%8C%EC%9D%B8%ED%94%BC%ED%94%8C_7%ED%8C%80_%EC%A7%84%ED%96%89%EC%83%81%ED%99%A9_%EA%B3%B5%EC%9C%A0.md) |
+| 3 | [3주차 Weekly](https://gitlab.com/GunLABS/pine-people/-/blob/developer/Weekly_Log/%5B3%EC%A3%BC%EC%B0%A8%5D%ED%8C%8C%EC%9D%B8%ED%94%BC%ED%94%8C_7%ED%8C%80_%EC%A7%84%ED%96%89%EC%83%81%ED%99%A9_%EA%B3%B5%EC%9C%A0.md) |
+| 4 | [4주차 Weekly](https://gitlab.com/GunLABS/pine-people/-/blob/developer/Weekly_Log/%5B4%EC%A3%BC%EC%B0%A8%5D%ED%8C%8C%EC%9D%B8%ED%94%BC%ED%94%8C_7%ED%8C%80_%EC%A7%84%ED%96%89%EC%83%81%ED%99%A9_%EA%B3%B5%EC%9C%A0.md) |
