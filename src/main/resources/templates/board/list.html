@@ -40,7 +40,7 @@
                 <th scope="col">조회수</th>
                 <th scope="col">제목</th>
                 <th scope="col">댓글수</th>
-                <th scope="col">추천수</th>
+<!--                <th scope="col">추천수</th>-->
                 <th scope="col">작성자</th>
             </tr>
             </thead>
@@ -53,7 +53,7 @@
                         th:onclick="|location.href='/pinepeople/board/'+${post.id}|">Mark
                     </td>
                     <td th:text="${post.commentsCount}">0</td>
-                    <td th:text="${post.recommendsCount}">0</td>
+<!--                    <td th:text="${post.recommendsCount}">0</td>-->
                     <td th:text="${post.userName}">Otto</td>
                 </tr>
             </th:block>
