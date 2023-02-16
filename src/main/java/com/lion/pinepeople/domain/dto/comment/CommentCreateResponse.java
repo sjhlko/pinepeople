@@ -11,11 +11,9 @@ import lombok.*;
 @Setter
 public class CommentCreateResponse {
 
-
     private Long id;
     private String body;
     private String userName;
-
 
     public static CommentCreateResponse of(Comment savedComment) {
         return CommentCreateResponse.builder()

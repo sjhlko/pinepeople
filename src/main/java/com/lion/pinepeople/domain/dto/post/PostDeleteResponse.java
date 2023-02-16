@@ -13,7 +13,6 @@ public class PostDeleteResponse {
 
     private Long id;
 
-
     public static PostDeleteResponse of (Long postId) {
         return PostDeleteResponse.builder()
                 .id(postId)

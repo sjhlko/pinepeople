@@ -13,10 +13,8 @@ import lombok.*;
 @Builder
 public class CommentCreateRequest {
 
-
     private Long id;
     private String body;
-
 
     public Comment of(User user, Post post) {
         return Comment.builder()
@@ -26,6 +24,5 @@ public class CommentCreateRequest {
                 .post(post)
                 .build();
     }
-
 
 }

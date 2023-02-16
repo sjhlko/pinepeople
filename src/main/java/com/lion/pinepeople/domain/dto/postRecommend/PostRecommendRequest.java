@@ -13,10 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 public class PostRecommendRequest {
 
-
     private Long id;
-
-
      public PostRecommend of (User user, Post post) {
         return PostRecommend.builder()
                 .id(this.id)
@@ -24,13 +21,5 @@ public class PostRecommendRequest {
                 .post(post)
                 .build();
     }
-
-//    public PostRecommend of (PostRecommend postRecommend) {
-//                return PostRecommend.builder()
-//                .id(postRecommend.getId())
-//                .user(postRecommend.getUser())
-//                .post(postRecommend.getPost())
-//                .build();
-//    }
 
 }

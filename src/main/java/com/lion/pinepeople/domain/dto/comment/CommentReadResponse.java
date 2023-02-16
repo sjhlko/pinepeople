@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 @Setter
 public class CommentReadResponse {
 
-
     private Long commentId;
     private String body;
     private Long userId;
@@ -23,7 +22,6 @@ public class CommentReadResponse {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp createdAt;
-
 
     public static CommentReadResponse of (Comment comment) {
         return CommentReadResponse.builder()
@@ -36,7 +34,6 @@ public class CommentReadResponse {
                 .build();
     }
 
-
     public static Page<CommentReadResponse> of (Page<Comment> comments) {
         return comments.map(map -> CommentReadResponse.builder()
                 .commentId(map.getId())
@@ -48,4 +45,5 @@ public class CommentReadResponse {
                 .build());
 
     }
+
 }

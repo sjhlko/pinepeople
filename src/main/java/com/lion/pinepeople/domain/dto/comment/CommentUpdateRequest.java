@@ -9,8 +9,6 @@ import lombok.*;
 @Builder
 public class CommentUpdateRequest {
 
-
-
     private String comment;
 
     public void of() {

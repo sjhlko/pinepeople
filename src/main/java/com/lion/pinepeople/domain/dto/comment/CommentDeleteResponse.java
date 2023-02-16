@@ -9,15 +9,12 @@ import lombok.*;
 @Setter
 public class CommentDeleteResponse {
 
-
     private Long id;
-
 
     public static CommentDeleteResponse of (Long id) {
         return CommentDeleteResponse.builder()
                 .id(id)
                 .build();
     }
-
 
 }

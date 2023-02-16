@@ -19,7 +19,6 @@ public class PostCreateRequest {
     @NotBlank(message = "내용을 입력해주세요.")
     private String body;
 
-
     public Post of(User user) {
         return Post.builder()
                 .title(this.title)

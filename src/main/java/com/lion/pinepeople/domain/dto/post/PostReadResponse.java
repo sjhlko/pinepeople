@@ -15,8 +15,6 @@ import java.util.Optional;
 @Builder
 public class PostReadResponse {
 
-
-
     private Long id;
     private String title;
     private String body;
@@ -32,11 +30,11 @@ public class PostReadResponse {
     private Timestamp updatedAt;
 
     public static PostReadResponse of (Optional<Post> post) {
-
         return PostReadResponse.builder()
                 .id(post.get().getId())
                 .userName(post.get().getUser().getName())
                 .title(post.get().getTitle())
+                .body(post.get().getBody())
                 .commentsCount(post.get().getCommentsCount())
                 .recommendsCount(post.get().getRecommendsCount())
                 .hits(post.get().getHits())
@@ -47,10 +45,10 @@ public class PostReadResponse {
 
 
     public static Page<PostReadResponse> of (Page<Post> posts) {
-
         return posts.map(map -> PostReadResponse.builder()
                 .id(map.getId())
                 .title(map.getTitle())
+                .body(map.getBody())
                 .commentsCount(map.getCommentsCount())
                 .recommendsCount(map.getRecommendsCount())
                 .hits(map.getHits())

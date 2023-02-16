@@ -13,11 +13,11 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 public class CommentUpdateResponse {
+
     private Long id;
     private String body;
     private Long userId;
     private Long postId;
-
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp createdAt;
@@ -25,12 +25,10 @@ public class CommentUpdateResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp updatedAt;
 
-
     public static CommentUpdateResponse of (Comment updatedComment) {
         return CommentUpdateResponse.builder()
                 .id(updatedComment.getId())
                 .build();
     }
-
 
 }

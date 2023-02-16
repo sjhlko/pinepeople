@@ -15,7 +15,6 @@ public class PostUpdateResponse {
 
     private Long id;
 
-
     public static PostUpdateResponse of (Post updatedPost) {
         return PostUpdateResponse.builder()
                 .id(updatedPost.getId())

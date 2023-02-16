@@ -15,12 +15,9 @@ import java.util.Optional;
 @Getter
 public class PostRecommendResponse {
 
-
     private Long postRecommendId;
     private Integer recommendsCount;
     private String userName;
-
-
     public static PostRecommendResponse of(PostRecommend savedRecommend, Integer recommendsCount) {
         return PostRecommendResponse.builder()
                 .postRecommendId(savedRecommend.getId())
@@ -28,15 +25,5 @@ public class PostRecommendResponse {
                 .recommendsCount(recommendsCount)
                   .build();
     }
-
-
-//    public static Page<PostRecommendResponse> of(Page<PostRecommend> postRecommends) {
-//
-//        return postRecommends.map(map -> PostRecommendResponse.builder()
-//                .id(map.getId())
-//                .build()
-//        );
-//    }
-
 
 }
