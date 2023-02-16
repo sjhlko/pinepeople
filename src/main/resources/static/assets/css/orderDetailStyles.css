@@ -1,24 +1,43 @@
 html {
-    font-size: 130%;
+    font-size: 15px;
+    color: #0b0b0b;
 }
-
-main {
-    width: 800px;
-    margin: 50px auto 80px;
+.order_detail {
+    margin: 0;
+    padding: 0;
+    line-height: 100px;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 500;
+    font-size: 19px;
+    text-align: center;
+}
+.order_info_box {
+    text-align: center;
+}
+div, span, label, section, aside, footer, header, nav, video, table, tr, td, th {
+    margin: 0;
+    border: 0;
+    color: black;
+    text-align: center;
 }
 
 .container2 {
     border: 1px solid #444444;
+    margin: 200px auto 200px;
 }
 
 .orderDate {
-    font-size: small;
-    margin-left: 40px;
+    font-size: 15px;
+    text-align: right;
+    margin-right: 150px;
 }
+.accumulate {
+    text-align: right;
+    padding: 0 150px 0 0px;
 
+}
 .orderDetailTable {
-    width: 90%;
-    height: 600%;
+    width: 1000px;
     border-collapse: collapse;
     border: 1px solid #444444;
     text-align: center;
@@ -36,40 +55,57 @@ main {
 
 .detailOrder {
     font-size: 25px;
+    width: 1000px;
+    margin: auto;
 }
 
 .orderDetailTable th {
-    background: #c1e2b3;
+    background: #c5d7f2;
     margin-left: 40px;
 }
 
 .paymentInfo {
-    width: 80%;
+    width: 1000px;
+    height: 200px;
     border-collapse: collapse;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
+    border: 1px solid #0b0b0b;
+}
+tbody{
+    border: 1px solid #0b0b0b;
+    border-bottom: #adadad;
 }
 
 .paymentInfo tr {
-    border: 1px solid #444444;
+    border: 1px solid #0b0b0b;
 }
 
 .paymentInfo td {
-    text-align: right;
-    padding: 0 30px 0 0;
+    text-align: left;
+    padding: 0 0 0 50px;
+}
+.orderType{
+    text-align: left;
+    padding: 0 0 0 0px;
 }
 
 .paymentInfo th {
-    text-align: left;
-    padding: 0 0 0 10px;
+    text-align: center;
+    width: 360px;
+    height: 50px;
+    padding: 0 0px 0 30px;
+    background: #d7d8da;
+    border-bottom: #adadad;
 }
 
 .accumulatePoint {
-    width: 30%;
+    height: 40px;
+    width: 300px;
     border-collapse: collapse;
     border: 1px solid #444444;
-    margin-left: 70px;
+    margin-left: 150px;
     /*margin-left: auto;*/
 }
 
@@ -83,20 +119,37 @@ main {
     padding: 0 30px 0 0px;
 }
 
-.frame {
-    text-align: right;
+.accumulatePoint2{
+    width: 40px;
+}
+.GetOrderList{
+    margin-right: auto;
+    height: 50px;
 }
 
+.btn-primary {
+    font-size: 15px;
+    padding: 6px;
+    margin-bottom: 50px;
+    border-radius: 40px;
+    text-align: left;
+}
 button.button_2 {
     border: 0;
     outline: none;
     font-size: 13px;
-    margin: 10px;
     background: black;
     color: white;
     padding: 10px;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 40px;
+    display :inline-block;
+    text-align: right;
+}
+.button-container{
+    width: 900px;
+    margin: 30px auto;
+    height: 40px;
 }
 
 button.button_2:hover {
@@ -117,16 +170,10 @@ a {
     background: #c5d7f2;
 }
 
-.orderListBtn {
-    background-color: #ffecb5;
-    font-size: 15px;
-    border: lightgrey solid 2px;
-    padding: 6px;
-}
 
 .paymentInfoTitle {
     text-align: center;
-    font-weight: bold;
+    /*font-weight: bold;*/
 }
 
 .plusPointChild {

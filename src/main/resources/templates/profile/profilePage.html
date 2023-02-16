@@ -47,6 +47,7 @@
                     </div>
                     <div class="mt-5 d-grid gap-3">
                         <button type="button" class="btn btn-warning"  data-bs-toggle="modal" data-bs-target="#exampleModal1">당도 평가하기</button>
+                        <button type="button" id="chattingButton" class="btn btn-warning">채팅하기</button>
                         <button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">신고하기</button>
                     </div>
 
@@ -78,6 +79,7 @@
                             </div>
                         </div>
                     </div>
+
 
                     <!-- 신고하기 -->
                     <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -216,6 +218,28 @@
             }
         })
     })
+
+    $("#chattingButton").on("click", function(){
+        var userId = [[${userInfo.userId}]];
+        /*]]>*/
+
+        let url = `/pinepeople/get-room?userId=`+userId;
+        console.log(url)
+        $.ajax({
+            url: url,
+            contentType: 'application/json',
+            type:'POST',
+            success:function(data){
+                console.log(data);
+                window.open("/pinepeople/movechatting?roomNumber=" + data.result.chattingRoomId , "chat", "width=500, height=800, top=200, left=200");
+            },
+            error:function (data){
+                alert(data.responseJSON.result.message)
+            }
+        })
+
+        //location.href="/movechatting?roomName="+name+"&"+"roomNumber="+number;
+    });
 
 </script>
 

@@ -165,13 +165,17 @@ public class PartyService {
      * @return 수정 후 파티 정보를 리턴
      * 파티 정보 수정은 해당 파티의 host 만 가능하다.
      */
-    public PartyUpdateResponse updateParty(Long partyId, PartyUpdateRequest partyUpdateRequest, String userId) {
+    public PartyUpdateResponse updateParty(Long partyId, PartyUpdateRequest partyUpdateRequest, String userId, MultipartFile file) throws IOException {
         User user = validateUser(userId);
         Party party = validateParty(partyId);
         validateHost(party,user);
         Category category = validateCategory(partyUpdateRequest.getBranch(), partyUpdateRequest.getCode());
         Timestamp createdAt = party.getCreatedAt();
-        Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party,category));
+
+        //파티 사진 클라우드에 업로드
+        String partyImg = fileUploadService.uploadFile(file, dir);
+
+        Party updatedParty = partyRepository.save(partyUpdateRequest.toEntity(party,category, partyImg));
         return PartyUpdateResponse.of(createdAt,updatedParty);
     }
 

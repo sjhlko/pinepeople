@@ -1,14 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
-<!--    <meta charset="utf-8">-->
-<!--    <title>Made Three</title>-->
-<!--    <meta name="description" content="">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <div th:replace="base :: base-head"></div>
     <link rel="icon" type="img/logo" href="https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/static/logo.png">
-
-
-
 <!--    <link rel="stylesheet" th:href="@{/static/assets/css/main/slick.css}">-->
 <!--    <link rel="stylesheet" th:href="@{/static/assets/css/main/slick-theme.css}">-->
 <!--    <link rel="stylesheet" th:href="@{/static/assets/css/main/animate.css}">-->
@@ -51,8 +45,6 @@
 
     <script href="https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/css/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
 
-
-    <div th:replace="base.html :: base-head"></div>
     <style>
         h1, h2, h3, h4, h5, h6, p {
             font-family: 'Noto Sans KR', sans-serif;
@@ -140,8 +132,11 @@
                         <h1 class="bold" >파인피플 </h1><br>
                         <h2 class="text-white">- ? -</h2><br>
                         <h3 class="text-black text-uppercase"><aside>
-                            <p class="regular">
-                                함께 파티를 구하는 서비스로 ~~~~~합니다
+                            <p class="regular" style="line-height:1.5">
+                                Find + People의 합성어로<br>
+                                혼자만의 즐거움 속에 ‘같이’라는 가치를 더해주는 서비스,<br>
+                                공간을 초월한 만남이 이루어지는 곳,<br>
+                                파인피플에 방문해주셔서 감사합니다.<br>
                             </p>
                         </aside></h3>
 
@@ -151,6 +146,29 @@
             </div>
         </div>
     </section>
+
+    <!--Featured Section-->
+    <section id="features" class="about bg-grey">
+        <div class="container">
+            <div class="row">
+                <div class="main_features text-center fix roomy-70">
+                    <div class="md-5">
+                        <div class="features_item">
+                            <h2 class="text-uppercase"><strong>PINEPEOPLE?</strong></h2>
+                            <p>-파인피플이란?-</p>
+                            <div class="featured_content">
+                                <p class="regular">
+                                    OTT를 함께 결제하거나, 배달료를 나눈다거나 하는 당장의 만남부터<br><br>
+                                    영화를 함께보거나, 스터디를 만드는 꾸준한 만남까지<br><br>
+                                    누군가가 필요할때 언제든지 사람을 찾을 수 있는 서비스입니다.<br><br>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- End off row -->
+        </div><!-- End off container -->
+    </section><!-- End off Featured Section-->
 
 
 
@@ -232,39 +250,6 @@
             </div>
         </div>
     </section><!-- End off Business section -->
-
-    <!--Featured Section-->
-    <section id="features" class="features bg-white">
-        <div class="container">
-            <div class="row">
-                <div class="main_features fix roomy-70">
-
-                    <div class="col-md-5">
-                        <div class="features_item">
-                            <div class="head_title">
-                                <h2 class="text-uppercase">What is <strong>Friend?</strong></h2>
-                                <p>-파인피플 이용자들의 후기 보기-</p>
-                            </div>
-                            <div class="featured_content">
-                                <p class="regular">
-                                    오래된 친구라고 다 잘 맞는 법은 없다.<br>
-
-                                    나의 취향은 내가 쟁취하는 것.<br>
-
-                                    마음 맞는 사람들끼리 모여 취미를 향유하는 것.<br>
-
-                                    그것이 행복이다. <br>
-
-                                </p>
-
-                                <a th:href="@{/pinepeople/board/list}" class="btn btn-default m-top-40">커뮤니티</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- End off row -->
-        </div><!-- End off container -->
-    </section><!-- End off Featured Section-->
 
     <!--footer-->
     <div th:insert="~{base :: pinepeople-footer}"></div>

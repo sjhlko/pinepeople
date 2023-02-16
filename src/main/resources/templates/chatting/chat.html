@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>chattingMessage</title>
+  <style>
+
+    body{
+      margin:0;
+      padding:0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .container{
+      width: 500px;
+      margin: 0 auto;
+      /*padding: 25px*/
+    }
+    .container h1{
+      text-align: left;
+      /*padding: 5px 5px 5px 15px;*/
+      color: #FFBB00;
+      border-left: 3px solid #FFBB00;
+      margin-bottom: 20px;
+    }
+    .chattingMessage{
+      background-color: #ffeef5;
+      width: 100%;
+      height: 700px;
+      overflow: auto;
+    }
+    .me{
+      float: right;
+      clear: both;
+      width: auto;
+      max-width: 40%;
+      padding:5px;
+      margin: 5px;
+      background-color: rgba(255, 192, 203, 0.5);
+      border-radius: 10px;
+      word-break:break-all;
+    }
+
+    .meTime{
+      float: right;
+      clear: both;
+      width: auto;
+      padding:1px;
+      margin: 1px;
+      font-size: 5px;
+      color: gray;
+    }
+    .others{
+      float: left;
+      clear: both;
+      width: auto;
+      max-width: 40%;
+      padding:5px;
+      margin: 5px;
+      background-color: rgba(255, 192, 203, 0.5);
+      border-radius: 10px;
+    }
+
+    .othersTime{
+      float: left;
+      clear: both;
+      width: auto;
+      padding:1px;
+      margin: 1px;
+      font-size: 5px;
+      color: gray;
+    }
+
+    input{
+      width: 99.5%;
+      height: 50px;
+    }
+
+    .inputTable{
+      width: 99.5%;
+      height: 50px;
+    }
+    #yourMsg{
+      display: none;
+    }
+
+    .header {
+      font-size: 14px;
+      padding: 15px 0px;
+      background: #F18C7E;
+      color: white;
+      text-align: center;
+    }
+
+  </style>
+</head>
+<body>
+<!-- jQuery -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+<div id="container" class="container">
+  <div class="header" th:text="*{roomName}"></div>
+  <input type="hidden" id="sessionId" value="">
+  <input type="hidden" id="roomNumber" th:value="*{roomNumber}">
+  <input type="hidden" id="userName" th:value="*{user.name}">
+
+  <div id="chattingMessage" class="chattingMessage">
+<!--    채팅이 들어갈 공간-->
+  </div>
+
+  <div id="yourMsg">
+    <table class="inputTable">
+      <tr>
+        <th><input id="chatting" placeholder="보내실 메시지를 입력하세요."></th>
+      </tr>
+    </table>
+  </div>
+</div>
+
+</body>
+<script th:inline="javascript">
+  var ws;
+  function wsOpen(){
+    //웹소켓 전송시 현재 방의 번호를 넘겨서 보낸다.
+    ws = new WebSocket("ws://" + location.host + "/pinepeople/chatting/"+$("#roomNumber").val());
+    wsEvt();
+  }
+
+  function wsEvt() {
+    ws.onopen = function(data){
+      //소켓이 열리면 동작
+    }
+
+    ws.onmessage = function(data) {
+      //메시지를 받으면 동작
+      var msg = data.data;
+      if(msg != null && msg.trim() !== ''){
+        var d = JSON.parse(msg);
+        if(d.type === "getId"){
+          var si = d.sessionId != null ? d.sessionId : "";
+          if(si !== ''){
+            $("#sessionId").val(si);
+          }
+        }else if(d.type === "message"&& d.msg!==""){
+          if(d.sessionId === $("#sessionId").val()){
+            $("#chattingMessage").append("<div class='me' id='me'>" + d.msg + "</div>");
+            $("#chattingMessage").append("<div class='meTime' id='meTime'>" +getCurrentDate() + "</div>");
+          }else{
+            $("#chattingMessage").append("<div class='others' id='others'>" + d.msg + "</div>");
+            $("#chattingMessage").append("<div class='othersTime' id='othersTime'>" +getCurrentDate() + "</div>");
+
+          }
+
+        }else{
+          console.warn("unknown type!")
+        }
+      }
+      $('#chattingMessage').scrollTop($('#chattingMessage')[0].scrollHeight);
+
+    }
+
+    document.addEventListener("keypress", function(e){
+      if(e.keyCode === 13){ //enter press
+        send();
+      }
+    });
+  }
+
+  window.onload=function(){
+    //실행할 내용
+    const name = [[${user.name}]];
+    console.log(name);
+      wsOpen();
+      $("#confirm").hide();
+      $("#yourMsg").show();
+
+    let url = `/pinepeople/get-chatting/`+ [[${chattingRoom.id}]];
+    $.ajax({
+      url: url,
+      contentType: 'application/json',
+      type:'GET',
+      success:function(data){
+        console.log(data);
+        for (const datum of data.result) {
+          console.log(datum);
+          if(datum.userId === [[${user.id}]]){
+            $("#chattingMessage").append("<div class='me' id='me'>" + datum.message + "</div>");
+            $("#chattingMessage").append("<div class='meTime' id='meTime'>" +datum.createdAt + "</div>");
+          }else{
+            $("#chattingMessage").append("<div class='others' id='others'>" + datum.message + "</div>");
+            $("#chattingMessage").append("<div class='othersTime' id='othersTime'>" +datum.createdAt + "</div>");
+          }
+        }
+        $('#chattingMessage').scrollTop($('#chattingMessage')[0].scrollHeight);
+      },
+      error:function (data){
+        console.log("error")
+      }
+    })
+  };
+
+
+  function send() {
+    if($("#chatting").val()===""){
+      return;
+    }
+    var option ={
+      type: "message",
+      roomNumber: $("#roomNumber").val(),
+      sessionId : $("#sessionId").val(),
+      userName : $("#userName").val(),
+      msg : $("#chatting").val()
+    }
+    console.log(option);
+
+    let url = `/pinepeople/chat-save/`+ [[${chattingRoom.id}]];
+    let sendData = JSON.stringify({
+      message: $("#chatting").val(),
+      user: [[${user}]],
+      chattingRoom : [[${chattingRoom}]]
+    })
+    console.log(url);
+    console.log(sendData);
+    $.ajax({
+      url: url,
+      data: sendData ,
+      contentType: 'application/json',
+      type:'POST',
+      success:function(data){
+        console.log(data);
+      },
+      error:function (data){
+        console.log("error")
+      }
+    })
+
+    ws.send(JSON.stringify(option));
+    console.log($("#chatting").val());
+    $('#chatting').val("");
+  }
+
+
+  function getCurrentDate()
+  {
+    var date = new Date();
+    var year = date.getFullYear().toString();
+
+    var month = date.getMonth() + 1;
+    month = month < 10 ? '0' + month.toString() : month.toString();
+
+    var day = date.getDate();
+    day = day < 10 ? '0' + day.toString() : day.toString();
+
+    var hour = date.getHours();
+    hour = hour < 10 ? '0' + hour.toString() : hour.toString();
+
+    var minites = date.getMinutes();
+    minites = minites < 10 ? '0' + minites.toString() : minites.toString();
+
+    var seconds = date.getSeconds();
+    seconds = seconds < 10 ? '0' + seconds.toString() : seconds.toString();
+
+    return year + '-'+ month + '-'+ day+ ' ' + hour + ':' + minites + ':' + seconds;
+  }
+</script>
+</html>

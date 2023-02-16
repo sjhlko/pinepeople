@@ -1,15 +1,10 @@
 package com.lion.pinepeople.service;
 
 import com.lion.pinepeople.domain.dto.participant.*;
-import com.lion.pinepeople.domain.dto.party.PartyInfoResponse;
-import com.lion.pinepeople.domain.dto.party.PartyUpdateResponse;
 import com.lion.pinepeople.domain.entity.Participant;
 import com.lion.pinepeople.domain.entity.Party;
 import com.lion.pinepeople.domain.entity.User;
-import com.lion.pinepeople.enums.ApprovalStatus;
-import com.lion.pinepeople.enums.ParticipantRole;
-import com.lion.pinepeople.enums.PartyStatus;
-import com.lion.pinepeople.enums.UserRole;
+import com.lion.pinepeople.enums.*;
 import com.lion.pinepeople.exception.ErrorCode;
 import com.lion.pinepeople.exception.customException.AppException;
 import com.lion.pinepeople.repository.ParticipantRepository;
@@ -31,6 +26,7 @@ public class ParticipantService {
     private final ParticipantRepository participantRepository;
     private final PartyRepository partyRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     /**
      * 특정 유저가 존재하는지를 확인함
@@ -59,6 +55,16 @@ public class ParticipantService {
      */
     public Participant validateParticipant(Long participantId){
         return participantRepository.findById(participantId)
+                .orElseThrow(() -> new AppException(ErrorCode.PARTICIPANT_NOT_FOUND, ErrorCode.PARTICIPANT_NOT_FOUND.getMessage()));
+    }
+
+    /**
+     * 특정 파티원이 특정 파티에 존재하는지 확인함
+     * @param participant 존재하는 파티원인지 확인하고픈 파티원
+     * @param party 존재하는지 확인하고픈 파티
+     */
+    public void checkParticipantAndParty(User participant, Party party){
+        participantRepository.findParticipantByUserAndParty(participant, party)
                 .orElseThrow(() -> new AppException(ErrorCode.PARTICIPANT_NOT_FOUND, ErrorCode.PARTICIPANT_NOT_FOUND.getMessage()));
     }
 
@@ -117,17 +123,37 @@ public class ParticipantService {
     }
 
     /**
+     * 특정 User 를 host 로 하는 파티가 생성될때 participant table에 해당 유저와 파티정보를 저장함.
+     * @param userId 가입한 회원의 아이디
+     * @param partyId 가입한 파티 번호
+     * @return 파티원 정보를 리턴함
+     */
+    public ParticipantInfoResponse getParticipant(Long userId, Long partyId){
+        Participant participant = participantRepository.findByUserIdAndPartyId(userId, partyId);
+        return ParticipantInfoResponse.of(participant);
+    }
+
+
+    /**
      * 특정 User 특정 파티의 guest 로 저장함
      * @param userId guest 로 저장될 유저의 id
      * @param partyId user 가 guest 로 들어가게 될 파티의 id
      * @return 해당 파티와 해당 유저의 정보를 participant 테이블에 저장한 뒤 해당 정보를 ParticipantCreateResponse로 리턴함
      * guest 의 자격으로 저장되었으므로 approvalStatus 는 WAITING 로 저장됨
      */
+    @Transactional
     public ParticipantCreateResponse createGuestParticipant(Long partyId, String userId){
         User user = validateUser(userId);
         Party party = validateParty(partyId);
         checkParticipantExist(party,user);
+        if(party.getPartyStatus().toString().equals("CLOSED")){
+            throw new AppException(ErrorCode.PARTY_CLOSED,ErrorCode.PARTY_CLOSED.getMessage());
+        }
         Participant participant = participantRepository.save(Participant.of(user,party, ParticipantRole.GUEST));
+        // 파티 가입 신청
+        String url = "/pinepeople/party/detail/"+partyId;
+        notificationService.send(party.getUser(), url, NotificationType.APPLY_JOIN_PARTY,
+                    participant.getUser().getName()+"님이 "+"\""+party.getPartyTitle() + "\" "+ NotificationType.APPLY_JOIN_PARTY.getMessage());
         return ParticipantCreateResponse.of(participant);
     }
 
@@ -189,10 +215,23 @@ public class ParticipantService {
         User user = validateUser(userId);
         Party party = validateParty(partyId);
         Participant participant = validateParticipant(id);
+        checkParticipantAndParty(participant.getUser(),party);
         Timestamp createdAt = participant.getCreatedAt();
         validateHost(party,user);
+        if(party.getPartyStatus().toString().equals("CLOSED")&& participantUpdateRequest.getApprovalStatus().equals("APPROVED")){
+            throw new AppException(ErrorCode.PARTY_CLOSED,ErrorCode.PARTY_CLOSED.getMessage());
+        }
         Participant updatedParticipant = participantRepository.save(participantUpdateRequest.toEntity(participant));
 
+        String url = "/pinepeople/party/detail/"+partyId;
+
+        if (participant.getApprovalStatus() == ApprovalStatus.APPROVED) { // 파티 승인
+            notificationService.send(participant.getUser(),url, NotificationType.APPROVE_JOIN_PARTY,
+                    "\""+party.getPartyTitle() + "\" "+ NotificationType.APPROVE_JOIN_PARTY.getMessage());
+        } else if (participant.getApprovalStatus() == ApprovalStatus.REJECTED) { // 파티 거절
+            notificationService.send(participant.getUser(),url,NotificationType.REJECT_JOIN_PARTY,
+                    "\""+party.getPartyTitle() + "\" "+ NotificationType.REJECT_JOIN_PARTY.getMessage());
+        }
         //파티 상태 변경(파티원 모집중인지, 마감되었는지)
         party.updateStatus(checkPartyStatus(partyId));
         partyRepository.save(party);
@@ -224,7 +263,7 @@ public class ParticipantService {
      */
     public PartyStatus checkPartyStatus(Long partyId){
         Party party = validateParty(partyId);
-        Long count = participantRepository.countByApprovalStatus(ApprovalStatus.APPROVED,partyId);
+        Long count = participantRepository.countByApprovalStatus(ApprovalStatus.APPROVED.toString(),partyId);
         if(count.intValue()<party.getPartySize()){
             return PartyStatus.RECRUITING;
         }

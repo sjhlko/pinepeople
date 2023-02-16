@@ -49,6 +49,13 @@ public class PartyMvcController {
     private final PartyRepository partyRepository;
     private final UserRepository userRepository;
 
+    //    @GetMapping("/chat")
+//    public String chat(){
+//        return "chatting/chatting";
+//    }
+
+
+
     /**파티 리스트 페이지**/
     @GetMapping("/list")
     public String getPartyList(@PageableDefault(page = 0, size = 8, sort = "createdAt",
@@ -188,6 +195,9 @@ public class PartyMvcController {
             model.addAttribute("partyUpdateRequest", new PartyUpdateRequest());
             model.addAttribute("rightNowCategory", categoryService.getCategorySteadily("RightNow",1));
             model.addAttribute("steadilyCategory", categoryService.getCategorySteadily("Steadily",1));
+            PartyInfoResponse party = partyService.getParty(id);
+            model.addAttribute("beforeParty", party);
+
             partyService.validateHost(authentication.getName(),id);
         } catch (AppException e){
             printMessage(e.getMessage(),response);
@@ -199,7 +209,7 @@ public class PartyMvcController {
      * 파티 글 수정 메소드
      * */
     @PostMapping ("/update/{id}")
-    public String updateParty(Authentication authentication, @Validated @ModelAttribute PartyUpdateRequest partyUpdateRequest,
+    public String updateParty(Authentication authentication, @Validated @ModelAttribute PartyUpdateRequest partyUpdateRequest,  @RequestPart(value = "file") MultipartFile file,
                               @PathVariable Long id, @RequestParam String branch, @RequestParam String code, HttpServletResponse response) throws IOException {
         try {
             PartyUpdateRequest request = PartyUpdateRequest.of(partyUpdateRequest,branch,code.split(",")[0]);
@@ -207,7 +217,7 @@ public class PartyMvcController {
                 request = PartyUpdateRequest.of(partyUpdateRequest,branch,code.split(",")[1]);
             }
             System.out.println(request.getBranch());
-            partyService.updateParty(id,request,authentication.getName());
+            partyService.updateParty(id,request,authentication.getName(), file);
         } catch (AppException e){
             printMessage(e.getMessage(),response);
         }

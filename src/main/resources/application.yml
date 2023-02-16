@@ -3,6 +3,11 @@ server:
   servlet:
     encoding:
       force-response: true
+      #JSP to Modify Not Restart Server
+    jsp:
+      init-parameters:
+        development: true
+
 spring:
   mvc:
     pathmatch:
@@ -12,6 +17,10 @@ spring:
     url: jdbc:mysql://localhost:3306/pinepeople
     username: root
     password: 1234
+    hikari:
+      connection-timeout: 10000
+      maximum-pool-size: 10
+      max-lifetime: 30000
 
   jpa:
     show-sql: true
@@ -23,6 +32,10 @@ spring:
     #    hibernate.naming.strategy : org.hibernate.cfg.SpringPhysicalNamingStrategy
     #    hibernate.naming.physical-strategy : org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     generate-ddl: false
+    open-in-view: false
+    properties:
+      hibernate.enable_lazy_load_no_trans: true
+
 
   security:
     oauth2:
@@ -38,8 +51,9 @@ spring:
   redis:
     host: ${REDIS_HOST}
     port: 6379
+    password: ${REDIS_PASSWORD}
 
-#multipart 설정
+  #multipart 설정
   servlet:
     multipart:
       max-request-size: 100MB

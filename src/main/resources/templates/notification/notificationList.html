@@ -34,7 +34,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6 text-center mb-5">
-                <h2 class="heading-section">🔔알람 내역</h2>
+                <h3 class="heading-section" style="font-size: 30px">🔔알람 내역</h3>
             </div>
         </div>
         <div class="row">
@@ -57,7 +57,7 @@
                             <td>
                                 <a class="clickColor" th:onclick="'javascript:isRead(' + ${notification.id} +')'"
                                    th:href="${notification.url}" >
-                                    <span th:text="${userInfo.userName} + '님이 ' + ${notification.notificationType}"></span>
+                                    <span th:text="${notification.content}"></span>
                                 </a>
                             </td>
                             <td id="alarmRead" style="font-size: 20px">

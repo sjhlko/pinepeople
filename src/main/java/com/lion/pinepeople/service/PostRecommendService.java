@@ -29,19 +29,9 @@ public class PostRecommendService {
     private final PostRepository postRepository;
     private final NotificationService notificationService;
 
-//        1. 좋아요 정보를 조회(GET매핑) 할 때 개수 및 자신이 좋아요를 눌렀는지 반환
-//        2. 좋아요를 누를 때 (POST매핑) 해당 글이나 댓글 좋아요에 본인 등록 및 좋아요 개수 + 1
-//        3. 좋아요를 삭제할 때 (DELETE매핑) 해당 글이나 댓글 좋아요에 본인 삭제 및 좋아요 개수 - 1
 
-    /**
-     * 게시물에 추천 추가
-     *
-     * @param postId               추천을 추가할 게시물 id
-     * @param userId               로그인한 회원 id
-     * @param postRecommendRequest 추천 정보
-     * @return 추가된 게시물 추천 정보 리턴
-     */
-    @Transactional
+    // 좋아요 수 증가하기
+    // 좋아요 눌러지고 저장도 되는데 좋아요 취소가 안된다
     public PostRecommendResponse addRecommend(Long postId, String userId, PostRecommendRequest postRecommendRequest) {
 
         Post findPost = validatePost(postId);
@@ -49,12 +39,12 @@ public class PostRecommendService {
         verifyRecommendAuthor(postId, userId);
         findPost.addRecommendsCount();
 
-        PostRecommend savedRecommend = postRecommendRepository.save(postRecommendRequest.of(findUser, findPost));
-
-        String url = "/pinepeople/board/" + findPost.getId();
-        notificationService.send(findPost.getUser(), url, NotificationType.LIKE_ON_POST,
+        String url ="/pinepeople/board/"+findPost.getId();
+        notificationService.send(findPost.getUser(),url,NotificationType.LIKE_ON_POST,
                 findUser.getName() + "님이 " + "\"" + findPost.getTitle() + "\" " + NotificationType.LIKE_ON_POST.getMessage());
 
+//        PostRecommend savedRecommend = postRecommendRepository.save(postRecommendRequest.of(findUser, findPost));
+//
         Integer RecommendsCount = getRecommendsCount(postId);
         return PostRecommendResponse.of(postRecommendRepository.save(savedRecommend), RecommendsCount);
 

@@ -59,9 +59,10 @@
                                         <img class="border p-1 rounded h-100 w-100" th:src="${myInfo.profileImg}" alt="profileImg" />
                                     </div>
                                     <div class="col-9 brix-bar p-1">
-                                        <div th:text="${myInfo.userName}"></div>
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-striped bg-warning" role="progressbar"  th:style="'width:'+${myInfo.brixFiguer}+'%'" th:aria-valuenow="${myInfo.brixFiguer}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <h3 class="h-80" th:text="${myInfo.userName}"></h3>
+                                        <div class="progress h-20">
+                                            <div class="progress-bar progress-bar-striped active bg-warning" role="progressbar"  th:style="'width:'+${myInfo.brixFiguer}+'%'" th:aria-valuenow="${myInfo.brixFiguer}" aria-valuemin="0" aria-valuemax="100" th:text="${myInfo.brixFiguer}">
+                                            </div>
                                         </div>
                                     </div>
 
@@ -168,7 +169,7 @@
                     success:function(data){
                         $('#party-body').empty()
                         for(var i=0; i<data.result.content.length; i++){
-                            var tableId = '<tr>';
+                            var tableId = '<tr style="cursor:pointer" class="partyDetail" value="'+ data.result.content[i].partyId +'">';
                             tableId += '<td>' + data.result.content[i].partyId + '</td>';
                             tableId += '<td>' + data.result.content[i].categoryName + '</td>';
                             tableId += '<td>' + data.result.content[i].partyTitle + '</td>';
@@ -176,9 +177,18 @@
                             tableId += '</tr>';
                             $('#party-body').append(tableId)
                         }
+
                     }
                 })
             })
+
+            $(document).on("click", ".partyDetail", function (e) {
+                console.log("partyDetail")
+                var partyId = $(this).attr('value');
+                let url = `/pinepeople/party/detail/`+partyId
+                window.location.href = url
+            });
+
 
         </script>
     </body>

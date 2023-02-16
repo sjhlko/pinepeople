@@ -3,6 +3,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <div th:replace="base :: base-head"></div>
+    <meta charset="utf-8">
     <!-- Bootstrap icons-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <link   rel="stylesheet"  href="https://pinepeople-t3-bucket.s3.ap-northeast-2.amazonaws.com/css/css/styles.css"/>
@@ -41,6 +42,19 @@
                             파티 참여하기
                         </button>
                     </form>
+                    <div th:each="participant:${approvedParticipant}">
+                        <th:block th:if="${#strings.toString(participant.approvalStatus)} == 'APPROVED' and ${participant.userName == user.name} and ${#strings.toString(participant.getParticipantRole())}=='GUEST'">
+                            <button class="btn btn-outline-dark flex-shrink-0"  type="button" th:onclick="|location.href='@{/pinepeople/party/{partyId}/order(partyId=${party.partyId})}'|">
+                                <i class="bi bi-wallet-fill"></i>
+                                결제하기
+                            </button>
+                            <button class="btn btn-outline-dark flex-shrink-0" id="deleteParty"  type="button">
+                                <i class="bi bi-file-excel-fill"></i>
+                                파티 탈퇴하기
+                            </button>
+                        </th:block>
+                    </div>
+
                     <!--                            <form style="display: inline;">-->
                     <!--                                <a href="#" style="margin-left: 15px" class="btn btn-primary" th:href="@{/pinepeople/party/update/{id}(id=${party.partyId})}" >파티 수정하기</a>-->
                     <!--                            </form>-->
@@ -55,7 +69,7 @@
     <div class="row h-100">
         <div class="col-2" th:each="participant:${approvedParticipant}">
             <div class="m-3">
-                <img class="rounded" th:src="${participant.userProfileImg}"/>
+                <a th:href="@{/pinepeople/profile/profilePage/{userId}(userId=${participant.userId})}"><img class="rounded" th:src="${participant.userProfileImg}"/></a>
             </div>
             <div class="text-center">
                 <div th:text="${participant.userName}"></div>
@@ -132,7 +146,7 @@
 <!-- Core theme JS-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </body>
-<script>
+<script charset="UTF-8">
     $('#waitingBtn').on("click", function(){
         var partyId = [[${party.partyId}]];
         let url = `/pinepeople/api/partys/`+partyId+`/participants/waits`
@@ -148,22 +162,44 @@
                 for(var i=0; i<data.result.content.length; i++){
                     body += '<div class="col-2">';
                     body += '<div class="m-3">';
-                    body +=  '<img class="rounded" src="'+data.result.content[i].userProfileImg+'"/>';
+                    body +=  '<a href="/pinepeople/profile/profilePage/'+ data.result.content[i].userId +'"><img class="rounded" src="'+data.result.content[i].userProfileImg+'"/></a>';
                     body += '</div>';
                     body += '<div class="text-center">';
                     body +=  '<div>'+ data.result.content[i].userName +'</div>';
                     body += '</div>';
                     body += '<div class="text-center">';
-                    body += '<button class="btn btn-secondary" id="okay" value="'+data.result.content[i].userId+'">승인</button>';
-                    body += '<button class="btn btn-warning" id="reject" value="'+data.result.content[i].userId+'">거절</button>';
+                    body += '<button class="btn btn-secondary" id="okay" value="'+data.result.content[i].id+'">승인</button>';
+                    body += '<button class="btn btn-warning" id="reject" value="'+data.result.content[i].id+'">거절</button>';
                     body += '</div>';
                     body += '</div>';
-                    body += '</div>';
-                    $('#waiting-body').append(body)
                 }
+                body += '</div>';
+                $('#waiting-body').append(body)
 
             }
         })
+    })
+    $('#deleteParty').on("click", function(){
+        var partyId = [[${party.partyId}]];
+        let url = '/pinepeople/api/partys/'+ partyId +'/participants'
+
+        if ( confirm("탈퇴하시겠습니까?") ) {
+            $.ajax({
+                url: url,
+                dataType:'json',
+                type:'DELETE',
+                success:function(data){
+                    console.log(data)
+                    alert("해당 파티에서 탈퇴하셨습니다.")
+                    document.location.href = '/pinepeople/party/list';
+                },
+                error:function (data){
+                    alert(data.responseJSON.result.message)
+                }
+            })
+
+        } else {
+        }
     })
 
     $('#deleteBtn').on("click", function(){
@@ -187,7 +223,7 @@
         var partyId = [[${party.partyId}]];
         let url = `/pinepeople/api/partys/`+partyId+`/participants/`+this.value
         let sendData = JSON.stringify({
-            approvalStatus: "REJECTED"
+            "approvalStatus": "REJECTED"
         })
 
         $.ajax({
@@ -196,11 +232,11 @@
             contentType: 'application/json',
             type:'PATCH',
             success:function(data){
-                console.log(data)
-
+                alert("파티 신청 거절 완료")
+                window.location.href = "/pinepeople/party/detail/"+partyId
             },
             error: function(data){
-                console.log(data)
+                alert(data.responseJSON.result.message)
             }
 
         })
@@ -211,7 +247,7 @@
         var partyId = [[${party.partyId}]];
         let url = `/pinepeople/api/partys/`+partyId+`/participants/`+this.value
         let sendData = JSON.stringify({
-            approvalStatus: "APPROVED"
+            "approvalStatus": "APPROVED"
         })
         $.ajax({
             url: url,
@@ -219,11 +255,11 @@
             contentType: 'application/json',
             type:'PATCH',
             success:function(data){
-                console.log(data)
-
+                window.location.href = "/pinepeople/party/detail/"+partyId
+                alert("파티 신청 승인 완료")
             },
             error: function(data){
-                console.log(data)
+                alert(data.responseJSON.result.message)
             }
         })
     });
