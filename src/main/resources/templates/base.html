@@ -95,6 +95,11 @@
         .alarmIcon{
             margin-left: 15px;
         }
+
+        .toast-message {
+            color: black;
+            font-size: 100%;
+        }
     </style>
     <!-- sse -->
     <script>
@@ -122,7 +127,6 @@
                         })
                     }
                 toastr.info(message.content)
-                eventSource.close()
             })
             eventSource.addEventListener("error", function (event) {
                 eventSource.close()
