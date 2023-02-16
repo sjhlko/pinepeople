@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByUser (Pageable pageable, User user);
+    Page<Post> findByTitleContaining(String keyword, Pageable pageable);
 
     // 조회수 순으로 정렬
 //    @Modifying
@@ -18,12 +19,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 //    @Modifying
 //    @Query("update Post set hits = hits + 1 where post.post_id = :post_id")
     //int updateHits(@Param(value = "postId") Long postId);
-
-
-    // 검색
-    Page<Post> findByTitleContaining(String keyword, Pageable pageable);
-
-
-
 
 }
