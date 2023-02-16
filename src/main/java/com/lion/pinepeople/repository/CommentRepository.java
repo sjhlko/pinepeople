@@ -11,15 +11,8 @@ import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    // 단일 조회
-    Optional<Comment> findByPostIdAndId (Long postId, Long id);
-
-    // 목록 조회
-    Page<Comment> findByPost (Pageable pageable, Post post);
-
-    // 내 게시물 조회 시
-    Page<Comment> findByUser(Pageable pageable, User findUser);
-
+    Optional<Comment> findByPostIdAndId (Long postId, Long id); // 단일 조회
+    Page<Comment> findByPost (Pageable pageable, Post post); // 목록 조회
+    Page<Comment> findByUser(Pageable pageable, User findUser); // 내 게시물 조회
 
 }
-
